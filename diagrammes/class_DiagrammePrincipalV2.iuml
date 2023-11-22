@@ -13,6 +13,7 @@ title Diagramme de classe général (V2)
 class Entreprise {
     # departs : []Employe
     # plaintes : [][]Employe
+    # CA : float
 
     + {static} NewEntreprise(nbEmployes int, parite float, recrutement Recrutement) : *Entreprise
     + Start()
@@ -25,6 +26,12 @@ class Entreprise {
     + PourcentageFemmes() : float
     + SupprimerEmploye(employe)
     + EnvoyerEmploye() : *Employe
+
+
+    + AjusterImpactFemmes()
+    + MettreAJourCA(santeMentale : int, competence : int)
+    + CalculerBenefice()
+    + ObtenirIndicateursSante() : map[string]float
 }
 
 class Recrutement {
@@ -50,15 +57,22 @@ class Employe {
     # genre : Genre
     # agresseur : bool
     # entreprise : Entreprise
+    # comportement : Comportement
+    # competence : int { [1, 10] }
 
     + {static} GenererEmployeInit(ent Entreprise, genre Genre) : *Employe
-    + {static} NewEmploye(ent Entreprise, genre Genre, estAgresseur bool, anciennete int) : *Employe
+    + {static} NewEmploye(ent Entreprise, genre Genre, estAgresseur bool, anciennete int, comportement : Comportement, competence : int) : *Employe
     + Start()
     + EtreAgresse(*Employe)
     + Agresser()
     + PorterPlainte(*Employe)
     + Genre() : Genre
     + GagnerAnciennete()
+
+
+    + PoserDemission()
+    + PartirRetraite()
+    + Travailler()
 }
 
 interface Logger {
@@ -85,14 +99,22 @@ enum Genre {
 }
 
 enum StratParite {
-    Femme
-    Homme
+    PrioFemme
+    PrioHomme
     Hasard
 }
 
 enum TypeRecrutement {
     CompetencesEgales
     PlacesReservees
+}
+
+enum Comportement {
+    Plainte100 = 1.0
+    Plainte75 = .75
+    Plainte50 = .5
+    Plainte25 = .25
+    Plainte0 = .0
 }
 
 '-----------------
