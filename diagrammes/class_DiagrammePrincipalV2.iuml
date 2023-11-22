@@ -1,0 +1,113 @@
+@startuml Diagramme de classe général (V2)
+
+'-----------------
+' Parametrage
+
+title Diagramme de classe général (V2)
+
+'-----------------
+' Classes
+
+' Simulation à discuter !!!
+
+class Entreprise {
+    # departs : []Employe
+    # plaintes : [][]Employe
+
+    + {static} NewEntreprise(nbEmployes int, parite float, recrutement Recrutement) : *Entreprise
+    + Start()
+    + GestionRecrutements() 
+    + GestionPlaintes()
+    + GestionDeparts()
+    + RecevoirDemission(Employe)
+    + RecevoirPlainte(plaignant Employe, accuse Employe)
+    + NombreEmployes() : int
+    + PourcentageFemmes() : float
+    + SupprimerEmploye(employe)
+    + EnvoyerEmploye() : *Employe
+}
+
+class Recrutement {
+    # objectif : float
+    # stratAvant : stratParite
+    # stratApres : stratParite
+    # typeRecrutementAvant : typeRecrutement
+    # typeRecrutementApres : typeRecrutement
+    # pourcentagePlacesAvant : float
+    # pourcentagePlacesApres : float
+
+    + {static} NewRecrutement(ent Entreprise, objectif float, stratAvant stratParite, stratApres stratParite, typeRecrutementAvant typeRecrutement, typeRecrutementApres typeRecrutement, pourcentagePlacesAvant float, pourcentagePlacesApres float) : *Recrutement
+    + Start()
+    + genererCandidats(NBCANDIDATS int) : []Employe
+    + recrutementPlacesReservees(nbARecruter int, candidats []Employe) : []Employe
+    + recrutementCompetencesEgales(nbARecruter int, candidats []Employe) : []Employe
+    + Recruter(nbARecruter) : []Employe
+}
+
+class Employe {
+    # anciennete : int = 0 {>= 0}
+    # santeMentale : int = 100 {>= 0 && <= 100}
+    # genre : Genre
+    # agresseur : bool
+    # entreprise : Entreprise
+
+    + {static} GenererEmployeInit(ent Entreprise, genre Genre) : *Employe
+    + {static} NewEmploye(ent Entreprise, genre Genre, estAgresseur bool, anciennete int) : *Employe
+    + Start()
+    + EtreAgresse(*Employe)
+    + Agresser()
+    + PorterPlainte(*Employe)
+    + Genre() : Genre
+    + GagnerAnciennete()
+}
+
+interface Logger {
+    + Log(msg any...)
+    + Err(msg any...)
+}
+
+class Loggers {
+    + AjouterLogger(Logger)
+    + Log(msg any...)
+    + Err(msg any...)
+}
+
+class ConsoleLogger {}
+class HTTPLogger {}
+class FileLogger {}
+
+'-----------------
+' Enumerations
+
+enum Genre {
+    Femme
+    Homme
+}
+
+enum StratParite {
+    Femme
+    Homme
+    Hasard
+}
+
+enum TypeRecrutement {
+    CompetencesEgales
+    PlacesReservees
+}
+
+'-----------------
+' Relations
+
+Entreprise "1" o-- "*" Employe : # employes []Employe
+Entreprise "1" o-- "1" Recrutement : # recrutement Recrutement
+
+Loggers --> "*" Logger : # lesLoggers []Logger
+
+Logger .. ConsoleLogger : <<implements>>
+Logger .. HTTPLogger : <<implements>>
+Logger .. FileLogger : <<implements>>
+
+Entreprise .. Loggers : # loggers Loggers
+Employe .. Loggers : # loggers Loggers
+
+@enduml

@@ -1,0 +1,80 @@
+@startuml Diagramme de séquence du déroulée de la simulation (V1)
+
+title Diagramme de séquence du déroulée de la simulation (V1)
+
+-> Simulateur : lancement
+activate Simulateur
+
+collections Employes
+
+loop Fin de simulation pas atteint
+
+    activate Employes
+    Employes -> Entreprise ++ : EtreAgresse(this)
+    Entreprise -> Entreprise : Tire un agresseur aléatoirement
+    return agresseur : Employe
+
+    Employes -> Employes : Tire un nombre aléatoire d'agressions
+
+    loop agresseur != nil && nbAléatoire d'agressions
+        alt Valeur Employe encourage a deposer plainte
+            Employes -> Entreprise ++ : RecevoirPlainte(agresse, agresseur)
+            deactivate Entreprise
+        end alt
+        Employes -> Employes : Reduction santé mentale (-10)
+        Employes -> Entreprise ++ : EtreAgresse(this)
+        Entreprise -> Entreprise : Tire un agresseur aléatoirement
+        return agresseur : Employe
+    end loop
+
+    Employes -> Employes : GagnerAnciennete()
+
+    alt anciennete >= 40 || Santé mentale <= 0
+        Employes -> Entreprise : RecevoirDemission(this)
+    end alt
+
+    alt Tous les employés ont joué leur tour
+
+        activate Entreprise
+
+        Entreprise -> Entreprise ++ : GestionPlaintes()
+        loop Pour chaque plainte
+            alt Valeur encourage a prendre en compte plainte
+                Entreprise -> Entreprise : RecevoirDemission(agresseur)
+            end alt
+        end loop
+        deactivate Entreprise
+
+        Entreprise -> Entreprise : Vide la liste de plaintes
+
+        Entreprise -> Entreprise ++ : GestionDeparts()
+        loop Pour chaque départs
+            Entreprise -> Entreprise : SupprimerEmploye(employe)
+        end loop
+        deactivate Entreprise
+
+        Entreprise -> Entreprise : Vide la liste des départs
+
+        Entreprise -> Entreprise ++ : GestionRecrutement()
+        loop Objectifs pas atteint
+            Entreprise -> Employe ++ : GenererCandidat(this)
+            return nouvelEmploye : Employe
+
+            alt nouvelEmploye correspond aux valeurs et permet atteindre objectifs
+                Entreprise -> Entreprise : Recruter(nouvelEmploye)
+            end alt
+            
+        end loop
+        deactivate Entreprise
+
+        Entreprise -> Entreprise : ChangerValeurs()
+        Entreprise -> Entreprise : GenererAgressions()
+
+    end alt
+
+
+end loop
+
+deactivate Simulateur
+
+@enduml
