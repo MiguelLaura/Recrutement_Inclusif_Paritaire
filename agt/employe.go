@@ -8,26 +8,40 @@ import (
 
 func GenererEmployeInit(ent Entreprise, genre Genre) *Employe {
 
-	// Génération aléatoire de l'attribut agresseur avec une loi de Bernouilli
-	// La probabilité d'être un agresseur.e dépend du genre de la personne
-	var b Bernoulli
-	// La loi de distribution b renvoie la valeur 1 avec une probabilité P, 0 sinon
-	if genre == Homme {
-		b.P = constantes.POURCENTAGE_AGRESSEUR_H
-	} else {
-		b.P = constantes.POURCENTAGE_AGRESSEUR_F
-	}
 	var agg bool // false par défaut
-	if b.Rand() == 1 {
-		agg = true
+	// Génération aléatoire de l'attribut agresseur
+	if genre == Homme {
+		if rand.Float64() <= constantes.POURCENTAGE_AGRESSEUR_H {
+			agg = true
+		}
+	} else {
+		if rand.Float64() <= constantes.POURCENTAGE_AGRESSEUR_H {
+			agg = true
+		}
 	}
 
 	// Génération aléatoire de l'ancienneté de l'employé entre 0 et ANCIENNETE_MAX
 	anc := rand.Intn(constantes.ANCIENNETE_MAX)
 
 	// Génération aléatoire du comportement de l'employé
-	// A FINIR APRES DISCUSSION
-	// Loi Bernouilli si deux comportements possibles, binomiale si plus
+	// On considère une proba égale d'avoir les différents comportements
+	r := rand.Float64()
+	var compor Comportement
+	if r >= 0 && r < 0.2 {
+		compor = Plainte0
+	} else if r >= 0.2 && r < 0.4 {
+		compor = Plainte25
+	} else if r >= 0.4 && r < 0.6 {
+		compor = Plainte50
+	} else if r >= 0.6 && r < 0.8 {
+		compor = Plainte75
+	} else {
+		compor = Plainte100
+	}
 
-	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, 0, ent)
+	// Génération aléatoire de la compétence de l'employé
+	// A FAIRE
+	// Piste: loi normale avec mu=50 et sd=10 ? (voir premier lien note Laura)
+
+	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, compor, 0, ent)
 }

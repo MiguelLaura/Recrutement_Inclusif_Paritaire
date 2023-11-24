@@ -12,26 +12,29 @@ const (
 	Femme
 )
 
-type Comportement int
+type Comportement float32
 
 // A MODIFIER APRES DISCUSSION
 const (
-	Plainte100 Comportement = iota
-	Plainte50
-	Plainte0
+	Plainte100 Comportement = 1.0
+	Plainte75  Comportement = 0.75
+	Plainte50  Comportement = 0.5
+	Plainte25  Comportement = 0.25
+	Plainte0   Comportement = 0.0
 )
 
 type Employe struct {
 	genre        Genre
-	anciennete   int
-	santeMentale int
+	anciennete   int //entre 0 et 40
+	santeMentale int //entre 0 et 100
 	agresseur    bool
 	comportement Comportement
+	competence   int //entre 0 et 10
 	entreprise   Entreprise
 }
 
-func NewEmploye(gen Genre, anc int, san int, ag bool, comp Comportement, ent Entreprise) *Employe {
-	return &Employe{genre: gen, anciennete: anc, santeMentale: san, agresseur: ag, comportement: comp, entreprise: ent}
+func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compe int, ent Entreprise) *Employe {
+	return &Employe{genre: gen, anciennete: anc, santeMentale: san, agresseur: ag, comportement: compor, competence: compe, entreprise: ent}
 }
 
 func (e Employe) Genre() Genre {
@@ -56,6 +59,10 @@ func (e Employe) Agresseur() bool {
 
 func (e Employe) Comportement() Comportement {
 	return e.comportement
+}
+
+func (e Employe) Competence() int {
+	return e.competence
 }
 
 func (e Employe) Entreprise() Entreprise {
@@ -127,6 +134,7 @@ type Entreprise struct {
 	departs     []Employe
 	plaintes    [][]Employe
 	recrutement Recrutement
+	ca          float64
 }
 
 // La fonction NewEntreprise doit créer l'entreprise et générer les employés de façon à respecter le quota de parité initial
@@ -148,6 +156,7 @@ func NewEntreprise(nbEmployesInit int, pariteInit float32, recrut Recrutement) *
 	e.departs = make([]Employe, 0)
 	e.plaintes = make([][]Employe, 0)
 	e.recrutement = recrut
+	e.ca = 0.0
 	return e
 }
 
@@ -165,4 +174,8 @@ func (e Entreprise) Plaintes() [][]Employe {
 
 func (e Entreprise) Recrutement() Recrutement {
 	return e.recrutement
+}
+
+func (e Entreprise) Ca() float64 {
+	return e.ca
 }
