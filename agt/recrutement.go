@@ -1,6 +1,7 @@
 package agt
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 )
@@ -28,8 +29,8 @@ func GenererCandidats(nb_candidats int, ent Entreprise) []Employe {
 	return emp
 }
 
-func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats []Employe) []Employe, err error {
-	embauches := make([]Employe, 0)
+func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats []Employe) (embauches []Employe, err error) {
+	embauches = make([]Employe, 0)
 
 	// nbARecruter ne doit jamais depasser 10 actuellement -> a ameliorer
 	for len(embauches) < nbARecruter {
