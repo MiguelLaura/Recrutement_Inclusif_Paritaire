@@ -1,6 +1,7 @@
 package main
 
 import (
+	"gitlab.utc.fr/mennynat/ia04-project/agt"
 	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
@@ -14,4 +15,8 @@ func main() {
 	//loggers.Log("cc", "comment", "ça", "va", "?")
 
 	//leLogger.Log("cc", "comment", "ça", "va", "?")
+
+	var e agt.Entreprise
+	leLogger.Log(agt.GenererCandidats(10, e))
+
 }
