@@ -116,10 +116,10 @@ func NewEntreprise(nbEmployesInit int, pariteInit float32, recrut Recrutement) *
 	var employesInit []Employe
 
 	for i := 0; i < nbFemmes; i++ {
-		employesInit = append(employesInit, *GenererEmployeInit(*e, Femme))
+		employesInit = append(employesInit, *GenererEmployeInit(e, Femme))
 	}
 	for i := 0; i < nbHommes; i++ {
-		employesInit = append(employesInit, *GenererEmployeInit(*e, Homme))
+		employesInit = append(employesInit, *GenererEmployeInit(e, Homme))
 	}
 	e.employes = employesInit
 	e.departs = make([]Employe, 0)

@@ -13,14 +13,14 @@ type Employe struct {
 	agresseur    bool
 	comportement Comportement
 	competence   int //entre 0 et 10
-	entreprise   Entreprise
+	entreprise   *Entreprise
 }
 
 // ---------------------
 //     Constructeurs
 // ---------------------
 
-func GenererEmployeInit(ent Entreprise, genre Genre) *Employe {
+func GenererEmployeInit(ent *Entreprise, genre Genre) *Employe {
 
 	var agg bool // false par défaut
 	// Génération aléatoire de l'attribut agresseur
@@ -60,7 +60,7 @@ func GenererEmployeInit(ent Entreprise, genre Genre) *Employe {
 	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, compor, 0, ent)
 }
 
-func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compe int, ent Entreprise) *Employe {
+func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compe int, ent *Entreprise) *Employe {
 	return &Employe{genre: gen, anciennete: anc, santeMentale: san, agresseur: ag, comportement: compor, competence: compe, entreprise: ent}
 }
 
@@ -92,7 +92,7 @@ func (e *Employe) Competence() int {
 	return e.competence
 }
 
-func (e *Employe) Entreprise() Entreprise {
+func (e *Employe) Entreprise() *Entreprise {
 	return e.entreprise
 }
 
