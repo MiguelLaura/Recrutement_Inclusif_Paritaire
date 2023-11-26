@@ -4,6 +4,21 @@ import (
 	"math"
 )
 
+type Action int
+
+// Action est une enumeration
+const (
+	NOOP Action = iota
+	LIBRE
+	AGRESSION
+)
+
+// Permet la communication entre agents
+type Communicateur struct {
+	Act     Action
+	Payload any
+}
+
 // ------------ EMPLOYE ------------
 type Genre int
 
