@@ -17,6 +17,10 @@ func main() {
 	//leLogger.Log("cc", "comment", "ça", "va", "?")
 
 	var e agt.Entreprise
-	leLogger.Log(agt.GenererCandidats(10, e))
+	l_employe := agt.GenererCandidats(10, e)
+	l_femmes := agt.FiltreFemme(l_employe)
+
+	leLogger.Log(l_femmes)
+	leLogger.Log(len(l_femmes))
 
 }
