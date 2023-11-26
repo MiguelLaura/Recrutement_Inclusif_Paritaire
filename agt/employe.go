@@ -128,6 +128,41 @@ func (e *Employe) String() string {
 //      Evenements
 // ---------------------
 
+func (e *Employe) Communiquer(act Action, payload any) {
+	go func() {
+		e.chnl <- Communicateur{act, payload}
+	}()
+}
+
 func (e *Employe) gagnerAnciennete() {
 	e.anciennete += 1
+}
+
+// ---------------------
+//  Logique de simulation
+// ---------------------
+
+func (e *Employe) Start() {
+	go func() {
+
+		// Initialisation
+
+		// Boucle de vie
+		for {
+			e.agir()
+		}
+
+	}()
+}
+
+func (e *Employe) agir() {
+
+	// Attend un message pour agir
+	msg := <-e.chnl
+
+	switch msg.Act {
+	case NOOP:
+		return
+	}
+
 }
