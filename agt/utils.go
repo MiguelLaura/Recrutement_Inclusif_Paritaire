@@ -39,20 +39,28 @@ func Trouver_Employe_conc(tab []Employe, f func(Employe) bool, n int) (index int
 		}
 		wg.Wait()
 	}()
-	idx_min := len(tab) - 1
+	idx_min := len(tab)
 	for i := range c {
 		if i != -1 {
 			idx_min = min(idx_min, i)
 		}
 	}
-	return idx_min, tab[idx_min]
+	if idx_min == len(tab) {
+		// Cas où l'élément n'existe pas dans le tableau
+		var e Employe
+		return -1, e
+	} else {
+		return idx_min, tab[idx_min]
+	}
+
 }
 
 // Problème : pour vérifier que les employés sont égaux, il faut vérifier égalité entreprise
 // pour vérifier que les entreprises sont égales, il faut vérifier que les employés sont égaux
-func listesEmployesEgales(l1 []Employe, l2 []Employe)
 
-func entreprisesEgales(ent1 Entreprise, ent2 Entreprise) bool
+//func listesEmployesEgales(l1 []Employe, l2 []Employe)
+
+//func entreprisesEgales(ent1 Entreprise, ent2 Entreprise) bool
 
 func employesEgaux(e1 Employe, e2 Employe) bool {
 	// ajouter verif entreprise si on regle le pb au dessus
@@ -146,7 +154,7 @@ func EmployeMaxCompetences(candidats []Employe) (emp []Employe) {
 }
 
 func FiltreFemme(employes []Employe) (f []Employe) {
-	emp := make([]Employe, 0)
+	emp := make([]Employe, len(employes))
 	copy(emp, employes)
 	f = make([]Employe, 0)
 
@@ -156,6 +164,21 @@ func FiltreFemme(employes []Employe) (f []Employe) {
 		f = append(f, emp[idx])
 		emp = enleverEmployer(emp, e)
 		idx, e = Trouver_Employe_conc(emp, EstFemme, 4)
+	}
+	return f
+}
+
+func FiltreHomme(employes []Employe) (f []Employe) {
+	emp := make([]Employe, len(employes))
+	copy(emp, employes)
+	f = make([]Employe, 0)
+
+	// on utilise 4 goroutines -> voir si y a plus opti
+	idx, e := Trouver_Employe_conc(emp, EstHomme, 4)
+	for idx != -1 {
+		f = append(f, emp[idx])
+		emp = enleverEmployer(emp, e)
+		idx, e = Trouver_Employe_conc(emp, EstHomme, 4)
 	}
 	return f
 }

@@ -31,7 +31,6 @@ func GenererCandidats(nb_candidats int, ent Entreprise) []Employe {
 
 func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats []Employe) (embauches []Employe, err error) {
 	embauches = make([]Employe, 0)
-
 	// nbARecruter ne doit jamais depasser 10 actuellement -> a ameliorer
 	for len(embauches) < nbARecruter {
 		maxCandidats := EmployeMaxCompetences(candidats)
@@ -40,16 +39,21 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 			candidats = enleverEmployer(candidats, maxCandidats[0])
 		} else if len(maxCandidats) > 1 {
 			// appliquer differentes strategies
+			var idx int
 			switch strat {
 			case Hasard:
-				h := rand.Intn(len(maxCandidats))
-				embauches = append(embauches, maxCandidats[h])
-				candidats = enleverEmployer(candidats, maxCandidats[h])
+				idx = rand.Intn(len(maxCandidats))
 			case PrioFemme:
+				l_femmes := FiltreFemme(candidats)
+				idx = rand.Intn(len(l_femmes))
 			case PrioHomme:
+				l_hommes := FiltreHomme(candidats)
+				idx = rand.Intn(len(l_hommes))
 			default:
 				err = errors.New("Stratégie de traitement des égalités de compétences inconnue")
 			}
+			embauches = append(embauches, maxCandidats[idx])
+			candidats = enleverEmployer(candidats, maxCandidats[idx])
 		} else {
 			err = errors.New("EmployeMaxCompetences ne renvoie aucun candidat")
 		}
