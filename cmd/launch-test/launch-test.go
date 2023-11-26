@@ -1,6 +1,8 @@
 package main
 
-import "gitlab.utc.fr/mennynat/ia04-project/utils/logger"
+import (
+	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
+)
 
 func main() {
 
@@ -9,7 +11,7 @@ func main() {
 	loggers := logger.Loggers{}
 	loggers.AjouterLogger(&leLogger)
 
-	loggers.Log("cc", "comment", "ça", "va", "?")
+	//loggers.Log("cc", "comment", "ça", "va", "?")
 
-	leLogger.Log("cc", "comment", "ça", "va", "?")
+	//leLogger.Log("cc", "comment", "ça", "va", "?")
 }
