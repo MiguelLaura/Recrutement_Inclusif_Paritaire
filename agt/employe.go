@@ -14,6 +14,7 @@ type Employe struct {
 	comportement Comportement
 	competence   int //entre 0 et 10
 	entreprise   *Entreprise
+	chnl         chan Communicateur
 }
 
 // ---------------------
@@ -60,8 +61,17 @@ func GenererEmployeInit(ent *Entreprise, genre Genre) *Employe {
 	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, compor, 0, ent)
 }
 
-func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compe int, ent *Entreprise) *Employe {
-	return &Employe{genre: gen, anciennete: anc, santeMentale: san, agresseur: ag, comportement: compor, competence: compe, entreprise: ent}
+func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compet int, ent *Entreprise) *Employe {
+	return &Employe{
+		genre:        gen,
+		anciennete:   anc,
+		santeMentale: san,
+		agresseur:    ag,
+		comportement: compor,
+		competence:   compet,
+		entreprise:   ent,
+		chnl:         make(chan Communicateur),
+	}
 }
 
 // ---------------------
