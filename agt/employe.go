@@ -137,13 +137,22 @@ func (e *Employe) String() string {
 }
 
 // ---------------------
-//      Evenements
+//     Comportement
 // ---------------------
 
 // L'Employe a passé une nouvelle année dans l'entreprise
 func (e *Employe) gagnerAnciennete() {
 	e.anciennete += 1
 }
+
+// L'employé porte plainte à son entreprise au sujet d'un autre employé.
+func (plaignant *Employe) porterPlainte(accuse *Employe) {
+	plaignant.entreprise.RecevoirPlante(plaignant, accuse)
+}
+
+// ---------------------
+//      Evenements
+// ---------------------
 
 // L'employé est agressé par quelqu'un
 func (agresse *Employe) etreAgresse(agresseur *Employe) {
@@ -154,11 +163,6 @@ func (agresse *Employe) etreAgresse(agresseur *Employe) {
 	}
 
 	agresse.santeMentale -= constantes.DEGATS_TRAUMATISME
-}
-
-// L'employé porte plainte à son entreprise au sujet d'un autre employé.
-func (plaignant *Employe) porterPlainte(accuse *Employe) {
-	plaignant.entreprise.RecevoirPlante(plaignant, accuse)
 }
 
 // ---------------------
