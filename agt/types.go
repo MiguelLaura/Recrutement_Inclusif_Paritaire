@@ -29,7 +29,7 @@ const (
 
 type Comportement float32
 
-// A MODIFIER APRES DISCUSSION
+// Probabilité de porter plainte pour les Employés
 const (
 	Plainte100 Comportement = 1.0
 	Plainte75  Comportement = 0.75
