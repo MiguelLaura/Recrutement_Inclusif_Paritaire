@@ -128,14 +128,37 @@ func (e *Employe) String() string {
 //      Evenements
 // ---------------------
 
-func (e *Employe) Communiquer(act Action, payload any) {
+func (e *Employe) EnvoyerMessage(dest *Employe, act Action, payload any) {
 	go func() {
-		e.chnl <- Communicateur{act, payload}
+		dest.chnl <- Communicateur{act, payload}
 	}()
 }
 
 func (e *Employe) gagnerAnciennete() {
 	e.anciennete += 1
+}
+
+func (agresse *Employe) etreAgresse(agresseur *Employe) {
+	if rand.Float32() < float32(agresse.comportement) {
+		agresse.entreprise.RecevoirPlante(agresse, agresseur)
+	}
+
+	agresse.santeMentale -= constantes.DEGATS_TRAUMATISME
+
+}
+
+// ---------------------
+//  Actions sur autres
+// ---------------------
+
+func (agresseur *Employe) agresser() {
+	cible := agresseur.entreprise.EnvoyerEmploye()
+	// S'assure de ne pas s'agresser lui-même
+	for cible == agresseur {
+		cible = agresseur.entreprise.EnvoyerEmploye()
+	}
+
+	agresseur.EnvoyerMessage(cible, AGRESSION, agresseur)
 }
 
 // ---------------------
@@ -161,8 +184,12 @@ func (e *Employe) agir() {
 	msg := <-e.chnl
 
 	switch msg.Act {
-	case NOOP:
+	case NOOP: // Ne fait rien
 		return
+	case LIBRE: // Vie une année conmplète
+
+	case AGRESSION: // Se fait agressé par quelqu'un
+
 	}
 
 }
