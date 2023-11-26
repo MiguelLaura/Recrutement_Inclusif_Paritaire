@@ -24,6 +24,18 @@ type Employe struct {
 }
 
 // ---------------------
+//        Général
+// ---------------------
+
+// Permet d'envoyer un certain message à un Employe. Ce message contient une action qu'il va effectuer
+// ainsi qu'un payload optionnel permettant de transmettre des informations en plus à l'agent.
+func EnvoyerMessage(dest *Employe, act Action, payload any) {
+	go func() {
+		dest.chnl <- Communicateur{act, payload}
+	}()
+}
+
+// ---------------------
 //     Constructeurs
 // ---------------------
 
@@ -128,13 +140,6 @@ func (e *Employe) String() string {
 //      Evenements
 // ---------------------
 
-// Permet d'envoyer un certain message à un autre Employe
-func (e *Employe) EnvoyerMessage(dest *Employe, act Action, payload any) {
-	go func() {
-		dest.chnl <- Communicateur{act, payload}
-	}()
-}
-
 // L'Employe a passé une nouvelle année dans l'entreprise
 func (e *Employe) gagnerAnciennete() {
 	e.anciennete += 1
@@ -159,12 +164,13 @@ func (agresse *Employe) etreAgresse(agresseur *Employe) {
 // L'agent agresse quelqu'un pris au hasard dans son entreprise
 func (agresseur *Employe) agresser() {
 	cible := agresseur.entreprise.EnvoyerEmploye()
+
 	// S'assure de ne pas s'agresser lui-même
 	for cible == agresseur {
 		cible = agresseur.entreprise.EnvoyerEmploye()
 	}
 
-	agresseur.EnvoyerMessage(cible, AGRESSION, agresseur)
+	EnvoyerMessage(cible, AGRESSION, agresseur)
 }
 
 // ---------------------
