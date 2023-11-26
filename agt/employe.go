@@ -2,14 +2,22 @@ package agt
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
+	"gonum.org/v1/gonum/stat/distuv"
 )
 
 type EmployeID string
 
 var agtCnt int = 0
+
+// On veut que les compétences tournent autour de 5 sans trop s’éparpiller autour
+var loiNormale = distuv.Normal{
+	Mu:    5,
+	Sigma: 3,
+}
 
 type Employe struct {
 	id           EmployeID
@@ -80,10 +88,11 @@ func GenererEmployeInit(ent *Entreprise, genre Genre) *Employe {
 	}
 
 	// Génération aléatoire de la compétence de l'employé
-	// A FAIRE
-	// Piste: loi normale avec mu=50 et sd=10 ? (voir premier lien note Laura)
 
-	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, compor, 0, ent)
+	// Permet de ne pas avoir de compétence négative et de ne pas aller au dessus du seuil max de compétence
+	competence := int(math.Abs(loiNormale.Rand())) % (constantes.COMPETENCE_MAX + 1)
+
+	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, compor, competence, ent)
 }
 
 func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compet int, ent *Entreprise) *Employe {
