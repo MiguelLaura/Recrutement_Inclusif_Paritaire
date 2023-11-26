@@ -155,6 +155,16 @@ func (e *Employe) poserDemission() {
 	e.entreprise.RecevoirDemission(e)
 }
 
+// L'Employé arrive à la fin de sa carrière et pose donc sa retraite
+func (e *Employe) partirRetraite() {
+	e.entreprise.RecevoirDemission(e)
+}
+
+// L'Employé travaille sur cette année
+func (e *Employe) travailler() {
+	e.entreprise.MettreAJourCA(e.santeMentale, e.competence)
+}
+
 // ---------------------
 //      Evenements
 // ---------------------
@@ -218,6 +228,14 @@ func (e *Employe) agir() {
 		// Si l'agent est un agresseur, il agresse
 		if e.Agresseur() {
 			e.agresser()
+		}
+
+		e.travailler()
+
+		e.gagnerAnciennete()
+
+		if e.anciennete >= constantes.ANCIENNETE_MAX {
+			e.partirRetraite()
 		}
 
 	case AGRESSION: // Se fait agressé par quelqu'un
