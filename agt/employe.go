@@ -128,17 +128,22 @@ func (e *Employe) String() string {
 //      Evenements
 // ---------------------
 
+// Permet d'envoyer un certain message à un autre Employe
 func (e *Employe) EnvoyerMessage(dest *Employe, act Action, payload any) {
 	go func() {
 		dest.chnl <- Communicateur{act, payload}
 	}()
 }
 
+// L'Employe a passé une nouvelle année dans l'entreprise
 func (e *Employe) gagnerAnciennete() {
 	e.anciennete += 1
 }
 
+// L'employé est agressé par quelqu'un
 func (agresse *Employe) etreAgresse(agresseur *Employe) {
+
+	// Selon son comportement, il va porter plainte ou non
 	if rand.Float32() < float32(agresse.comportement) {
 		agresse.entreprise.RecevoirPlante(agresse, agresseur)
 	}
@@ -151,6 +156,7 @@ func (agresse *Employe) etreAgresse(agresseur *Employe) {
 //  Actions sur autres
 // ---------------------
 
+// L'agent agresse quelqu'un pris au hasard dans son entreprise
 func (agresseur *Employe) agresser() {
 	cible := agresseur.entreprise.EnvoyerEmploye()
 	// S'assure de ne pas s'agresser lui-même
@@ -165,6 +171,7 @@ func (agresseur *Employe) agresser() {
 //  Logique de simulation
 // ---------------------
 
+// Lance la vie de l'agent
 func (e *Employe) Start() {
 	go func() {
 
@@ -178,6 +185,7 @@ func (e *Employe) Start() {
 	}()
 }
 
+// Ce que l'employé fait à chaque tour
 func (e *Employe) agir() {
 
 	// Attend un message pour agir
@@ -186,10 +194,19 @@ func (e *Employe) agir() {
 	switch msg.Act {
 	case NOOP: // Ne fait rien
 		return
-	case LIBRE: // Vie une année conmplète
+	case LIBRE: // Vie une année complète
+
+		// Si l'agent est un agresseur, il agresse
+		if e.Agresseur() {
+			e.agresser()
+		}
 
 	case AGRESSION: // Se fait agressé par quelqu'un
 
+		e.etreAgresse(msg.Payload.(*Employe))
+
 	}
 
+	// Permet de notifier l'entreprise que l'agent vient de faire une action
+	e.entreprise.NotifierAction()
 }
