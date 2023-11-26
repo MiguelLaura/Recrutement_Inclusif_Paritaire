@@ -1,12 +1,18 @@
 package agt
 
 import (
+	"fmt"
 	"math/rand"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
 )
 
+type EmployeID string
+
+var agtCnt int = 0
+
 type Employe struct {
+	id           EmployeID
 	genre        Genre
 	anciennete   int //entre 0 et 40
 	santeMentale int //entre 0 et 100
@@ -20,6 +26,13 @@ type Employe struct {
 // ---------------------
 //     Constructeurs
 // ---------------------
+
+func genererIDEmploye() EmployeID {
+	res := fmt.Sprintf("employe%d", agtCnt)
+	agtCnt++
+
+	return EmployeID(res)
+}
 
 func GenererEmployeInit(ent *Entreprise, genre Genre) *Employe {
 
@@ -63,6 +76,7 @@ func GenererEmployeInit(ent *Entreprise, genre Genre) *Employe {
 
 func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compet int, ent *Entreprise) *Employe {
 	return &Employe{
+		id:           genererIDEmploye(),
 		genre:        gen,
 		anciennete:   anc,
 		santeMentale: san,
@@ -106,10 +120,14 @@ func (e *Employe) Entreprise() *Entreprise {
 	return e.entreprise
 }
 
+func (e *Employe) String() string {
+	return fmt.Sprintf("%s (%d)", e.id, e.genre)
+}
+
 // ---------------------
 //      Evenements
 // ---------------------
 
-func (e *Employe) GagnerAnciennete() {
+func (e *Employe) gagnerAnciennete() {
 	e.anciennete += 1
 }
