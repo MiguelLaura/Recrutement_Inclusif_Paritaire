@@ -148,19 +148,17 @@ func (e *Employe) gagnerAnciennete() {
 // L'employé est agressé par quelqu'un
 func (agresse *Employe) etreAgresse(agresseur *Employe) {
 
-	agresse.porterPlainte(agresseur)
+	// Selon son comportement, il va porter plainte ou non
+	if rand.Float32() < float32(agresse.comportement) {
+		agresse.porterPlainte(agresseur)
+	}
+
 	agresse.santeMentale -= constantes.DEGATS_TRAUMATISME
 }
 
-// L'employé va plus ou moins avoir de chance de porter plainte à son entreprise
-// au sujet d'un autre employé.
+// L'employé porte plainte à son entreprise au sujet d'un autre employé.
 func (plaignant *Employe) porterPlainte(accuse *Employe) {
-
-	// Selon son comportement, il va porter plainte ou non
-	if rand.Float32() < float32(plaignant.comportement) {
-		plaignant.entreprise.RecevoirPlante(plaignant, accuse)
-	}
-
+	plaignant.entreprise.RecevoirPlante(plaignant, accuse)
 }
 
 // ---------------------
