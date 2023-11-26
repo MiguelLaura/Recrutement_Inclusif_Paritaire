@@ -6,6 +6,20 @@ import (
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
 )
 
+type Employe struct {
+	genre        Genre
+	anciennete   int //entre 0 et 40
+	santeMentale int //entre 0 et 100
+	agresseur    bool
+	comportement Comportement
+	competence   int //entre 0 et 10
+	entreprise   Entreprise
+}
+
+// ---------------------
+//     Constructeurs
+// ---------------------
+
 func GenererEmployeInit(ent Entreprise, genre Genre) *Employe {
 
 	var agg bool // false par défaut
@@ -44,4 +58,48 @@ func GenererEmployeInit(ent Entreprise, genre Genre) *Employe {
 	// Piste: loi normale avec mu=50 et sd=10 ? (voir premier lien note Laura)
 
 	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, compor, 0, ent)
+}
+
+func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compe int, ent Entreprise) *Employe {
+	return &Employe{genre: gen, anciennete: anc, santeMentale: san, agresseur: ag, comportement: compor, competence: compe, entreprise: ent}
+}
+
+// ---------------------
+//        Getters
+// ---------------------
+
+func (e *Employe) Genre() Genre {
+	return e.genre
+}
+
+func (e *Employe) Anciennete() int {
+	return e.anciennete
+}
+
+func (e *Employe) SanteMentale() int {
+	return e.santeMentale
+}
+
+func (e *Employe) Agresseur() bool {
+	return e.agresseur
+}
+
+func (e *Employe) Comportement() Comportement {
+	return e.comportement
+}
+
+func (e *Employe) Competence() int {
+	return e.competence
+}
+
+func (e *Employe) Entreprise() Entreprise {
+	return e.entreprise
+}
+
+// ---------------------
+//      Evenements
+// ---------------------
+
+func (e *Employe) GagnerAnciennete() {
+	e.anciennete += 1
 }
