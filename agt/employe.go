@@ -150,6 +150,11 @@ func (plaignant *Employe) porterPlainte(accuse *Employe) {
 	plaignant.entreprise.RecevoirPlante(plaignant, accuse)
 }
 
+// L'Employé pose sa démission auprès de son entreprise
+func (e *Employe) poserDemission() {
+	e.entreprise.RecevoirDemission(e)
+}
+
 // ---------------------
 //      Evenements
 // ---------------------
@@ -218,6 +223,11 @@ func (e *Employe) agir() {
 	case AGRESSION: // Se fait agressé par quelqu'un
 
 		e.etreAgresse(msg.Payload.(*Employe))
+
+		// Si l'agent n'a plus de santé mentale, il pose sa démission
+		if e.santeMentale <= 0 {
+			e.poserDemission()
+		}
 
 	}
 
