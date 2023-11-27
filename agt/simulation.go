@@ -20,7 +20,7 @@ func NewSimulation(NbEmployes int, pariteInit float32, maxStep int, maxDuration 
 	simu.maxStep = maxStep
 	simu.maxDuration = maxDuration
 
-	//simu.ent = *NewEntreprise(NbEmployes, pariteInit)
+	simu.ent = *NewEntreprise(NbEmployes, pariteInit)
 
 	return simu
 }
@@ -28,29 +28,31 @@ func NewSimulation(NbEmployes int, pariteInit float32, maxStep int, maxDuration 
 func (simu *Simulation) Run() {
 	log.Printf("Démarrage de la simulation [step: %d]", simu.step)
 
-	// Démarrage du micro-service de Log
-	//go simu.Log()
 	// Démarrage du micro-service d'affichage
-	//go simu.Print()
+	go simu.Print()
 
 	// On sauvegarde la date du début de la simulation
 	simu.start = time.Now()
+	pariteInit := simu.ent.PourcentageFemmes()
 
 	// Démarrage de l'entreprise
 	//simu.ent.Start() TO DO
 
+	/*
+		for {
+			simu.step += 1
+			simu.ent.Boucle ?
+		}
+	*/
+
 	time.Sleep(simu.maxDuration)
 
-	//log.Printf("Fin de la simulation [step: %d, in: %d, out: %d, π: %f]", simu.step, simu.env.in, simu.env.out, simu.env.PI())
+	log.Printf("Fin de la simulation [step: %d, début parité : %f, fin parité : %f", simu.step, pariteInit, simu.ent.PourcentageFemmes())
 }
 
 func (simu *Simulation) Print() {
 	for {
-		fmt.Printf("\rparite = %.30f" /*simu.ent.NBFemmes*/) //A VOIR
-		time.Sleep(time.Second / 60)                         // 60 fps !
+		fmt.Printf("\rPourcentage de femmes = %f", simu.ent.PourcentageFemmes())
+		time.Sleep(time.Second / 60) // 60 fps !
 	}
-}
-
-func (simu *Simulation) Log() {
-	// Not implemented
 }

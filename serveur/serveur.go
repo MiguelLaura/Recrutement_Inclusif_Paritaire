@@ -9,12 +9,15 @@ import (
 	"path"
 	"sync"
 	"time"
+
+	"gitlab.utc.fr/mennynat/ia04-project/agt"
 )
 
 type RestServerAgent struct {
 	sync.Mutex
-	id   string
-	addr string
+	id         string
+	addr       string
+	simulation agt.Simulation
 }
 
 func NewRestServerAgent(addr string) *RestServerAgent {
@@ -100,28 +103,15 @@ func (rsa *RestServerAgent) createNewSimulation(w http.ResponseWriter, r *http.R
 		return
 	} else {
 		resp.Id_simulation = req.ID
-		/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-		//err = rsa.NewBallot(resp.Ballot_id, req.Rule, TimeDeadline, req.Alts, req.Voter_ids, req.TieBreak)
+		w.WriteHeader(http.StatusCreated)
+		serial, _ := json.Marshal(resp)
+		w.Write(serial)
+		fmt.Println("OK création et lancement simulation")
 
-		/*
-			Lancement simulation
-			s := simulation.NewSimulation(100, -1, 600*time.Second)
-			go simulation.StartAPI(s)
-			s.Run()
-
-
-		*/
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			msg := fmt.Sprintf("Error: %s", err)
-			w.Write([]byte(msg))
-			return
-		} else {
-			w.WriteHeader(http.StatusCreated)
-			serial, _ := json.Marshal(resp)
-			w.Write(serial)
-			fmt.Println("OK création")
-		}
+		//*********** CREATION & LANCEMENT SIMULATION ****************************
+		s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, -1, 600*time.Second)
+		rsa.simulation = *s //la simulation (non un pointeur)
+		s.Run()
 	}
 }
 
@@ -155,8 +145,6 @@ func (rsa *RestServerAgent) Start() {
 		MaxHeaderBytes: 1 << 20}
 
 	// lancement du serveur
-	//rsa.ballot_list = make(map[string]Ballot)
-
 	log.Println("Listening on", rsa.addr)
 	go log.Fatal(s.ListenAndServe())
 }
