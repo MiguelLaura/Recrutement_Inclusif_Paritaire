@@ -154,9 +154,9 @@ func (e *Employe) gagnerAnciennete() {
 	e.anciennete += 1
 }
 
-// L'employé porte plainte à son entreprise au sujet d'un autre employé.
+// L'Employé porte plainte à son entreprise au sujet d'un autre employé.
 func (plaignant *Employe) porterPlainte(accuse *Employe) {
-	plaignant.entreprise.RecevoirPlante(plaignant, accuse)
+	plaignant.entreprise.RecevoirPlainte(plaignant, accuse)
 }
 
 // L'Employé pose sa démission auprès de son entreprise
@@ -164,9 +164,14 @@ func (e *Employe) poserDemission() {
 	e.entreprise.RecevoirDemission(e)
 }
 
+// L'Employé pose sa démission auprès de son entreprise pour cause de dépression
+func (e *Employe) partirDepression() {
+	e.entreprise.RecevoirDepression(e)
+}
+
 // L'Employé arrive à la fin de sa carrière et pose donc sa retraite
 func (e *Employe) partirRetraite() {
-	e.entreprise.RecevoirDemission(e)
+	e.entreprise.RecevoirRetraite(e)
 }
 
 // L'Employé travaille sur cette année
@@ -178,7 +183,7 @@ func (e *Employe) travailler() {
 //      Evenements
 // ---------------------
 
-// L'employé est agressé par quelqu'un
+// L'Employé est agressé par quelqu'un
 func (agresse *Employe) etreAgresse(agresseur *Employe) {
 
 	// Selon son comportement, il va porter plainte ou non
@@ -247,13 +252,13 @@ func (e *Employe) agir() {
 			e.partirRetraite()
 		}
 
-	case AGRESSION: // Se fait agressé par quelqu'un
+	case AGRESSION: // Se fait agresser par quelqu'un
 
 		e.etreAgresse(msg.Payload.(*Employe))
 
 		// Si l'agent n'a plus de santé mentale, il pose sa démission
 		if e.santeMentale <= 0 {
-			e.poserDemission()
+			e.partirDepression()
 		}
 
 	}
