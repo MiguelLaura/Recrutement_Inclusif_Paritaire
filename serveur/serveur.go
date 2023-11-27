@@ -102,6 +102,15 @@ func (rsa *RestServerAgent) createNewSimulation(w http.ResponseWriter, r *http.R
 		resp.Id_simulation = req.ID
 		/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
 		//err = rsa.NewBallot(resp.Ballot_id, req.Rule, TimeDeadline, req.Alts, req.Voter_ids, req.TieBreak)
+
+		/*
+			Lancement simulation
+			s := simulation.NewSimulation(100, -1, 600*time.Second)
+			go simulation.StartAPI(s)
+			s.Run()
+
+
+		*/
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			msg := fmt.Sprintf("Error: %s", err)
