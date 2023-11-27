@@ -60,3 +60,89 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 	}
 	return embauches, nil
 }
+
+func RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentagePlace float64) (embauches []Employe) {
+	embauches = make([]Employe, 0)
+	nbFemmesARecruter := int(pourcentagePlace * float64(nbARecruter))
+	candidatsFemmes := FiltreFemme(candidats)
+
+	for i := 0; i < nbFemmesARecruter; i++ {
+		if len(candidatsFemmes) == 0 {
+			break
+		}
+		// On récupère les femmes avec la compétence maximum
+		maxCandidates := EmployeMaxCompetences(candidatsFemmes)
+		embauches = append(embauches, maxCandidates[0])
+		candidatsFemmes = enleverEmployer(candidatsFemmes, maxCandidates[0])
+		candidats = enleverEmployer(candidats, maxCandidates[0])
+	}
+	// S'il n'y a pas assez de femmes dans les candidats que faire ?
+
+	// Le reste des candidats sont sélectionnés uniquement pour leurs compétences
+	reste := nbARecruter - len(embauches)
+	for i := 0; i < reste; i++ {
+		maxCandidats := EmployeMaxCompetences(candidats)
+		idx := rand.Intn(len(maxCandidats))
+		embauches = append(embauches, maxCandidats[idx])
+		candidats = enleverEmployer(candidats, maxCandidats[idx])
+	}
+
+	return embauches
+}
+
+func (r Recrutement) Recruter(nbARecruter int, ent Entreprise) (embauches []Employe, err error) {
+	// Cas où l'utilisateur n'a pas défini un objectif de parité à atteindre
+	candidats := GenererCandidats(10, ent)
+	if r.objectif == -1 {
+		// Faire des test : si stratAvant et typeRecrutementAvant sont définies toutes les deux, erreur
+		if r.stratAvant != -1 {
+			// On recruter en fonction des competences et s'il y a égalité, on utilise la stratégie définie par l'utilisateur
+			embauches, err := RecrutementCompetencesEgales(nbARecruter, r.stratAvant, candidats)
+			if err != nil {
+				return nil, err
+			}
+			return embauches, nil
+		} else if r.typeRecrutementAvant != -1 {
+			// Verif coherence valeur pourcentage
+			embauches = RecrutementPlacesReservees(nbARecruter, candidats, float64(r.pourcentagePlacesAvant))
+			return embauches, nil
+		} else {
+			err := errors.New("Les stratégies de recrutement n'ont pas été correctement définies")
+			return nil, err
+		}
+	} else {
+		if r.objectif < ent.PourcentageFemmes() {
+			if r.stratAvant != -1 {
+				// On recruter en fonction des competences et s'il y a égalité, on utilise la stratégie définie par l'utilisateur
+				embauches, err := RecrutementCompetencesEgales(nbARecruter, r.stratAvant, candidats)
+				if err != nil {
+					return nil, err
+				}
+				return embauches, nil
+			} else if r.typeRecrutementAvant != -1 {
+				// Verif coherence valeur pourcentage
+				embauches = RecrutementPlacesReservees(nbARecruter, candidats, float64(r.pourcentagePlacesAvant))
+				return embauches, nil
+			} else {
+				err := errors.New("Les stratégies de recrutement n'ont pas été correctement définies")
+				return nil, err
+			}
+		} else {
+			if r.stratApres != -1 {
+				// On recruter en fonction des competences et s'il y a égalité, on utilise la stratégie définie par l'utilisateur
+				embauches, err := RecrutementCompetencesEgales(nbARecruter, r.stratApres, candidats)
+				if err != nil {
+					return nil, err
+				}
+				return embauches, nil
+			} else if r.typeRecrutementApres != -1 {
+				// Verif coherence valeur pourcentage
+				embauches = RecrutementPlacesReservees(nbARecruter, candidats, float64(r.pourcentagePlacesApres))
+				return embauches, nil
+			} else {
+				err := errors.New("Les stratégies de recrutement n'ont pas été correctement définies")
+				return nil, err
+			}
+		}
+	}
+}

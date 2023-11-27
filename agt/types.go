@@ -86,7 +86,7 @@ const (
 )
 
 type Recrutement struct {
-	objectif               float32
+	objectif               float64
 	stratAvant             StratParite
 	stratApres             StratParite
 	typeRecrutementAvant   TypeRecrutement
@@ -95,11 +95,11 @@ type Recrutement struct {
 	pourcentagePlacesApres float32
 }
 
-func NewRecrutement(obj float32, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float32, ppap float32) *Recrutement {
+func NewRecrutement(obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float32, ppap float32) *Recrutement {
 	return &Recrutement{objectif: obj, stratAvant: sav, stratApres: sap, typeRecrutementAvant: trav, typeRecrutementApres: trap, pourcentagePlacesAvant: ppav, pourcentagePlacesApres: ppap}
 }
 
-func (r Recrutement) Objectif() float32 {
+func (r Recrutement) Objectif() float64 {
 	return r.objectif
 }
 
