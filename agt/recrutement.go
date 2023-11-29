@@ -2,36 +2,43 @@ package agt
 
 import (
 	"errors"
-	"fmt"
 	"math/rand"
+
+	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
 )
 
-// Comment le recrutement récupère les informations de l'entreprise ?
-
-// a mettre en minuscule apres tests
-func GenererCandidats(nb_candidats int, ent Entreprise) []Employe {
-	// anciennete = 0 car candidat
-	var emp []Employe
-	emp = make([]Employe, 0)
-	for i := 0; i < nb_candidats; i++ {
-		var e Employe
-		e.anciennete = 0
-		e.santeMentale = 100
-		e.genre = genGenre()
-		e.agresseur = genAgresseur(e.genre)
-		e.comportement = genComportement()
-		e.entreprise = ent
-		e.competence = genCompetence()
-		emp = append(emp, e)
-		fmt.Println("employe ", i, ": ", e)
+// Pour le recrutement, des candidats sont générés aléatoirement
+func (r Recrutement) GenererCandidats(nb_candidats int) (candidats []Employe, err error) {
+	if nb_candidats < 0 {
+		err := errors.New("Nombre de candidats à générer négatif")
+		return nil, err
 	}
-	fmt.Println("emp : ", emp)
-	return emp
+	candidats = make([]Employe, 0)
+	for i := 0; i < nb_candidats; i++ {
+		var genre Genre = genGenre()
+		// anciennete = 0 car candidat
+		var anciennete int = 0
+		var santeMentale int = 100
+		var agresseur bool = genAgresseur(genre)
+		var comportement Comportement = genComportement()
+		var competence int = genCompetence()
+		e := NewEmploye(genre, anciennete, santeMentale, agresseur, comportement, competence, r.entreprise)
+		candidats = append(candidats, *e)
+	}
+	return candidats, nil
 }
 
 func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats []Employe) (embauches []Employe, err error) {
+	if nbARecruter < 0 {
+		err := errors.New("Nombre de candidats à recruter négatif")
+		return nil, err
+	}
+	if strat != PrioFemme && strat != PrioHomme && strat != Hasard {
+		err := errors.New("Stratégie de recrutement inconnue")
+		return nil, err
+	}
 	embauches = make([]Employe, 0)
-	// nbARecruter ne doit jamais depasser 10 actuellement -> a ameliorer
+	// nbARecruter ne doit jamais depasser 10 actuellement -> a ameliorer car nb_candidats=10
 	for len(embauches) < nbARecruter {
 		maxCandidats := EmployeMaxCompetences(candidats)
 		if len(maxCandidats) == 1 {
@@ -51,6 +58,7 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 				idx = rand.Intn(len(l_hommes))
 			default:
 				err = errors.New("Stratégie de traitement des égalités de compétences inconnue")
+				return nil, err
 			}
 			embauches = append(embauches, maxCandidats[idx])
 			candidats = enleverEmployer(candidats, maxCandidats[idx])
@@ -77,6 +85,7 @@ func RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentag
 		candidats = enleverEmployer(candidats, maxCandidates[0])
 	}
 	// S'il n'y a pas assez de femmes dans les candidats que faire ?
+	// On recrute des hommes
 
 	// Le reste des candidats sont sélectionnés uniquement pour leurs compétences
 	reste := nbARecruter - len(embauches)
@@ -90,9 +99,12 @@ func RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentag
 	return embauches
 }
 
-func (r Recrutement) Recruter(nbARecruter int, ent Entreprise) (embauches []Employe, err error) {
+func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) {
 	// Cas où l'utilisateur n'a pas défini un objectif de parité à atteindre
-	candidats := GenererCandidats(10, ent)
+	candidats, err := r.GenererCandidats(constantes.NBCANDIDATS)
+	if err != nil {
+		return nil, err
+	}
 	if r.objectif == -1 {
 		// Faire des test : si stratAvant et typeRecrutementAvant sont définies toutes les deux, erreur
 		if r.stratAvant != -1 {
@@ -111,7 +123,7 @@ func (r Recrutement) Recruter(nbARecruter int, ent Entreprise) (embauches []Empl
 			return nil, err
 		}
 	} else {
-		if r.objectif < ent.PourcentageFemmes() {
+		if r.objectif < r.entreprise.PourcentageFemmes() {
 			if r.stratAvant != -1 {
 				// On recruter en fonction des competences et s'il y a égalité, on utilise la stratégie définie par l'utilisateur
 				embauches, err := RecrutementCompetencesEgales(nbARecruter, r.stratAvant, candidats)

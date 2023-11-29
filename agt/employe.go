@@ -6,7 +6,7 @@ import (
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
 )
 
-func GenererEmployeInit(ent Entreprise, genre Genre) *Employe {
+func GenererEmployeInit(ent *Entreprise, genre Genre) *Employe {
 	// Génération aléatoire de l'attribut agresseur
 	agg := genAgresseur(genre)
 

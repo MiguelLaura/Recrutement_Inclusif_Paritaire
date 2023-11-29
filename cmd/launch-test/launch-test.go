@@ -12,15 +12,11 @@ func main() {
 	loggers := logger.Loggers{}
 	loggers.AjouterLogger(&leLogger)
 
-	//loggers.Log("cc", "comment", "ça", "va", "?")
-
-	//leLogger.Log("cc", "comment", "ça", "va", "?")
-
-	var e agt.Entreprise
-	l_employe := agt.GenererCandidats(10, e)
-	l_femmes := agt.FiltreFemme(l_employe)
-
-	leLogger.Log(l_femmes)
-	leLogger.Log(len(l_femmes))
+	var recrutnil agt.Recrutement
+	e := agt.NewEntreprise(5, 0.5, recrutnil)
+	r := agt.NewRecrutement(e, -1, agt.PrioFemme, agt.StratVide, agt.Competences, agt.Vide, -1, -1)
+	embauches, err := r.GenererCandidats(10)
+	leLogger.Log("candidats: ", embauches)
+	leLogger.Log(err)
 
 }

@@ -1,10 +1,12 @@
 package agt
 
 import (
+	"math"
 	"math/rand"
 	"sync"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
+	"gonum.org/v1/gonum/stat/distuv"
 )
 
 // GENERAL
@@ -125,7 +127,12 @@ func genComportement() Comportement {
 }
 
 func genCompetence() int {
-	return rand.Intn(10)
+	// Loi normale définie pour modéliser les compétences
+	var loiNormale = distuv.Normal{
+		Mu:    5,
+		Sigma: 3,
+	}
+	return int(math.Abs(loiNormale.Rand())) % (constantes.COMPETENCE_MAX + 1)
 }
 
 // RECRUTEMENT

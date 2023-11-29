@@ -30,10 +30,10 @@ type Employe struct {
 	agresseur    bool
 	comportement Comportement
 	competence   int //entre 0 et 10
-	entreprise   Entreprise
+	entreprise   *Entreprise
 }
 
-func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compe int, ent Entreprise) *Employe {
+func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compe int, ent *Entreprise) *Employe {
 	return &Employe{genre: gen, anciennete: anc, santeMentale: san, agresseur: ag, comportement: compor, competence: compe, entreprise: ent}
 }
 
@@ -65,7 +65,7 @@ func (e Employe) Competence() int {
 	return e.competence
 }
 
-func (e Employe) Entreprise() Entreprise {
+func (e Employe) Entreprise() *Entreprise {
 	return e.entreprise
 }
 
@@ -73,7 +73,8 @@ func (e Employe) Entreprise() Entreprise {
 type StratParite int
 
 const (
-	PrioHomme StratParite = iota
+	StratVide StratParite = iota
+	PrioHomme
 	PrioFemme
 	Hasard
 )
@@ -81,11 +82,13 @@ const (
 type TypeRecrutement int
 
 const (
-	Competences TypeRecrutement = iota
+	Vide TypeRecrutement = iota
+	Competences
 	PlacesReservees
 )
 
 type Recrutement struct {
+	entreprise             *Entreprise
 	objectif               float64
 	stratAvant             StratParite
 	stratApres             StratParite
@@ -95,8 +98,8 @@ type Recrutement struct {
 	pourcentagePlacesApres float32
 }
 
-func NewRecrutement(obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float32, ppap float32) *Recrutement {
-	return &Recrutement{objectif: obj, stratAvant: sav, stratApres: sap, typeRecrutementAvant: trav, typeRecrutementApres: trap, pourcentagePlacesAvant: ppav, pourcentagePlacesApres: ppap}
+func NewRecrutement(ent *Entreprise, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float32, ppap float32) *Recrutement {
+	return &Recrutement{entreprise: ent, objectif: obj, stratAvant: sav, stratApres: sap, typeRecrutementAvant: trav, typeRecrutementApres: trap, pourcentagePlacesAvant: ppav, pourcentagePlacesApres: ppap}
 }
 
 func (r Recrutement) Objectif() float64 {
@@ -147,10 +150,10 @@ func NewEntreprise(nbEmployesInit int, pariteInit float32, recrut Recrutement) *
 	var employesInit []Employe
 
 	for i := 0; i < nbFemmes; i++ {
-		employesInit = append(employesInit, *GenererEmployeInit(*e, Femme))
+		employesInit = append(employesInit, *GenererEmployeInit(e, Femme))
 	}
 	for i := 0; i < nbHommes; i++ {
-		employesInit = append(employesInit, *GenererEmployeInit(*e, Homme))
+		employesInit = append(employesInit, *GenererEmployeInit(e, Homme))
 	}
 	e.employes = employesInit
 	e.departs = make([]Employe, 0)
