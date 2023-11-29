@@ -1,0 +1,33 @@
+@startuml Diagramme de séquence de l'initialisation (V1)
+
+title Diagramme de séquence de l'initialisation (V1)
+
+Simulation -> Entreprise ** : NewEntreprise(nbEmp, parite, valeursEntr) 
+
+collections Employes
+
+loop nbEmp
+    
+    Entreprise -> Entreprise : Generer genre pour respecter parite
+
+    Entreprise -> Employes ** : GenererEmployeInit(this, genre, valeursEntr)
+
+    activate Employes
+    Employes -> Employes : Prend une valeur dans valeursEntr au pif a garder
+    Employes -> Employes : Tire les autres valeurs aleatoirement
+    Employes -> Employes : Tire aleatoirement l'anciennete
+    Employes -> Employes : Tire aleatoirement la condition d'agresseur ou non
+    return emp : Employe
+
+    alt emp.EstAgresseur()
+        Entreprise -> Entreprise : Insère emp dans la liste des agresseurs
+    end alt
+
+end loop
+
+Entreprise -> Entreprise ++ : GenererAgressions()
+Entreprise -> Entreprise : Calc le ratio magique
+Entreprise -> Entreprise : Tire les employes agresses correspondant à ce ratio magique
+Entreprise -> Entreprise : Les insère dans la liste des agresses
+
+@enduml 
