@@ -1,6 +1,7 @@
 package agt
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 	"sync"
@@ -10,6 +11,14 @@ import (
 )
 
 // GENERAL
+func EstDansSliceEmploye(employes []Employe, e Employe) bool {
+	for _, val := range employes {
+		if e.Id() == val.Id() {
+			return true
+		}
+	}
+	return false
+}
 
 func Trouver_Employe(tab []Employe, f func(Employe) bool) (index int, val Employe) {
 	var e Employe
@@ -33,6 +42,7 @@ func Trouver_Employe_conc(tab []Employe, f func(Employe) bool, n int) (index int
 			wg.Add(1)
 			go func(i int) {
 				defer wg.Done()
+				fmt.Println("a:", i*len(tab)/4, "b:", len(tab)/n+i*len(tab)/n)
 				idx, _ := Trouver_Employe(tab[i*len(tab)/n:(len(tab)/n+i*len(tab)/n)], f)
 				if idx != -1 {
 					c <- (idx + i*len(tab)/n)
@@ -132,10 +142,12 @@ func genCompetence() int {
 		Mu:    5,
 		Sigma: 3,
 	}
+	// Permet de ne pas avoir de compétence négative et de ne pas aller au dessus du seuil max de compétence
 	return int(math.Abs(loiNormale.Rand())) % (constantes.COMPETENCE_MAX + 1)
 }
 
 // RECRUTEMENT
+
 func EstFemme(e Employe) bool {
 	return e.Genre() == Femme
 }
@@ -165,12 +177,11 @@ func FiltreFemme(employes []Employe) (f []Employe) {
 	copy(emp, employes)
 	f = make([]Employe, 0)
 
-	// on utilise 4 goroutines -> voir si y a plus opti
-	idx, e := Trouver_Employe_conc(emp, EstFemme, 4)
+	idx, e := Trouver_Employe(emp, EstFemme)
 	for idx != -1 {
 		f = append(f, emp[idx])
 		emp = enleverEmployer(emp, e)
-		idx, e = Trouver_Employe_conc(emp, EstFemme, 4)
+		idx, e = Trouver_Employe(emp, EstFemme)
 	}
 	return f
 }
@@ -180,12 +191,11 @@ func FiltreHomme(employes []Employe) (f []Employe) {
 	copy(emp, employes)
 	f = make([]Employe, 0)
 
-	// on utilise 4 goroutines -> voir si y a plus opti
-	idx, e := Trouver_Employe_conc(emp, EstHomme, 4)
+	idx, e := Trouver_Employe(emp, EstHomme)
 	for idx != -1 {
 		f = append(f, emp[idx])
 		emp = enleverEmployer(emp, e)
-		idx, e = Trouver_Employe_conc(emp, EstHomme, 4)
+		idx, e = Trouver_Employe(emp, EstHomme)
 	}
 	return f
 }

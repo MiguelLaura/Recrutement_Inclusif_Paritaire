@@ -37,6 +37,7 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 		err := errors.New("Stratégie de recrutement inconnue")
 		return nil, err
 	}
+	// On ne verifie pas si candidats est vide car dans ce cas, liste vide renvoyée ce qui est cohérent
 	embauches = make([]Employe, 0)
 	// nbARecruter ne doit jamais depasser 10 actuellement -> a ameliorer car nb_candidats=10
 	for len(embauches) < nbARecruter {
@@ -50,18 +51,39 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 			switch strat {
 			case Hasard:
 				idx = rand.Intn(len(maxCandidats))
+				embauches = append(embauches, maxCandidats[idx])
+				candidats = enleverEmployer(candidats, maxCandidats[idx])
 			case PrioFemme:
-				l_femmes := FiltreFemme(candidats)
-				idx = rand.Intn(len(l_femmes))
+				l_femmes := FiltreFemme(maxCandidats)
+				// si parmi les plus compétents, il y a des femmes, on choisit parmi elles sinon au hasard
+				if len(l_femmes) > 0 {
+					idx = rand.Intn(len(l_femmes))
+					embauches = append(embauches, l_femmes[idx])
+					candidats = enleverEmployer(candidats, l_femmes[idx])
+				} else {
+					idx = rand.Intn(len(maxCandidats))
+					embauches = append(embauches, maxCandidats[idx])
+					candidats = enleverEmployer(candidats, maxCandidats[idx])
+				}
+
 			case PrioHomme:
-				l_hommes := FiltreHomme(candidats)
-				idx = rand.Intn(len(l_hommes))
+				l_hommes := FiltreHomme(maxCandidats)
+				// si parmi les plus compétents, il y a des hommes, on choisit parmi eux sinon au hasard
+				if len(l_hommes) > 0 {
+					idx = rand.Intn(len(l_hommes))
+					embauches = append(embauches, l_hommes[idx])
+					candidats = enleverEmployer(candidats, l_hommes[idx])
+				} else {
+					idx = rand.Intn(len(maxCandidats))
+					embauches = append(embauches, maxCandidats[idx])
+					candidats = enleverEmployer(candidats, maxCandidats[idx])
+				}
+
 			default:
 				err = errors.New("Stratégie de traitement des égalités de compétences inconnue")
 				return nil, err
 			}
-			embauches = append(embauches, maxCandidats[idx])
-			candidats = enleverEmployer(candidats, maxCandidats[idx])
+
 		} else {
 			err = errors.New("EmployeMaxCompetences ne renvoie aucun candidat")
 		}

@@ -10,5 +10,4 @@ const (
 	NBCANDIDATS             = 10
 	COMPETENCE_MIN          = 0
 	COMPETENCE_MAX          = 10
-	COMPETENCE_MAX          = 10
 )

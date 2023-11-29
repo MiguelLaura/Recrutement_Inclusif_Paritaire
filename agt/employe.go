@@ -2,7 +2,6 @@ package agt
 
 import (
 	"fmt"
-	"math"
 	"math/rand"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
@@ -66,11 +65,9 @@ func GenererEmployeInit(ent **Entreprise, genre Genre) *Employe {
 	compor := genComportement()
 
 	// Génération aléatoire de la compétence de l'employé
+	competence := genCompetence()
 
-	// Permet de ne pas avoir de compétence négative et de ne pas aller au dessus du seuil max de compétence
-	competence := int(math.Abs(loiNormale.Rand())) % (constantes.COMPETENCE_MAX + 1)
-
-	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, compor, competence, ent)
+	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, compor, competence, *ent)
 }
 
 func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compet int, ent *Entreprise) *Employe {
@@ -90,6 +87,10 @@ func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compe
 // ---------------------
 //        Getters
 // ---------------------
+
+func (e *Employe) Id() EmployeID {
+	return e.id
+}
 
 func (e *Employe) Genre() Genre {
 	return e.genre
@@ -132,6 +133,7 @@ func (e *Employe) gagnerAnciennete() {
 	e.anciennete += 1
 }
 
+/*
 // L'Employé porte plainte à son entreprise au sujet d'un autre employé.
 func (plaignant *Employe) porterPlainte(accuse *Employe) {
 	plaignant.entreprise.RecevoirPlainte(plaignant, accuse)
@@ -244,3 +246,4 @@ func (e *Employe) agir() {
 	// Permet de notifier l'entreprise que l'agent vient de faire une action
 	e.entreprise.NotifierAction()
 }
+*/
