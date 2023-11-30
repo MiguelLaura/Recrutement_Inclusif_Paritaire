@@ -2,6 +2,7 @@ package agt
 
 import (
 	"errors"
+	"math"
 	"math/rand"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
@@ -28,6 +29,7 @@ func (r Recrutement) GenererCandidats(nb_candidats int) (candidats []Employe, er
 	return candidats, nil
 }
 
+// nbARecruter ne doit jamais depasser 10 actuellement -> a ameliorer car nb_candidats=10
 func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats []Employe) (embauches []Employe, err error) {
 	if nbARecruter < 0 {
 		err := errors.New("Nombre de candidats à recruter négatif")
@@ -39,7 +41,7 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 	}
 	// On ne verifie pas si candidats est vide car dans ce cas, liste vide renvoyée ce qui est cohérent
 	embauches = make([]Employe, 0)
-	// nbARecruter ne doit jamais depasser 10 actuellement -> a ameliorer car nb_candidats=10
+
 	for len(embauches) < nbARecruter {
 		maxCandidats := EmployeMaxCompetences(candidats)
 		if len(maxCandidats) == 1 {
@@ -91,9 +93,19 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 	return embauches, nil
 }
 
-func RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentagePlace float64) (embauches []Employe) {
+func RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentagePlace float64) (embauches []Employe, err error) {
+	if nbARecruter < 0 {
+		err := errors.New("Nombre de candidats à recruter négatif")
+		return nil, err
+	}
+	if pourcentagePlace < 0 || pourcentagePlace > 1 {
+		err := errors.New("pourcentagePlace doit être compris entre 0 et 1")
+		return nil, err
+	}
+	// On ne verifie pas si candidats est vide car dans ce cas, liste vide renvoyée ce qui est cohérent
 	embauches = make([]Employe, 0)
-	nbFemmesARecruter := int(pourcentagePlace * float64(nbARecruter))
+	// Hypothèse : si le résultat ne tombe pas juste, on arrondit le nombre de femmes au supérieur
+	nbFemmesARecruter := int(math.Round(pourcentagePlace * float64(nbARecruter)))
 	candidatsFemmes := FiltreFemme(candidats)
 
 	for i := 0; i < nbFemmesARecruter; i++ {
@@ -106,8 +118,7 @@ func RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentag
 		candidatsFemmes = enleverEmployer(candidatsFemmes, maxCandidates[0])
 		candidats = enleverEmployer(candidats, maxCandidates[0])
 	}
-	// S'il n'y a pas assez de femmes dans les candidats que faire ?
-	// On recrute des hommes
+	// S'il n'y a pas assez de femmes dans les candidats, on recrute des hommes
 
 	// Le reste des candidats sont sélectionnés uniquement pour leurs compétences
 	reste := nbARecruter - len(embauches)
@@ -118,7 +129,7 @@ func RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentag
 		candidats = enleverEmployer(candidats, maxCandidats[idx])
 	}
 
-	return embauches
+	return embauches, nil
 }
 
 func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) {
@@ -138,7 +149,10 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 			return embauches, nil
 		} else if r.typeRecrutementAvant != -1 {
 			// Verif coherence valeur pourcentage
-			embauches = RecrutementPlacesReservees(nbARecruter, candidats, float64(r.pourcentagePlacesAvant))
+			embauches, err := RecrutementPlacesReservees(nbARecruter, candidats, float64(r.pourcentagePlacesAvant))
+			if err != nil {
+				return nil, err
+			}
 			return embauches, nil
 		} else {
 			err := errors.New("Les stratégies de recrutement n'ont pas été correctement définies")
@@ -154,8 +168,10 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 				}
 				return embauches, nil
 			} else if r.typeRecrutementAvant != -1 {
-				// Verif coherence valeur pourcentage
-				embauches = RecrutementPlacesReservees(nbARecruter, candidats, float64(r.pourcentagePlacesAvant))
+				embauches, err := RecrutementPlacesReservees(nbARecruter, candidats, float64(r.pourcentagePlacesAvant))
+				if err != nil {
+					return nil, err
+				}
 				return embauches, nil
 			} else {
 				err := errors.New("Les stratégies de recrutement n'ont pas été correctement définies")
@@ -170,8 +186,10 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 				}
 				return embauches, nil
 			} else if r.typeRecrutementApres != -1 {
-				// Verif coherence valeur pourcentage
-				embauches = RecrutementPlacesReservees(nbARecruter, candidats, float64(r.pourcentagePlacesApres))
+				embauches, err := RecrutementPlacesReservees(nbARecruter, candidats, float64(r.pourcentagePlacesApres))
+				if err != nil {
+					return nil, err
+				}
 				return embauches, nil
 			} else {
 				err := errors.New("Les stratégies de recrutement n'ont pas été correctement définies")

@@ -250,3 +250,122 @@ func Test_RecrutementCompetencesEgales(t *testing.T) {
 		t.Errorf("Pas d'erreur renvoyée alors que nombre négatif de personnes à recruter: %s", err)
 	}
 }
+
+func Test_RecrutementPlacesReservees(t *testing.T) {
+	// TEST 1: Nombre de femmes à recruter tombe juste
+	var ent agt.Entreprise
+	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 0.25, 6, &ent) //recruté
+	var e2 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 0.25, 4, &ent) //recruté
+	var e3 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 0.25, 8, &ent) //recrutée
+	var e4 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 0.25, 1, &ent)
+	var e5 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 0.25, 3, &ent) //recrutée
+	var e6 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 0.25, 2, &ent)
+	var cand []agt.Employe
+	cand = append(cand, e1)
+	cand = append(cand, e2)
+	cand = append(cand, e3)
+	cand = append(cand, e4)
+	cand = append(cand, e5)
+	cand = append(cand, e6)
+
+	embauches, err := agt.RecrutementPlacesReservees(4, cand, 0.5)
+	if err != nil {
+		t.Errorf("Erreur : %s", err)
+	}
+	if len(embauches) != 4 {
+		t.Errorf("Pas assez de candidats recrutés")
+	}
+	if !agt.EstDansSliceEmploye(embauches, e1) || !agt.EstDansSliceEmploye(embauches, e2) || !agt.EstDansSliceEmploye(embauches, e3) || !agt.EstDansSliceEmploye(embauches, e5) {
+		t.Errorf("Mauvais candidats recrutés: %T", embauches)
+	}
+
+	// TEST 2: Nombre de femmes à recruter ne tombe pas juste
+	e1 = *agt.NewEmploye(0, 0, 100, false, 0.25, 7, &ent) //recruté
+	e2 = *agt.NewEmploye(0, 0, 100, false, 0.25, 4, &ent)
+	e3 = *agt.NewEmploye(1, 0, 100, false, 0.25, 9, &ent) //recrutée
+	e4 = *agt.NewEmploye(1, 0, 100, false, 0.25, 3, &ent) //recrutée
+	e5 = *agt.NewEmploye(1, 0, 100, false, 0.25, 1, &ent)
+	cand = nil
+	cand = append(cand, e1)
+	cand = append(cand, e2)
+	cand = append(cand, e3)
+	cand = append(cand, e4)
+	cand = append(cand, e5)
+
+	embauches, err = agt.RecrutementPlacesReservees(3, cand, 0.5)
+	if err != nil {
+		t.Errorf("Erreur : %s", err)
+	}
+	if len(embauches) != 3 {
+		t.Errorf("Pas assez de candidats recrutés")
+	}
+	if !agt.EstDansSliceEmploye(embauches, e1) || !agt.EstDansSliceEmploye(embauches, e3) || !agt.EstDansSliceEmploye(embauches, e4) {
+		t.Errorf("Mauvais candidats recrutés: %T", embauches)
+	}
+
+	// TEST 3: Il n'y a pas assez de femmes pour atteindre l'objectif donné par le pourcentage
+	e1 = *agt.NewEmploye(0, 0, 100, false, 0.25, 8, &ent) //recruté
+	e2 = *agt.NewEmploye(0, 0, 100, false, 0.25, 4, &ent) //recruté
+	e3 = *agt.NewEmploye(0, 0, 100, false, 0.25, 5, &ent) //recruté
+	e4 = *agt.NewEmploye(0, 0, 100, false, 0.25, 1, &ent)
+	e5 = *agt.NewEmploye(1, 0, 100, false, 0.25, 7, &ent) //recrutée
+	cand = nil
+	cand = append(cand, e1)
+	cand = append(cand, e2)
+	cand = append(cand, e3)
+	cand = append(cand, e4)
+	cand = append(cand, e5)
+
+	embauches, err = agt.RecrutementPlacesReservees(4, cand, 0.75)
+	if err != nil {
+		t.Errorf("Erreur : %s", err)
+	}
+	if len(embauches) != 4 {
+		t.Errorf("Pas assez de candidats recrutés")
+	}
+	if !agt.EstDansSliceEmploye(embauches, e1) || !agt.EstDansSliceEmploye(embauches, e2) || !agt.EstDansSliceEmploye(embauches, e3) || !agt.EstDansSliceEmploye(embauches, e5) {
+		t.Errorf("Mauvais candidats recrutés: %T", embauches)
+	}
+
+	// TEST 4: Egalité de compétences
+	e1 = *agt.NewEmploye(0, 0, 100, false, 0.25, 6, &ent) //recruté
+	e2 = *agt.NewEmploye(0, 0, 100, false, 0.25, 4, &ent)
+	e3 = *agt.NewEmploye(0, 0, 100, false, 0.25, 5, &ent) //recruté
+	e4 = *agt.NewEmploye(1, 0, 100, false, 0.25, 6, &ent) //recrutée
+	e5 = *agt.NewEmploye(1, 0, 100, false, 0.25, 7, &ent) //recrutée
+	e6 = *agt.NewEmploye(1, 0, 100, false, 0.25, 3, &ent)
+	cand = nil
+	cand = append(cand, e1)
+	cand = append(cand, e2)
+	cand = append(cand, e3)
+	cand = append(cand, e4)
+	cand = append(cand, e5)
+	cand = append(cand, e6)
+
+	embauches, err = agt.RecrutementPlacesReservees(4, cand, 0.25)
+	if err != nil {
+		t.Errorf("Erreur : %s", err)
+	}
+	if len(embauches) != 4 {
+		t.Errorf("Pas assez de candidats recrutés")
+	}
+	if !agt.EstDansSliceEmploye(embauches, e1) || !agt.EstDansSliceEmploye(embauches, e3) || !agt.EstDansSliceEmploye(embauches, e4) || !agt.EstDansSliceEmploye(embauches, e5) {
+		t.Errorf("Mauvais candidats recrutés: %T", embauches)
+	}
+
+	// TEST 5: Gestion des erreurs
+	cand = nil
+	embauches, err = agt.RecrutementPlacesReservees(4, cand, 12)
+	if err == nil {
+		t.Errorf("Pas d'erreur renvoyée alors que pourcentagePlace > 1")
+	}
+	embauches, err = agt.RecrutementPlacesReservees(4, cand, -0.2)
+	if err == nil {
+		t.Errorf("Pas d'erreur renvoyée alors que pourcentagePlace <0")
+	}
+	embauches, err = agt.RecrutementPlacesReservees(-4, cand, 0.2)
+	if err == nil {
+		t.Errorf("Pas d'erreur renvoyée alors que nbARecruter<0")
+	}
+
+}
