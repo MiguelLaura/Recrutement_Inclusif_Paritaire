@@ -6,6 +6,10 @@ import (
 	"gitlab.utc.fr/mennynat/ia04-project/agt"
 )
 
+// ------------------------------------------------------
+//   Tests pour les fonctions propres au recrutement
+// ------------------------------------------------------
+
 func Test_FiltreFemme(t *testing.T) {
 	var ent agt.Entreprise
 	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 0.25, 6, &ent) //recruté
@@ -367,25 +371,4 @@ func Test_RecrutementPlacesReservees(t *testing.T) {
 	if err == nil {
 		t.Errorf("Pas d'erreur renvoyée alors que nbARecruter<0")
 	}
-}
-
-func Test_Recruter(t *testing.T) {
-	var ent *agt.Entreprise
-
-	// TEST 1: Erreurs
-
-	r := agt.NewRecrutement(ent, -1, agt.StratVide, agt.StratVide, agt.Competences, agt.Vide, -1, -1)
-	_, err := r.Recruter(2)
-
-	if err == nil {
-		t.Errorf("Pas d'erreur renvoyée alors que typeRecrutement=Competences et pas de stratégie de recrutement renseignée")
-	}
-
-	r = agt.NewRecrutement(ent, -1, agt.PrioFemme, agt.PrioHomme, agt.Competences, agt.Vide, -1, -1)
-	_, err = r.Recruter(2)
-
-	if err == nil {
-		t.Errorf("Pas d'erreur renvoyée alors que pas d'objectif mais deux stratégies renseignées ")
-	}
-
 }

@@ -1,16 +1,18 @@
 package agt
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
-	"sync"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
 	"gonum.org/v1/gonum/stat/distuv"
 )
 
-// GENERAL
+// ---------------------
+//        Général
+// ---------------------
+
+// Vérifie la présence d'un employé dans un slice employé
 func EstDansSliceEmploye(employes []Employe, e Employe) bool {
 	for _, val := range employes {
 		if e.Id() == val.Id() {
@@ -20,6 +22,7 @@ func EstDansSliceEmploye(employes []Employe, e Employe) bool {
 	return false
 }
 
+// Permet de trouver un employé à partir d'une condition et renvoie l'employé et son indice
 func Trouver_Employe(tab []Employe, f func(Employe) bool) (index int, val Employe) {
 	var e Employe
 	for idx, value := range tab {
@@ -30,72 +33,27 @@ func Trouver_Employe(tab []Employe, f func(Employe) bool) (index int, val Employ
 	return -1, e
 }
 
-func Trouver_Employe_conc(tab []Employe, f func(Employe) bool, n int) (index int, value Employe) {
-
-	c := make(chan int)
-
-	go func() {
-		var wg sync.WaitGroup
-		defer close(c)
-
-		for i := 0; i < n; i++ {
-			wg.Add(1)
-			go func(i int) {
-				defer wg.Done()
-				fmt.Println("a:", i*len(tab)/4, "b:", len(tab)/n+i*len(tab)/n)
-				idx, _ := Trouver_Employe(tab[i*len(tab)/n:(len(tab)/n+i*len(tab)/n)], f)
-				if idx != -1 {
-					c <- (idx + i*len(tab)/n)
-				}
-			}(i)
-		}
-		wg.Wait()
-	}()
-	idx_min := len(tab)
-	for i := range c {
-		if i != -1 {
-			idx_min = min(idx_min, i)
-		}
-	}
-	if idx_min == len(tab) {
-		// Cas où l'élément n'existe pas dans le tableau
-		var e Employe
-		return -1, e
-	} else {
-		return idx_min, tab[idx_min]
-	}
-
-}
-
-// Problème : pour vérifier que les employés sont égaux, il faut vérifier égalité entreprise
-// pour vérifier que les entreprises sont égales, il faut vérifier que les employés sont égaux
-
-//func listesEmployesEgales(l1 []Employe, l2 []Employe)
-
-//func entreprisesEgales(ent1 Entreprise, ent2 Entreprise) bool
-
-func employesEgaux(e1 Employe, e2 Employe) bool {
-	// ajouter verif entreprise si on regle le pb au dessus
-	return (e1.Agresseur() == e2.Agresseur() && e1.Anciennete() == e2.Anciennete() && e1.Competence() == e2.Competence() && e1.Comportement() == e2.Comportement() && e1.Genre() == e2.Genre() && e1.SanteMentale() == e2.SanteMentale())
-}
-
+// Récupère index d'un employé au sein d'une slice d'employés
 func obtenirIndexEmploye(emp []Employe, e Employe) int {
 	for idx, val := range emp {
-		if employesEgaux(e, val) {
+		if e.Id() == val.Id() {
 			return idx
 		}
 	}
 	return -1
 }
 
-// renvoie la liste emp sans l'employe e
+// Renvoie la liste emp sans l'employé e
 func enleverEmployer(emp []Employe, e Employe) []Employe {
 	i := obtenirIndexEmploye(emp, e)
 	emp[i] = emp[len(emp)-1]
 	return emp[:len(emp)-1]
 }
 
-// GENERATION
+// ---------------------
+//       Génération
+// ---------------------
+
 func genAgresseur(genre Genre) (agg bool) {
 
 	if genre == Homme {
@@ -146,7 +104,9 @@ func genCompetence() int {
 	return int(math.Abs(loiNormale.Rand())) % (constantes.COMPETENCE_MAX + 1)
 }
 
-// RECRUTEMENT
+// ---------------------
+//     Recrutement
+// ---------------------
 
 func EstFemme(e Employe) bool {
 	return e.Genre() == Femme
@@ -156,7 +116,7 @@ func EstHomme(e Employe) bool {
 	return e.Genre() == Homme
 }
 
-// Recherche avec des goroutines ? 4 par exemple ?
+// Renvoie l'employé ou les employés avec le maximum de compétence
 func EmployeMaxCompetences(candidats []Employe) (emp []Employe) {
 	emp = make([]Employe, 0)
 	var max int = 0
@@ -172,6 +132,7 @@ func EmployeMaxCompetences(candidats []Employe) (emp []Employe) {
 	return emp
 }
 
+// Renvoie le slice des employées femmes à partir d'une liste d'employé.es
 func FiltreFemme(employes []Employe) (f []Employe) {
 	emp := make([]Employe, len(employes))
 	copy(emp, employes)
@@ -186,6 +147,7 @@ func FiltreFemme(employes []Employe) (f []Employe) {
 	return f
 }
 
+// Renvoie le slice des employés hommes à partir d'une liste d'employé.es
 func FiltreHomme(employes []Employe) (f []Employe) {
 	emp := make([]Employe, len(employes))
 	copy(emp, employes)
