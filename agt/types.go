@@ -38,67 +38,6 @@ const (
 	Plainte0   Comportement = 0.0
 )
 
-// ------------ RECRUTEMENT ------------
-type StratParite int
-
-const (
-	StratVide StratParite = iota
-	PrioHomme
-	PrioFemme
-	Hasard
-)
-
-type TypeRecrutement int
-
-const (
-	Vide TypeRecrutement = iota
-	Competences
-	PlacesReservees
-)
-
-type Recrutement struct {
-	entreprise             *Entreprise
-	objectif               float64
-	stratAvant             StratParite
-	stratApres             StratParite
-	typeRecrutementAvant   TypeRecrutement
-	typeRecrutementApres   TypeRecrutement
-	pourcentagePlacesAvant float32
-	pourcentagePlacesApres float32
-}
-
-func NewRecrutement(ent *Entreprise, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float32, ppap float32) *Recrutement {
-	return &Recrutement{entreprise: ent, objectif: obj, stratAvant: sav, stratApres: sap, typeRecrutementAvant: trav, typeRecrutementApres: trap, pourcentagePlacesAvant: ppav, pourcentagePlacesApres: ppap}
-}
-
-func (r Recrutement) Objectif() float64 {
-	return r.objectif
-}
-
-func (r Recrutement) StratAvant() StratParite {
-	return r.stratAvant
-}
-
-func (r Recrutement) StratApres() StratParite {
-	return r.stratApres
-}
-
-func (r Recrutement) TypeRecrutementAvant() TypeRecrutement {
-	return r.typeRecrutementAvant
-}
-
-func (r Recrutement) TypeRecrutementApres() TypeRecrutement {
-	return r.typeRecrutementApres
-}
-
-func (r Recrutement) PourcentagePlacesAvant() float32 {
-	return r.pourcentagePlacesAvant
-}
-
-func (r Recrutement) PourcentagePlacesApres() float32 {
-	return r.pourcentagePlacesApres
-}
-
 // ------------ ENTREPRISE ------------
 
 type Entreprise struct {
