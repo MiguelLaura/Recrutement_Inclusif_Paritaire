@@ -13,6 +13,10 @@ import (
 	"gitlab.utc.fr/mennynat/ia04-project/agt"
 )
 
+// -----------------------------------
+//       Fonctions utils serveur
+// -----------------------------------
+
 type RestServerAgent struct {
 	sync.Mutex
 	id         string
@@ -20,11 +24,12 @@ type RestServerAgent struct {
 	simulation agt.Simulation
 }
 
+// retourne un pointeur sur un nouveau ServeurAgent
 func NewRestServerAgent(addr string) *RestServerAgent {
 	return &RestServerAgent{id: addr, addr: addr}
 }
 
-// Test de la méthode (post, ...)
+// retourne un bool si la méthode est bien celle demandée (POST, GET, ..;)
 func (rsa *RestServerAgent) checkMethod(method string, w http.ResponseWriter, r *http.Request) bool {
 	if r.Method != method {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -34,6 +39,11 @@ func (rsa *RestServerAgent) checkMethod(method string, w http.ResponseWriter, r 
 	return true
 }
 
+// -----------------------------
+//       Gestion requêtes
+// -----------------------------
+
+// retourne la structure en go depuis la requête JSON
 func (*RestServerAgent) decodeRequestNewSimulation(r *http.Request) (req requestNewSimulation, err error) {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(r.Body)
@@ -41,6 +51,7 @@ func (*RestServerAgent) decodeRequestNewSimulation(r *http.Request) (req request
 	return
 }
 
+// teste la requête de création, créé la simulation et la lance
 func (rsa *RestServerAgent) createNewSimulation(w http.ResponseWriter, r *http.Request) {
 	//set-up header
 	setupCORS(&w, r)
@@ -115,13 +126,18 @@ func (rsa *RestServerAgent) createNewSimulation(w http.ResponseWriter, r *http.R
 	}
 }
 
+// ---------------------
+//       Server
+// ---------------------
+
+// Ajoute les options CORS pour pouvoir envoyer les informations par formulaire sur page HTML
 func setupCORS(w *http.ResponseWriter, req *http.Request) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
 
-// serves index file
+// Retourne la page index
 func home(w http.ResponseWriter, r *http.Request) {
 	p := path.Dir("./serveur/templates/index.html")
 	// set header
@@ -129,11 +145,12 @@ func home(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, p)
 }
 
+// Lance le serveur
 func (rsa *RestServerAgent) Start() {
 	// création du multiplexer
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", home)
+	mux.HandleFunc("/", home) //index
 	mux.HandleFunc("/new_simulation", rsa.createNewSimulation)
 
 	// création du serveur http

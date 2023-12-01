@@ -15,6 +15,7 @@ type Simulation struct {
 	start       time.Time
 }
 
+// retourne un pointeur sur une nouveau simulation
 func NewSimulation(NbEmployes int, pariteInit float32, maxStep int, maxDuration time.Duration) (simu *Simulation) {
 	simu = &Simulation{}
 	simu.maxStep = maxStep
@@ -25,6 +26,7 @@ func NewSimulation(NbEmployes int, pariteInit float32, maxStep int, maxDuration 
 	return simu
 }
 
+// lance la simulation
 func (simu *Simulation) Run() {
 	log.Printf("Démarrage de la simulation [step: %d]", simu.step)
 
@@ -50,6 +52,7 @@ func (simu *Simulation) Run() {
 	log.Printf("Fin de la simulation [step: %d, début parité : %f, fin parité : %f", simu.step, pariteInit, simu.ent.PourcentageFemmes())
 }
 
+// affiche les informations sur la parité au cours du temps
 func (simu *Simulation) Print() {
 	for {
 		fmt.Printf("\rPourcentage de femmes = %f", simu.ent.PourcentageFemmes())

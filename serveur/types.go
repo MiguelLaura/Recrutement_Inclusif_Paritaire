@@ -2,7 +2,10 @@ package serveur
 
 import "gitlab.utc.fr/mennynat/ia04-project/agt"
 
-/* Types request et response */
+// -----------------------------
+//       Types requêtes
+// -----------------------------
+
 type requestNewSimulation struct {
 	ID                     string              `json:"id_simulation"`
 	NbEmployes             int                 `json:"nb_employes"`
