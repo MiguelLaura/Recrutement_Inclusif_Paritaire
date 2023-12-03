@@ -23,7 +23,7 @@ func EstDansSliceEmploye(employes []Employe, e Employe) bool {
 }
 
 // Permet de trouver un employé à partir d'une condition et renvoie l'employé et son indice
-func Trouver_Employe(tab []Employe, f func(Employe) bool) (index int, val Employe) {
+func TrouverEmploye(tab []Employe, f func(Employe) bool) (index int, val Employe) {
 	var e Employe
 	for idx, value := range tab {
 		if f(value) {
@@ -139,11 +139,11 @@ func FiltreFemme(employes []Employe) (f []Employe) {
 	copy(emp, employes)
 	f = make([]Employe, 0)
 
-	idx, e := Trouver_Employe(emp, EstFemme)
+	idx, e := TrouverEmploye(emp, EstFemme)
 	for idx != -1 {
 		f = append(f, emp[idx])
 		emp = enleverEmploye(emp, e)
-		idx, e = Trouver_Employe(emp, EstFemme)
+		idx, e = TrouverEmploye(emp, EstFemme)
 	}
 	return f
 }
@@ -154,11 +154,11 @@ func FiltreHomme(employes []Employe) (f []Employe) {
 	copy(emp, employes)
 	f = make([]Employe, 0)
 
-	idx, e := Trouver_Employe(emp, EstHomme)
+	idx, e := TrouverEmploye(emp, EstHomme)
 	for idx != -1 {
 		f = append(f, emp[idx])
 		emp = enleverEmploye(emp, e)
-		idx, e = Trouver_Employe(emp, EstHomme)
+		idx, e = TrouverEmploye(emp, EstHomme)
 	}
 	return f
 }

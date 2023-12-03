@@ -171,6 +171,7 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 
 		} else {
 			err = errors.New("erreur : employeMaxCompetences ne renvoie aucun candidat")
+			return nil, err
 		}
 	}
 	return embauches, nil
