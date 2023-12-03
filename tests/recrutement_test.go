@@ -10,7 +10,7 @@ import (
 //   Tests pour les fonctions propres au recrutement
 // ------------------------------------------------------
 
-func Test_FiltreFemme(t *testing.T) {
+func TestFiltreFemme(t *testing.T) {
 	var ent agt.Entreprise
 	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 0.25, 6, &ent) //recruté
 	var e2 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 0.25, 4, &ent)
@@ -27,14 +27,14 @@ func Test_FiltreFemme(t *testing.T) {
 	employes = append(employes, e6)
 	femmes := agt.FiltreFemme(employes)
 	if len(femmes) != 3 {
-		t.Errorf("Le slice renvoyé ne contient pas le bon nombre d'élement")
+		t.Errorf("erreur : le slice renvoyé ne contient pas le bon nombre d'élement")
 	}
 	if !agt.EstDansSliceEmploye(femmes, e3) || !agt.EstDansSliceEmploye(femmes, e5) || !agt.EstDansSliceEmploye(femmes, e6) {
-		t.Errorf("Mauvais candidats recrutés: %v", femmes)
+		t.Errorf("erreur : mauvais candidats recrutés %v", femmes)
 	}
 }
 
-func Test_FiltreHomme(t *testing.T) {
+func TestFiltreHomme(t *testing.T) {
 	var ent agt.Entreprise
 	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 0.25, 6, &ent) //recruté
 	var e2 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 0.25, 4, &ent)
@@ -51,14 +51,14 @@ func Test_FiltreHomme(t *testing.T) {
 	employes = append(employes, e6)
 	hommes := agt.FiltreHomme(employes)
 	if len(hommes) != 3 {
-		t.Errorf("Le slice renvoyé ne contient pas le bon nombre d'élement")
+		t.Errorf("erreur : le slice renvoyé ne contient pas le bon nombre d'élement")
 	}
 	if !agt.EstDansSliceEmploye(hommes, e1) || !agt.EstDansSliceEmploye(hommes, e2) || !agt.EstDansSliceEmploye(hommes, e4) {
-		t.Errorf("Mauvais candidats recrutés: %v", hommes)
+		t.Errorf("erreur : mauvais candidats recrutés %v", hommes)
 	}
 }
 
-func Test_EmployeMaxCompetences(t *testing.T) {
+func TestEmployeMaxCompetences(t *testing.T) {
 	// TEST 1 : un seul candidat renvoyé
 	var ent agt.Entreprise
 	var e1 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 0.25, 6, &ent)
@@ -73,13 +73,13 @@ func Test_EmployeMaxCompetences(t *testing.T) {
 
 	embauches := agt.EmployeMaxCompetences(cand)
 	if len(embauches) == 0 {
-		t.Errorf("Aucun candidat renvoyé")
+		t.Errorf("erreur : aucun candidat renvoyé")
 	}
 	if len(embauches) > 1 {
-		t.Errorf("Plus d'un candidat renvoyé")
+		t.Errorf("erreur : plus d'un candidat renvoyé")
 	}
 	if embauches[0].Id() != e3.Id() {
-		t.Errorf("Le 3e candidat est celui avec la competence max, le candidat retourné est %T", embauches[0])
+		t.Errorf("erreur : le 3e candidat est celui avec la competence max, le candidat retourné est %T", embauches[0])
 	}
 
 	// TEST 2: Plusieurs candidats renvoyés
@@ -97,17 +97,17 @@ func Test_EmployeMaxCompetences(t *testing.T) {
 
 	embauches = agt.EmployeMaxCompetences(cand)
 	if len(embauches) == 0 {
-		t.Errorf("Aucun candidat renvoyé")
+		t.Errorf("erreur : aucun candidat renvoyé")
 	}
 	if len(embauches) == 1 {
-		t.Errorf("Un seul candidat trouvé: %T", embauches[0])
+		t.Errorf("erreur : un seul candidat trouvé %T", embauches[0])
 	}
 	if len(embauches) == 2 && ((embauches[0].Id() != e2.Id() && embauches[0].Id() != e3.Id()) || (embauches[1].Id() != e2.Id() && embauches[1].Id() != e3.Id())) {
-		t.Errorf("Les mauvais candidats ont été sélectionnés: %T", embauches)
+		t.Errorf("erreur : les mauvais candidats ont été sélectionnés %T", embauches)
 	}
 }
 
-func Test_RecrutementCompetencesEgales(t *testing.T) {
+func TestRecrutementCompetencesEgales(t *testing.T) {
 	// TEST 1 : Pas d'utilisation des stratégies
 	var ent agt.Entreprise
 	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 0.25, 6, &ent) //recruté
@@ -126,13 +126,13 @@ func Test_RecrutementCompetencesEgales(t *testing.T) {
 
 	embauches, err := agt.RecrutementCompetencesEgales(3, agt.PrioFemme, cand)
 	if err != nil {
-		t.Errorf("Erreur : %s", err)
+		t.Errorf("%s", err)
 	}
 	if len(embauches) != 3 {
-		t.Errorf("Pas assez de candidats recrutés")
+		t.Errorf("erreur : pas assez de candidats recrutés")
 	}
 	if !agt.EstDansSliceEmploye(embauches, e1) || !agt.EstDansSliceEmploye(embauches, e6) || !agt.EstDansSliceEmploye(embauches, e3) {
-		t.Errorf("Mauvais candidats recrutés: %T", embauches)
+		t.Errorf("erreur : mauvais candidats recrutés %T", embauches)
 	}
 
 	// TEST 2: Utilisation de PrioFemme pour egalité HF
@@ -153,13 +153,13 @@ func Test_RecrutementCompetencesEgales(t *testing.T) {
 	embauches, err = agt.RecrutementCompetencesEgales(2, agt.PrioFemme, cand)
 
 	if err != nil {
-		t.Errorf("Erreur : %s", err)
+		t.Errorf("%s", err)
 	}
 	if len(embauches) != 2 {
-		t.Errorf("Pas assez de candidats recrutés")
+		t.Errorf("erreur : pas assez de candidats recrutés")
 	}
 	if !agt.EstDansSliceEmploye(embauches, e3) || !agt.EstDansSliceEmploye(embauches, e6) {
-		t.Errorf("Mauvais candidats recrutés: %T", embauches)
+		t.Errorf("erreur : mauvais candidats recrutés %T", embauches)
 	}
 
 	// TEST 3: Utilisation de PrioFemme pour egalité HH
@@ -180,13 +180,13 @@ func Test_RecrutementCompetencesEgales(t *testing.T) {
 
 	embauches, err = agt.RecrutementCompetencesEgales(2, agt.PrioFemme, cand)
 	if err != nil {
-		t.Errorf("Erreur : %s", err)
+		t.Errorf("%s", err)
 	}
 	if len(embauches) != 2 {
-		t.Errorf("Pas assez de candidats recrutés")
+		t.Errorf("erreur : pas assez de candidats recrutés")
 	}
 	if !agt.EstDansSliceEmploye(embauches, e3) || (!agt.EstDansSliceEmploye(embauches, e6) && !agt.EstDansSliceEmploye(embauches, e1)) {
-		t.Errorf("Mauvais candidats recrutés: %T", embauches)
+		t.Errorf("erreur : mauvais candidats recrutés %T", embauches)
 	}
 
 	// TEST 4: Utilisation de PrioHomme pour egalité HF
@@ -207,13 +207,13 @@ func Test_RecrutementCompetencesEgales(t *testing.T) {
 	embauches, err = agt.RecrutementCompetencesEgales(2, agt.PrioHomme, cand)
 
 	if err != nil {
-		t.Errorf("Erreur : %s", err)
+		t.Errorf("%s", err)
 	}
 	if len(embauches) != 2 {
-		t.Errorf("Pas assez de candidats recrutés")
+		t.Errorf("erreur : pas assez de candidats recrutés")
 	}
 	if !agt.EstDansSliceEmploye(embauches, e3) || !agt.EstDansSliceEmploye(embauches, e1) {
-		t.Errorf("Mauvais candidats recrutés: %T", embauches)
+		t.Errorf("erreur : mauvais candidats recrutés %T", embauches)
 	}
 
 	// TEST 5: Utilisation de PrioHomme pour egalité FF
@@ -233,13 +233,13 @@ func Test_RecrutementCompetencesEgales(t *testing.T) {
 
 	embauches, err = agt.RecrutementCompetencesEgales(2, agt.PrioHomme, cand)
 	if err != nil {
-		t.Errorf("Erreur : %s", err)
+		t.Errorf("%s", err)
 	}
 	if len(embauches) != 2 {
-		t.Errorf("Pas assez de candidats recrutés")
+		t.Errorf("erreur : pas assez de candidats recrutés")
 	}
 	if !agt.EstDansSliceEmploye(embauches, e3) || (!agt.EstDansSliceEmploye(embauches, e6) && !agt.EstDansSliceEmploye(embauches, e1)) {
-		t.Errorf("Mauvais candidats recrutés: %T", embauches)
+		t.Errorf("erreur : mauvais candidats recrutés %T", embauches)
 	}
 
 	// TEST 6: Erreurs
@@ -247,15 +247,15 @@ func Test_RecrutementCompetencesEgales(t *testing.T) {
 	cand = nil
 	embauches, err = agt.RecrutementCompetencesEgales(2, agt.StratVide, cand)
 	if err == nil {
-		t.Errorf("Pas d'erreur renvoyée alors que stratégie inconnue: %s", err)
+		t.Errorf("erreur : pas d'erreur renvoyée alors que stratégie inconnue %s", err)
 	}
 	embauches, err = agt.RecrutementCompetencesEgales(-1, agt.StratVide, cand)
 	if err == nil {
-		t.Errorf("Pas d'erreur renvoyée alors que nombre négatif de personnes à recruter: %s", err)
+		t.Errorf("erreur : pas d'erreur renvoyée alors que nombre négatif de personnes à recruter %s", err)
 	}
 }
 
-func Test_RecrutementPlacesReservees(t *testing.T) {
+func TestRecrutementPlacesReservees(t *testing.T) {
 	// TEST 1: Nombre de femmes à recruter tombe juste
 	var ent agt.Entreprise
 	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 0.25, 6, &ent) //recruté
@@ -274,13 +274,13 @@ func Test_RecrutementPlacesReservees(t *testing.T) {
 
 	embauches, err := agt.RecrutementPlacesReservees(4, cand, 0.5)
 	if err != nil {
-		t.Errorf("Erreur : %s", err)
+		t.Errorf("%s", err)
 	}
 	if len(embauches) != 4 {
-		t.Errorf("Pas assez de candidats recrutés")
+		t.Errorf("erreur : pas assez de candidats recrutés")
 	}
 	if !agt.EstDansSliceEmploye(embauches, e1) || !agt.EstDansSliceEmploye(embauches, e2) || !agt.EstDansSliceEmploye(embauches, e3) || !agt.EstDansSliceEmploye(embauches, e5) {
-		t.Errorf("Mauvais candidats recrutés: %T", embauches)
+		t.Errorf("erreur : mauvais candidats recrutés %T", embauches)
 	}
 
 	// TEST 2: Nombre de femmes à recruter ne tombe pas juste
@@ -298,13 +298,13 @@ func Test_RecrutementPlacesReservees(t *testing.T) {
 
 	embauches, err = agt.RecrutementPlacesReservees(3, cand, 0.5)
 	if err != nil {
-		t.Errorf("Erreur : %s", err)
+		t.Errorf("%s", err)
 	}
 	if len(embauches) != 3 {
-		t.Errorf("Pas assez de candidats recrutés")
+		t.Errorf("erreur : pas assez de candidats recrutés")
 	}
 	if !agt.EstDansSliceEmploye(embauches, e1) || !agt.EstDansSliceEmploye(embauches, e3) || !agt.EstDansSliceEmploye(embauches, e4) {
-		t.Errorf("Mauvais candidats recrutés: %T", embauches)
+		t.Errorf("erreur : mauvais candidats recrutés %T", embauches)
 	}
 
 	// TEST 3: Il n'y a pas assez de femmes pour atteindre l'objectif donné par le pourcentage
@@ -322,13 +322,13 @@ func Test_RecrutementPlacesReservees(t *testing.T) {
 
 	embauches, err = agt.RecrutementPlacesReservees(4, cand, 0.75)
 	if err != nil {
-		t.Errorf("Erreur : %s", err)
+		t.Errorf("%s", err)
 	}
 	if len(embauches) != 4 {
-		t.Errorf("Pas assez de candidats recrutés")
+		t.Errorf("erreur : pas assez de candidats recrutés")
 	}
 	if !agt.EstDansSliceEmploye(embauches, e1) || !agt.EstDansSliceEmploye(embauches, e2) || !agt.EstDansSliceEmploye(embauches, e3) || !agt.EstDansSliceEmploye(embauches, e5) {
-		t.Errorf("Mauvais candidats recrutés: %T", embauches)
+		t.Errorf("erreur : mauvais candidats recrutés %T", embauches)
 	}
 
 	// TEST 4: Egalité de compétences
@@ -348,27 +348,27 @@ func Test_RecrutementPlacesReservees(t *testing.T) {
 
 	embauches, err = agt.RecrutementPlacesReservees(4, cand, 0.25)
 	if err != nil {
-		t.Errorf("Erreur : %s", err)
+		t.Errorf("%s", err)
 	}
 	if len(embauches) != 4 {
-		t.Errorf("Pas assez de candidats recrutés")
+		t.Errorf("erreur : pas assez de candidats recrutés")
 	}
 	if !agt.EstDansSliceEmploye(embauches, e1) || !agt.EstDansSliceEmploye(embauches, e3) || !agt.EstDansSliceEmploye(embauches, e4) || !agt.EstDansSliceEmploye(embauches, e5) {
-		t.Errorf("Mauvais candidats recrutés: %T", embauches)
+		t.Errorf("erreur : mauvais candidats recrutés %T", embauches)
 	}
 
 	// TEST 5: Gestion des erreurs
 	cand = nil
 	embauches, err = agt.RecrutementPlacesReservees(4, cand, 12)
 	if err == nil {
-		t.Errorf("Pas d'erreur renvoyée alors que pourcentagePlace > 1")
+		t.Errorf("erreur : pas d'erreur renvoyée alors que pourcentagePlace > 1")
 	}
 	embauches, err = agt.RecrutementPlacesReservees(4, cand, -0.2)
 	if err == nil {
-		t.Errorf("Pas d'erreur renvoyée alors que pourcentagePlace <0")
+		t.Errorf("erreur : pas d'erreur renvoyée alors que pourcentagePlace <0")
 	}
 	embauches, err = agt.RecrutementPlacesReservees(-4, cand, 0.2)
 	if err == nil {
-		t.Errorf("Pas d'erreur renvoyée alors que nbARecruter<0")
+		t.Errorf("erreur : pas d'erreur renvoyée alors que nbARecruter<0")
 	}
 }

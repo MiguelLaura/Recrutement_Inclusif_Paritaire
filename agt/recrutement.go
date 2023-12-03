@@ -87,7 +87,7 @@ func (r Recrutement) PourcentagePlacesApres() float64 {
 // Permet de générer n candidat.es aléatoirement pour le besoin du recrutement
 func (r Recrutement) GenererCandidats(nb_candidats int) (candidats []Employe, err error) {
 	if nb_candidats < 0 {
-		err := errors.New("Nombre de candidats à générer négatif")
+		err := errors.New("erreur : nombre de candidats à générer négatif")
 		return nil, err
 	}
 	candidats = make([]Employe, 0)
@@ -112,11 +112,11 @@ func (r Recrutement) GenererCandidats(nb_candidats int) (candidats []Employe, er
 // Les candidat.es les plus compétent.es sont recrutés. En cas d'égalité, le choix diffère en fonction de StratParite.
 func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats []Employe) (embauches []Employe, err error) {
 	if nbARecruter < 0 {
-		err := errors.New("Nombre de candidats à recruter négatif")
+		err := errors.New("erreur : nombre de candidats à recruter négatif")
 		return nil, err
 	}
 	if strat != PrioFemme && strat != PrioHomme && strat != Hasard {
-		err := errors.New("Stratégie de recrutement inconnue")
+		err := errors.New("erreur : stratégie de recrutement inconnue")
 		return nil, err
 	}
 	// Pas d'erreur si len(candidats)=0 car dans ce cas, la fonction renvoie slice vide
@@ -165,12 +165,12 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 				}
 
 			default:
-				err = errors.New("Stratégie de traitement des égalités de compétences inconnue")
+				err = errors.New("erreur : stratégie de traitement des égalités de compétences inconnue")
 				return nil, err
 			}
 
 		} else {
-			err = errors.New("EmployeMaxCompetences ne renvoie aucun candidat")
+			err = errors.New("erreur : employeMaxCompetences ne renvoie aucun candidat")
 		}
 	}
 	return embauches, nil
@@ -180,11 +180,11 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 // Parmi les candidats à recruter, un certain pourcentage est réservé aux femmes, peu importe leurs compétences
 func RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentagePlace float64) (embauches []Employe, err error) {
 	if nbARecruter < 0 {
-		err := errors.New("Nombre de candidats à recruter négatif")
+		err := errors.New("erreur : nombre de candidats à recruter négatif")
 		return nil, err
 	}
 	if pourcentagePlace < 0 || pourcentagePlace > 1 {
-		err := errors.New("pourcentagePlace doit être compris entre 0 et 1")
+		err := errors.New("erreur : pourcentagePlace doit être compris entre 0 et 1")
 		return nil, err
 	}
 	// Pas d'erreur si len(candidats)=0 car dans ce cas, la fonction renvoie slice vide
@@ -221,7 +221,7 @@ func RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentag
 // Réalise un recrutement à partir des choix renseignés par l'utilisation lors de l'initialisation
 func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) {
 	if nbARecruter < 0 {
-		err := errors.New("Nombre de candidats à recruter négatif")
+		err := errors.New("erreur : nombre de candidats à recruter négatif")
 		return nil, err
 	}
 
@@ -240,25 +240,25 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 
 		// Tests cohérence
 		if r.stratApres != StratVide {
-			err := errors.New("Erreur: une stratégie de parité après atteinte d'objectif a été définie mais pas d'objectif")
+			err := errors.New("erreur: une stratégie de parité après atteinte d'objectif a été définie mais pas d'objectif")
 			return nil, err
 		} else if r.typeRecrutementApres != Vide {
-			err := errors.New("Erreur: un type de recrutement après atteinte d'objectif a été défini mais pas d'objectif")
+			err := errors.New("erreur: un type de recrutement après atteinte d'objectif a été défini mais pas d'objectif")
 			return nil, err
 		} else if r.pourcentagePlacesApres != -1 {
-			err := errors.New("Erreur: un pourcentage de parité à appliquer au recrutement après atteinte d'objectif a été défini mais pas d'objectif")
+			err := errors.New("erreur: un pourcentage de parité à appliquer au recrutement après atteinte d'objectif a été défini mais pas d'objectif")
 			return nil, err
 		} else if r.typeRecrutementAvant == Competences && r.stratAvant == StratVide {
-			err := errors.New("Erreur: typeRecrutement=Compétences mais aucune stratégie définie en cas d'égalité des compétences")
+			err := errors.New("erreur: typeRecrutement=Compétences mais aucune stratégie définie en cas d'égalité des compétences")
 			return nil, err
 		} else if r.typeRecrutementAvant == PlacesReservees && r.pourcentagePlacesAvant == -1 {
-			err := errors.New("Erreur: typeRecrutement=PlacesReservees mais pas de pourcentage de places renseigné")
+			err := errors.New("erreur: typeRecrutement=PlacesReservees mais pas de pourcentage de places renseigné")
 			return nil, err
 		} else if r.typeRecrutementAvant == Competences && r.pourcentagePlacesAvant != -1 {
-			err := errors.New("Erreur: typeRecrutement=Compétences mais pourcentage de places à réserver renseigné")
+			err := errors.New("erreur: typeRecrutement=Compétences mais pourcentage de places à réserver renseigné")
 			return nil, err
 		} else if r.typeRecrutementAvant == PlacesReservees && r.stratAvant != StratVide {
-			err := errors.New("Erreur: typeRecrutement=PlacesReservées mais stratégie en cas d'égalité de compétences renseignée")
+			err := errors.New("erreur: typeRecrutement=PlacesReservées mais stratégie en cas d'égalité de compétences renseignée")
 			return nil, err
 		}
 
@@ -271,7 +271,7 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 			return embauches, nil
 		} else if r.typeRecrutementAvant == PlacesReservees {
 			if r.pourcentagePlacesAvant < 0 || r.pourcentagePlacesAvant > 1 {
-				err := errors.New("pourcentagePlaces doit être entre 0 et 1")
+				err := errors.New("erreur : pourcentagePlaces doit être entre 0 et 1")
 				return nil, err
 			}
 			embauches, err := RecrutementPlacesReservees(nbARecruter, candidats, r.pourcentagePlacesAvant)
@@ -280,7 +280,7 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 			}
 			return embauches, nil
 		} else {
-			err := errors.New("Erreur: typeRecrutement inconnu")
+			err := errors.New("erreur : typeRecrutement inconnu")
 			return nil, err
 		}
 
@@ -289,22 +289,22 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 
 		// Tests cohérences
 		if r.objectif < 0 || r.objectif > 1 {
-			err := errors.New("objectif doit être entre 0 et 1")
+			err := errors.New("erreur : objectif doit être entre 0 et 1")
 			return nil, err
 		} else if r.typeRecrutementAvant == Vide || r.typeRecrutementApres == Vide {
-			err := errors.New("le type de recrutement avant et après objectif doit être défini")
+			err := errors.New("erreur : le type de recrutement avant et après objectif doit être défini")
 			return nil, err
 		} else if (r.typeRecrutementAvant == Competences && r.stratAvant == StratVide) || (r.typeRecrutementApres == Competences && r.stratApres == StratVide) {
-			err := errors.New("Erreur: typeRecrutement=Compétences mais aucune stratégie définie en cas d'égalité des compétences")
+			err := errors.New("erreur : typeRecrutement=Compétences mais aucune stratégie définie en cas d'égalité des compétences")
 			return nil, err
 		} else if (r.typeRecrutementAvant == PlacesReservees && r.pourcentagePlacesAvant == -1) || (r.typeRecrutementApres == PlacesReservees && r.pourcentagePlacesApres == -1) {
-			err := errors.New("Erreur: typeRecrutement=PlacesReservees mais pas de pourcentage de places renseigné")
+			err := errors.New("erreur : typeRecrutement=PlacesReservees mais pas de pourcentage de places renseigné")
 			return nil, err
 		} else if (r.typeRecrutementAvant == Competences && r.pourcentagePlacesAvant != -1) || (r.typeRecrutementApres == Competences && r.pourcentagePlacesApres != -1) {
-			err := errors.New("Erreur: typeRecrutement=Compétences mais pourcentage de places à réserver renseigné")
+			err := errors.New("erreur : typeRecrutement=Compétences mais pourcentage de places à réserver renseigné")
 			return nil, err
 		} else if (r.typeRecrutementAvant == PlacesReservees && r.stratAvant != StratVide) || (r.typeRecrutementApres == PlacesReservees && r.stratApres != StratVide) {
-			err := errors.New("Erreur: typeRecrutement=PlacesReservées mais stratégie en cas d'égalité de compétences renseignée")
+			err := errors.New("erreur : typeRecrutement=PlacesReservées mais stratégie en cas d'égalité de compétences renseignée")
 			return nil, err
 		}
 
@@ -319,7 +319,7 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 				return embauches, nil
 			} else if r.typeRecrutementAvant == PlacesReservees {
 				if r.pourcentagePlacesAvant < 0 || r.pourcentagePlacesAvant > 1 {
-					err := errors.New("pourcentagePlaces doit être entre 0 et 1")
+					err := errors.New("erreur : pourcentagePlaces doit être entre 0 et 1")
 					return nil, err
 				}
 				embauches, err := RecrutementPlacesReservees(nbARecruter, candidats, r.pourcentagePlacesAvant)
@@ -328,7 +328,7 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 				}
 				return embauches, nil
 			} else {
-				err := errors.New("Erreur: typeRecrutement inconnu")
+				err := errors.New("erreur : typeRecrutement inconnu")
 				return nil, err
 			}
 		} else {
@@ -341,7 +341,7 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 				return embauches, nil
 			} else if r.typeRecrutementApres == PlacesReservees {
 				if r.pourcentagePlacesApres < 0 || r.pourcentagePlacesApres > 1 {
-					err := errors.New("pourcentagePlaces doit être entre 0 et 1")
+					err := errors.New("erreur : pourcentagePlaces doit être entre 0 et 1")
 					return nil, err
 				}
 				embauches, err := RecrutementPlacesReservees(nbARecruter, candidats, r.pourcentagePlacesApres)
@@ -350,7 +350,7 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 				}
 				return embauches, nil
 			} else {
-				err := errors.New("Erreur: typeRecrutement inconnu")
+				err := errors.New("erreur : typeRecrutement inconnu")
 				return nil, err
 			}
 		}
