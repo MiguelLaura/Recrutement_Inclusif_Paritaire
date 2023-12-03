@@ -1,6 +1,11 @@
 package agt
 
-import "math"
+import (
+	"math"
+	"math/rand"
+
+	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
+)
 
 type Entreprise struct {
 	employes    []Employe
@@ -18,86 +23,101 @@ type Entreprise struct {
 
 // La fonction NewEntreprise doit créer l'entreprise et générer les employés de façon à respecter le quota de parité initial
 func NewEntreprise(nbEmployesInit int, pariteInit float32) *Entreprise {
-	e := new(Entreprise)
+	ent := new(Entreprise)
 
 	var nbFemmes int = int(math.Round(float64(nbEmployesInit) * float64(pariteInit)))
 	var nbHommes int = nbEmployesInit - nbFemmes
 	var employesInit []Employe
 
 	for i := 0; i < nbFemmes; i++ {
-		employesInit = append(employesInit, *GenererEmployeInit(&e, Femme))
+		employesInit = append(employesInit, *GenererEmployeInit(&ent, Femme))
 	}
 	for i := 0; i < nbHommes; i++ {
-		employesInit = append(employesInit, *GenererEmployeInit(&e, Homme))
+		employesInit = append(employesInit, *GenererEmployeInit(&ent, Homme))
 	}
-	e.employes = employesInit
-	e.departs = make([]Employe, 0)
-	e.plaintes = make([][]Employe, 0)
-	e.ca = 0.0
-	return e
+	ent.employes = employesInit
+	ent.departs = make([]Employe, 0)
+	ent.plaintes = make([][]Employe, 0)
+	ent.ca = 0.0
+	return ent
 }
 
 // ---------------------
 //        Getters
 // ---------------------
 
-func (e Entreprise) Employes() []Employe {
-	return e.employes
+func (ent Entreprise) Employes() []Employe {
+	return ent.employes
 }
 
-func (e Entreprise) Departs() []Employe {
-	return e.departs
+func (ent Entreprise) Departs() []Employe {
+	return ent.departs
 }
 
-func (e Entreprise) Plaintes() [][]Employe {
-	return e.plaintes
+func (ent Entreprise) Plaintes() [][]Employe {
+	return ent.plaintes
 }
 
-func (e Entreprise) Recrutement() Recrutement {
-	return e.recrutement
+func (ent Entreprise) Recrutement() Recrutement {
+	return ent.recrutement
 }
 
-func (e Entreprise) Ca() float64 {
-	return e.ca
+func (ent Entreprise) Ca() float64 {
+	return ent.ca
 }
 
 // ---------------------
 //     En cours d'année (appelées par les employés)
 // ---------------------
 
-func (ent Entreprise) RecevoirDemission(emp *Employe) {
+func (ent *Entreprise) RecevoirDemission(emp *Employe) {
 	ent.departs = append(ent.departs, *emp)
 }
 
-func (ent Entreprise) RecevoirDepression(emp *Employe) {
+func (ent *Entreprise) RecevoirDepression(emp *Employe) {
 	ent.depression += 1
 	ent.departs = append(ent.departs, *emp)
 }
 
-func (ent Entreprise) RecevoirRetraite(emp *Employe) {
+func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	ent.departs = append(ent.departs, *emp)
 }
 
-func (e Entreprise) RecevoirPlainte(plaignant *Employe, accuse *Employe) {
-	e.plaintes = append(e.plaintes, []Employe{*plaignant, *accuse})
+func (ent *Entreprise) RecevoirPlainte(plaignant *Employe, accuse *Employe) {
+	ent.plaintes = append(ent.plaintes, []Employe{*plaignant, *accuse})
 }
 
 // METTRE A JOUR LA FORMULE
-func (e Entreprise) MettreAJourCA(santeMentale int, competence int) {
-	e.ca += float64(santeMentale) * float64(competence)
+func (ent *Entreprise) MettreAJourCA(santeMentale int, competence int) {
+	ent.ca += float64(santeMentale) * float64(competence)
 }
 
-func (e Entreprise) NotifierAction() {
-	e.nbAction += 1
+func (ent *Entreprise) NotifierAction() {
+	ent.nbAction += 1
 }
 
 // ---------------------
 //     Fin d'année
 // ---------------------
 
-//     + GestionRecrutements()
+func (ent *Entreprise) GestionRecrutements() (err error) {
+	nbARecruter := float64(ent.nbEmployes()) * constantes.POURCENTAGE_RECRUTEMENT
+	embauches, err := ent.recrutement.Recruter(int(math.Round(nbARecruter)))
+	if err != nil {
+		return err
+	}
+
+	ent.employes = append(ent.employes, embauches...)
+	return nil
+}
+
+func (ent *Entreprise) GestionDeparts() {
+	for _, emp := range ent.employes {
+		ent.employes = enleverEmploye(ent.employes, emp)
+	}
+}
+
 //     + GestionPlaintes()
-//     + GestionDeparts()
 //     + CalculerBenefice()
 //     + ObtenirIndicateursSante() : map[string]float
 
@@ -112,8 +132,8 @@ func (e Entreprise) NotifierAction() {
 //     Autres
 // ---------------------
 
-func (e Entreprise) AjouterRecrutement(recrut Recrutement) {
-	e.recrutement = recrut
+func (ent *Entreprise) ajouterRecrutement(recrut Recrutement) {
+	ent.recrutement = recrut
 }
 
 func (ent Entreprise) nbEmployes() int {
@@ -125,8 +145,11 @@ func (ent Entreprise) PourcentageFemmes() float64 {
 	return float64(len(femmes)) / float64(len(ent.employes))
 }
 
-//     + NombreEmployes() : int -> DEJA FAIT PAR SOLENN SUR UNE AUTRE BRANCHE
-//     + PourcentageFemmes() : float -> DEJA FAIT PAR SOLENN SUR UNE AUTRE BRANCHE
-//     + SupprimerEmploye(employe)
-//     + EnvoyerEmploye() : *Employe
-//     + AjusterImpactFemmes()
+func (ent Entreprise) EnvoyerEmploye() *Employe {
+	idx := rand.Intn(len(ent.employes))
+	emp := ent.employes[idx]
+	return &emp
+}
+
+// func (ent Entreprise) ajusterImpactFemmes() {
+// }

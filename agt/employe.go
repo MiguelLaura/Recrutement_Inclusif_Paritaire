@@ -5,18 +5,11 @@ import (
 	"math/rand"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
-	"gonum.org/v1/gonum/stat/distuv"
 )
 
 type EmployeID string
 
 var agtCnt int = 0
-
-// On veut que les compétences tournent autour de 5 sans trop s’éparpiller autour
-var loiNormale = distuv.Normal{
-	Mu:    5,
-	Sigma: 3,
-}
 
 type Employe struct {
 	id           EmployeID

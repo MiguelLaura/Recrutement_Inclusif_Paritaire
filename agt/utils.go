@@ -44,7 +44,7 @@ func obtenirIndexEmploye(emp []Employe, e Employe) int {
 }
 
 // Renvoie la liste emp sans l'employé e
-func enleverEmployer(emp []Employe, e Employe) []Employe {
+func enleverEmploye(emp []Employe, e Employe) []Employe {
 	i := obtenirIndexEmploye(emp, e)
 	emp[i] = emp[len(emp)-1]
 	return emp[:len(emp)-1]
@@ -141,7 +141,7 @@ func FiltreFemme(employes []Employe) (f []Employe) {
 	idx, e := TrouverEmploye(emp, EstFemme)
 	for idx != -1 {
 		f = append(f, emp[idx])
-		emp = enleverEmployer(emp, e)
+		emp = enleverEmploye(emp, e)
 		idx, e = TrouverEmploye(emp, EstFemme)
 	}
 	return f
@@ -156,7 +156,7 @@ func FiltreHomme(employes []Employe) (f []Employe) {
 	idx, e := TrouverEmploye(emp, EstHomme)
 	for idx != -1 {
 		f = append(f, emp[idx])
-		emp = enleverEmployer(emp, e)
+		emp = enleverEmploye(emp, e)
 		idx, e = TrouverEmploye(emp, EstHomme)
 	}
 	return f
