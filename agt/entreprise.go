@@ -8,13 +8,15 @@ import (
 )
 
 type Entreprise struct {
-	employes    []Employe
-	departs     []Employe
-	plaintes    [][]Employe
-	depression  int
-	recrutement Recrutement
-	ca          float64
-	nbAction    int
+	employes      []Employe
+	departs       []Employe
+	plaintes      [][]Employe
+	nbDepressions int
+	nbRenvois     int
+	recrutement   Recrutement
+	ca            float64
+	nbActions     int
+	nbAgresseurs  int
 }
 
 // ---------------------
@@ -30,15 +32,26 @@ func NewEntreprise(nbEmployesInit int, pariteInit float32) *Entreprise {
 	var employesInit []Employe
 
 	for i := 0; i < nbFemmes; i++ {
-		employesInit = append(employesInit, *GenererEmployeInit(&ent, Femme))
+		emp := GenererEmployeInit(&ent, Femme)
+		employesInit = append(employesInit, *emp)
+		if emp.agresseur {
+			ent.nbAgresseurs += 1
+		}
 	}
 	for i := 0; i < nbHommes; i++ {
-		employesInit = append(employesInit, *GenererEmployeInit(&ent, Homme))
+		emp := GenererEmployeInit(&ent, Homme)
+		employesInit = append(employesInit, *emp)
+		if emp.agresseur {
+			ent.nbAgresseurs += 1
+		}
 	}
 	ent.employes = employesInit
 	ent.departs = make([]Employe, 0)
 	ent.plaintes = make([][]Employe, 0)
+	ent.nbDepressions = 0
+	ent.nbRenvois = 0
 	ent.ca = 0.0
+	ent.nbActions = 0
 	return ent
 }
 
@@ -58,12 +71,28 @@ func (ent Entreprise) Plaintes() [][]Employe {
 	return ent.plaintes
 }
 
+func (ent Entreprise) NbDepressions() int {
+	return ent.nbDepressions
+}
+
+func (ent Entreprise) NbRenvois() int {
+	return ent.nbRenvois
+}
+
 func (ent Entreprise) Recrutement() Recrutement {
 	return ent.recrutement
 }
 
 func (ent Entreprise) Ca() float64 {
 	return ent.ca
+}
+
+func (ent Entreprise) NbActions() int {
+	return ent.nbActions
+}
+
+func (ent Entreprise) NbAgresseurs() int {
+	return ent.nbAgresseurs
 }
 
 // ---------------------
@@ -75,7 +104,7 @@ func (ent *Entreprise) RecevoirDemission(emp *Employe) {
 }
 
 func (ent *Entreprise) RecevoirDepression(emp *Employe) {
-	ent.depression += 1
+	ent.nbDepressions += 1
 	ent.departs = append(ent.departs, *emp)
 }
 
@@ -87,52 +116,103 @@ func (ent *Entreprise) RecevoirPlainte(plaignant *Employe, accuse *Employe) {
 	ent.plaintes = append(ent.plaintes, []Employe{*plaignant, *accuse})
 }
 
-// METTRE A JOUR LA FORMULE
+// Mettre à jour la formule
 func (ent *Entreprise) MettreAJourCA(santeMentale int, competence int) {
 	ent.ca += float64(santeMentale) * float64(competence)
 }
 
 func (ent *Entreprise) NotifierAction() {
-	ent.nbAction += 1
+	ent.nbActions += 1
 }
 
 // ---------------------
 //     Fin d'année
 // ---------------------
 
-func (ent *Entreprise) GestionRecrutements() (err error) {
+// // Renvoyer selon un certain pourcentage
+// func (ent Entreprise) gestionPlaintes() {
+
+// }
+
+// func (ent Entreprise) ajusterImpactFemmes() {
+// }
+
+// func (ent *Entreprise) calculerBenefice() {
+// }
+
+// func (ent *Entreprise) obtenirIndicateursSante() map[string]float64 {
+// }
+
+func (ent *Entreprise) gestionDeparts() {
+	for _, emp := range ent.employes {
+		ent.employes = enleverEmploye(ent.employes, emp)
+		if emp.agresseur {
+			ent.nbAgresseurs -= 1
+		}
+	}
+}
+
+func (ent *Entreprise) gestionRecrutements() (err error) {
 	nbARecruter := float64(ent.nbEmployes()) * constantes.POURCENTAGE_RECRUTEMENT
 	embauches, err := ent.recrutement.Recruter(int(math.Round(nbARecruter)))
 	if err != nil {
 		return err
 	}
 
-	ent.employes = append(ent.employes, embauches...)
+	for _, emp := range embauches {
+		ent.employes = append(ent.employes, emp)
+		if emp.agresseur {
+			ent.nbAgresseurs += 1
+		}
+	}
 	return nil
 }
 
-func (ent *Entreprise) GestionDeparts() {
+func (ent Entreprise) bonneAnnee() {
 	for _, emp := range ent.employes {
-		ent.employes = enleverEmploye(ent.employes, emp)
+		EnvoyerMessage(&emp, LIBRE, nil)
 	}
 }
-
-//     + GestionPlaintes()
-//     + CalculerBenefice()
-//     + ObtenirIndicateursSante() : map[string]float
 
 // ---------------------
 //  Logique de simulation
 // ---------------------
 
-//     + Start() -> start les employés
-// 	   + FinirCycle()
+func (ent *Entreprise) Start() {
+	for _, emp := range ent.employes {
+		go emp.Start()
+	}
+
+	// go ent.recrutement.Start()
+
+	for {
+		for ent.nbActions != (ent.nbEmployes() + ent.nbAgresseurs) {
+		}
+		ent.FinirCycle()
+	}
+}
+
+func (ent *Entreprise) FinirCycle() {
+	// // A faire avant GestionDeparts pour bien renvoyer les gens cette année
+	// ent.gestionPlaintes()
+	// ent.ajusterImpactFemmes()
+	// ent.calculerBenefice()
+	// ent.obtenirIndicateursSante()
+
+	// Si on le fait en premier, on ne comptera pas ces employés dans les indicateurs ?
+	ent.gestionDeparts()
+	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
+	ent.gestionRecrutements()
+
+	// Envoyer le message aux employés pour qu'ils agissent
+	ent.bonneAnnee()
+}
 
 // ---------------------
 //     Autres
 // ---------------------
 
-func (ent *Entreprise) ajouterRecrutement(recrut Recrutement) {
+func (ent *Entreprise) AjouterRecrutement(recrut Recrutement) {
 	ent.recrutement = recrut
 }
 
@@ -150,6 +230,3 @@ func (ent Entreprise) EnvoyerEmploye() *Employe {
 	emp := ent.employes[idx]
 	return &emp
 }
-
-// func (ent Entreprise) ajusterImpactFemmes() {
-// }
