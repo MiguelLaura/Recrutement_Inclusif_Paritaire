@@ -85,13 +85,13 @@ func (r Recrutement) PourcentagePlacesApres() float64 {
 // ---------------------
 
 // Permet de générer n candidat.es aléatoirement pour le besoin du recrutement
-func (r Recrutement) GenererCandidats(nb_candidats int) (candidats []Employe, err error) {
-	if nb_candidats < 0 {
+func (r Recrutement) GenererCandidats(nbCandidats int) (candidats []Employe, err error) {
+	if nbCandidats < 0 {
 		err := errors.New("erreur : nombre de candidats à générer négatif")
 		return nil, err
 	}
 	candidats = make([]Employe, 0)
-	for i := 0; i < nb_candidats; i++ {
+	for i := 0; i < nbCandidats; i++ {
 		var genre Genre = genGenre()
 		var anciennete int = 0 // anciennete = 0 car candidat
 		var santeMentale int = 100
@@ -138,11 +138,11 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 				candidats = enleverEmployer(candidats, maxCandidats[idx])
 			case PrioFemme:
 				// Une femme au hasard parmi les candidat.es est recrutée
-				l_femmes := FiltreFemme(maxCandidats) // permet d'isoler les femmes parmi les candidat.es
-				if len(l_femmes) > 0 {
-					idx = rand.Intn(len(l_femmes))
-					embauches = append(embauches, l_femmes[idx])
-					candidats = enleverEmployer(candidats, l_femmes[idx])
+				lFemmes := FiltreFemme(maxCandidats) // permet d'isoler les femmes parmi les candidat.es
+				if len(lFemmes) > 0 {
+					idx = rand.Intn(len(lFemmes))
+					embauches = append(embauches, lFemmes[idx])
+					candidats = enleverEmployer(candidats, lFemmes[idx])
 				} else {
 					// S'il n'y a pas de femmes parmi les candidats les plus compétents, on choisit au hasard
 					idx = rand.Intn(len(maxCandidats))
@@ -152,11 +152,11 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 
 			case PrioHomme:
 				// Un homme au hasard parmi les candidat.es est recruté
-				l_hommes := FiltreHomme(maxCandidats) // permet d'isoler les hommes parmi les candidat.es
-				if len(l_hommes) > 0 {
-					idx = rand.Intn(len(l_hommes))
-					embauches = append(embauches, l_hommes[idx])
-					candidats = enleverEmployer(candidats, l_hommes[idx])
+				lHommes := FiltreHomme(maxCandidats) // permet d'isoler les hommes parmi les candidat.es
+				if len(lHommes) > 0 {
+					idx = rand.Intn(len(lHommes))
+					embauches = append(embauches, lHommes[idx])
+					candidats = enleverEmployer(candidats, lHommes[idx])
 				} else {
 					// S'il n'y a pas d'hommes parmi les candidats les plus compétents, on choisit au hasard
 					idx = rand.Intn(len(maxCandidats))
