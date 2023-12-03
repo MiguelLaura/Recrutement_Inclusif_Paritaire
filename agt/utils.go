@@ -44,7 +44,7 @@ func obtenirIndexEmploye(emp []Employe, e Employe) int {
 }
 
 // Renvoie la liste emp sans l'employé e
-func enleverEmployer(emp []Employe, e Employe) []Employe {
+func enleverEmploye(emp []Employe, e Employe) []Employe {
 	i := obtenirIndexEmploye(emp, e)
 	emp[i] = emp[len(emp)-1]
 	return emp[:len(emp)-1]
@@ -96,6 +96,7 @@ func genComportement() Comportement {
 
 func genCompetence() int {
 	// Loi normale définie pour modéliser les compétences
+	// On veut que les compétences tournent autour de 5 sans trop s’éparpiller autour
 	var loiNormale = distuv.Normal{
 		Mu:    5,
 		Sigma: 3,
@@ -141,7 +142,7 @@ func FiltreFemme(employes []Employe) (f []Employe) {
 	idx, e := Trouver_Employe(emp, EstFemme)
 	for idx != -1 {
 		f = append(f, emp[idx])
-		emp = enleverEmployer(emp, e)
+		emp = enleverEmploye(emp, e)
 		idx, e = Trouver_Employe(emp, EstFemme)
 	}
 	return f
@@ -156,7 +157,7 @@ func FiltreHomme(employes []Employe) (f []Employe) {
 	idx, e := Trouver_Employe(emp, EstHomme)
 	for idx != -1 {
 		f = append(f, emp[idx])
-		emp = enleverEmployer(emp, e)
+		emp = enleverEmploye(emp, e)
 		idx, e = Trouver_Employe(emp, EstHomme)
 	}
 	return f

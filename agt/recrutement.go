@@ -31,12 +31,12 @@ const (
 
 type Recrutement struct {
 	entreprise             *Entreprise
-	objectif               float64     // -1 si non renseigné, entre 0 et 100 sinon
+	objectif               float64     // -1 si non renseigné, entre 0 et 1 sinon
 	stratAvant             StratParite // stratVide si non renseigné
 	stratApres             StratParite
 	typeRecrutementAvant   TypeRecrutement // Vide si non renseigné
 	typeRecrutementApres   TypeRecrutement
-	pourcentagePlacesAvant float64 // -1 si non renseigné, entre 0 et 100 sinon
+	pourcentagePlacesAvant float64 // -1 si non renseigné, entre 0 et 1 sinon
 	pourcentagePlacesApres float64
 }
 
@@ -126,7 +126,7 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 		maxCandidats := EmployeMaxCompetences(candidats)
 		if len(maxCandidats) == 1 {
 			embauches = append(embauches, maxCandidats[0])
-			candidats = enleverEmployer(candidats, maxCandidats[0])
+			candidats = enleverEmploye(candidats, maxCandidats[0])
 		} else if len(maxCandidats) > 1 {
 			// Cas d'une égalité de compétence entre les candidat.es
 			var idx int
@@ -135,19 +135,19 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 				// Un.e candidat.e au hasard parmi les plus compétent.es est recruté
 				idx = rand.Intn(len(maxCandidats))
 				embauches = append(embauches, maxCandidats[idx])
-				candidats = enleverEmployer(candidats, maxCandidats[idx])
+				candidats = enleverEmploye(candidats, maxCandidats[idx])
 			case PrioFemme:
 				// Une femme au hasard parmi les candidat.es est recrutée
 				lFemmes := FiltreFemme(maxCandidats) // permet d'isoler les femmes parmi les candidat.es
 				if len(lFemmes) > 0 {
 					idx = rand.Intn(len(lFemmes))
 					embauches = append(embauches, lFemmes[idx])
-					candidats = enleverEmployer(candidats, lFemmes[idx])
+					candidats = enleverEmploye(candidats, lFemmes[idx])
 				} else {
 					// S'il n'y a pas de femmes parmi les candidats les plus compétents, on choisit au hasard
 					idx = rand.Intn(len(maxCandidats))
 					embauches = append(embauches, maxCandidats[idx])
-					candidats = enleverEmployer(candidats, maxCandidats[idx])
+					candidats = enleverEmploye(candidats, maxCandidats[idx])
 				}
 
 			case PrioHomme:
@@ -156,12 +156,12 @@ func RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats 
 				if len(lHommes) > 0 {
 					idx = rand.Intn(len(lHommes))
 					embauches = append(embauches, lHommes[idx])
-					candidats = enleverEmployer(candidats, lHommes[idx])
+					candidats = enleverEmploye(candidats, lHommes[idx])
 				} else {
 					// S'il n'y a pas d'hommes parmi les candidats les plus compétents, on choisit au hasard
 					idx = rand.Intn(len(maxCandidats))
 					embauches = append(embauches, maxCandidats[idx])
-					candidats = enleverEmployer(candidats, maxCandidats[idx])
+					candidats = enleverEmploye(candidats, maxCandidats[idx])
 				}
 
 			default:
@@ -200,8 +200,8 @@ func RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentag
 		}
 		maxCandidates := EmployeMaxCompetences(candidatsFemmes)
 		embauches = append(embauches, maxCandidates[0])
-		candidatsFemmes = enleverEmployer(candidatsFemmes, maxCandidates[0])
-		candidats = enleverEmployer(candidats, maxCandidates[0])
+		candidatsFemmes = enleverEmploye(candidatsFemmes, maxCandidates[0])
+		candidats = enleverEmploye(candidats, maxCandidates[0])
 	}
 	// S'il n'y a pas assez de femmes dans les candidats pour toutes les places réservées, on recrute des hommes
 
@@ -211,7 +211,7 @@ func RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentag
 		maxCandidats := EmployeMaxCompetences(candidats)
 		idx := rand.Intn(len(maxCandidats))
 		embauches = append(embauches, maxCandidats[idx])
-		candidats = enleverEmployer(candidats, maxCandidats[idx])
+		candidats = enleverEmploye(candidats, maxCandidats[idx])
 	}
 
 	return embauches, nil
