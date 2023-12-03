@@ -92,7 +92,7 @@ func (e Entreprise) Ca() float64 {
 //  Logique de simulation
 // ---------------------
 
-//     + Start()
+//     + Start() -> start les employés
 // 	   + FinirCycle()
 
 // ---------------------
