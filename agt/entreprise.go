@@ -25,10 +25,10 @@ func NewEntreprise(nbEmployesInit int, pariteInit float32) *Entreprise {
 	var employesInit []Employe
 
 	for i := 0; i < nbFemmes; i++ {
-		employesInit = append(employesInit, *GenererEmployeInit(e, Femme))
+		employesInit = append(employesInit, *GenererEmployeInit(&e, Femme))
 	}
 	for i := 0; i < nbHommes; i++ {
-		employesInit = append(employesInit, *GenererEmployeInit(e, Homme))
+		employesInit = append(employesInit, *GenererEmployeInit(&e, Homme))
 	}
 	e.employes = employesInit
 	e.departs = make([]Employe, 0)
@@ -62,21 +62,34 @@ func (e Entreprise) Ca() float64 {
 }
 
 // ---------------------
-//        Setter
+//     En cours d'année (appelées par les employés)
 // ---------------------
 
-//     + AjouterRecrutement(recrut Recrutement)
+func (ent Entreprise) RecevoirDemission(emp *Employe) {
+	ent.departs = append(ent.departs, *emp)
+}
 
-// ---------------------
-//     En cours d'année (appelés par les employés)
-// ---------------------
+func (ent Entreprise) RecevoirDepression(emp *Employe) {
+	ent.depression += 1
+	ent.departs = append(ent.departs, *emp)
+}
 
-//     + RecevoirDemission(Employe)
-//	   + RecevoirDepression(Employe)
-// 	   + RecevoirRetraite(Employe)
-//     + RecevoirPlainte(plaignant Employe, accuse Employe)
-//     + MettreAJourCA(santeMentale : int, competence : int)
-// 	   + NotifierAction()
+func (ent Entreprise) RecevoirRetraite(emp *Employe) {
+	ent.departs = append(ent.departs, *emp)
+}
+
+func (e Entreprise) RecevoirPlainte(plaignant *Employe, accuse *Employe) {
+	e.plaintes = append(e.plaintes, []Employe{*plaignant, *accuse})
+}
+
+// METTRE A JOUR LA FORMULE
+func (e Entreprise) MettreAJourCA(santeMentale int, competence int) {
+	e.ca += float64(santeMentale) * float64(competence)
+}
+
+func (e Entreprise) NotifierAction() {
+	e.nbAction += 1
+}
 
 // ---------------------
 //     Fin d'année
@@ -99,8 +112,21 @@ func (e Entreprise) Ca() float64 {
 //     Autres
 // ---------------------
 
-//     + NombreEmployes() : int
-//     + PourcentageFemmes() : float
+func (e Entreprise) AjouterRecrutement(recrut Recrutement) {
+	e.recrutement = recrut
+}
+
+func (ent Entreprise) nbEmployes() int {
+	return len(ent.employes)
+}
+
+func (ent Entreprise) PourcentageFemmes() float64 {
+	femmes := FiltreFemme(ent.employes)
+	return float64(len(femmes)) / float64(len(ent.employes))
+}
+
+//     + NombreEmployes() : int -> DEJA FAIT PAR SOLENN SUR UNE AUTRE BRANCHE
+//     + PourcentageFemmes() : float -> DEJA FAIT PAR SOLENN SUR UNE AUTRE BRANCHE
 //     + SupprimerEmploye(employe)
 //     + EnvoyerEmploye() : *Employe
 //     + AjusterImpactFemmes()
