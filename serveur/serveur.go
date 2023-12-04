@@ -30,10 +30,10 @@ func NewRestServerAgent(addr string) *RestServerAgent {
 }
 
 // retourne un bool si la méthode est bien celle demandée (POST, GET, ..;)
-func (rsa *RestServerAgent) checkMethod(method string, w http.ResponseWriter, r *http.Request) bool {
-	if r.Method != method {
+func (rsa *RestServerAgent) verifierMethode(methode string, w http.ResponseWriter, r *http.Request) bool {
+	if r.Method != methode {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		fmt.Fprintf(w, "method %q not allowed", r.Method)
+		fmt.Fprintf(w, "méthode %q pas autorisée", r.Method)
 		return false
 	}
 	return true
@@ -44,7 +44,7 @@ func (rsa *RestServerAgent) checkMethod(method string, w http.ResponseWriter, r 
 // -----------------------------
 
 // retourne la structure en go depuis la requête JSON
-func (*RestServerAgent) decodeRequestNewSimulation(r *http.Request) (req requestNewSimulation, err error) {
+func (*RestServerAgent) decoderRequeteNouvelleSimulation(r *http.Request) (req requeteNouvelleSimulation, err error) {
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(r.Body)
 	err = json.Unmarshal(buf.Bytes(), &req)
@@ -52,9 +52,9 @@ func (*RestServerAgent) decodeRequestNewSimulation(r *http.Request) (req request
 }
 
 // teste la requête de création, créé la simulation et la lance
-func (rsa *RestServerAgent) createNewSimulation(w http.ResponseWriter, r *http.Request) {
+func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *http.Request) {
 	//set-up header
-	setupCORS(&w, r)
+	ajouterCORS(&w, r)
 	if (*r).Method == "OPTIONS" {
 		return
 	}
@@ -63,64 +63,64 @@ func (rsa *RestServerAgent) createNewSimulation(w http.ResponseWriter, r *http.R
 	defer rsa.Unlock()
 
 	// vérification de la méthode de la requête
-	if !rsa.checkMethod("POST", w, r) {
+	if !rsa.verifierMethode("POST", w, r) {
 		return
 	}
 
 	// décodage de la requête
-	req, err := rsa.decodeRequestNewSimulation(r)
+	req, err := rsa.decoderRequeteNouvelleSimulation(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, err.Error())
 		fmt.Println(err.Error())
-		fmt.Println("erreur décodage requête /new_simulation")
+		fmt.Println("erreur : décodage requête /new_simulation")
 		return
 	}
 
 	// traitement de la requête
-	var resp responseNewSimulation
+	var resp reponseNouvelleSimulation
 
 	//TO DO : test sur l'id - simulation déjà créée ??
 
 	if req.ID == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		msg := "il manque un identifiant"
+		msg := "erreur : il manque un identifiant"
 		w.Write([]byte(msg))
 		return
 	} else if req.NbEmployes <= 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		msg := "le nombre d'employés doit être > 0"
+		msg := "erreur : le nombre d'employés doit être > 0"
 		w.Write([]byte(msg))
 		return
 	} else if req.PourcentageFemmes < 0.0 || req.PourcentageFemmes > 1.0 {
 		w.WriteHeader(http.StatusBadRequest)
-		msg := "le pourcentage de femmes doit être entre 0 et 1"
+		msg := "erreur : le pourcentage de femmes doit être entre 0 et 1"
 		w.Write([]byte(msg))
 		return
 	} else if req.Objectif < 0.0 || req.Objectif > 1.0 {
 		w.WriteHeader(http.StatusBadRequest)
-		msg := "l'objectif doit être entre 0 et 1"
+		msg := "erreur : l'objectif doit être entre 0 et 1"
 		w.Write([]byte(msg))
 		return
 	} else if req.PourcentagePlacesAvant < 0.0 || req.PourcentagePlacesAvant > 1.0 {
 		w.WriteHeader(http.StatusBadRequest)
-		msg := "le pourcentage de places avant doit être entre 0 et 1"
+		msg := "erreur : le pourcentage de places avant doit être entre 0 et 1"
 		w.Write([]byte(msg))
 		return
 	} else if req.PourcentagePlacesApres < 0.0 || req.PourcentagePlacesApres > 1.0 {
 		w.WriteHeader(http.StatusBadRequest)
-		msg := "le pourcentage de places après doit être entre 0 et 1"
+		msg := "erreur : le pourcentage de places après doit être entre 0 et 1"
 		w.Write([]byte(msg))
 		return
 	} else {
-		resp.Id_simulation = req.ID
+		resp.ID = req.ID
 		w.WriteHeader(http.StatusCreated)
 		serial, _ := json.Marshal(resp)
 		w.Write(serial)
-		fmt.Println("OK création et lancement simulation")
+		fmt.Println("\nOK création et lancement simulation")
 
 		//*********** CREATION & LANCEMENT SIMULATION ****************************
-		s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, -1, 600*time.Second)
+		s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, req.Objectif, req.StratAvant, req.StratApres, req.TypeRecrutementAvant, req.TypeRecrutementApres, req.PourcentagePlacesAvant, req.PourcentagePlacesApres, 3, 10*time.Second)
 		rsa.simulation = *s //la simulation (non un pointeur)
 		s.Run()
 	}
@@ -131,7 +131,7 @@ func (rsa *RestServerAgent) createNewSimulation(w http.ResponseWriter, r *http.R
 // ---------------------
 
 // Ajoute les options CORS pour pouvoir envoyer les informations par formulaire sur page HTML
-func setupCORS(w *http.ResponseWriter, req *http.Request) {
+func ajouterCORS(w *http.ResponseWriter, req *http.Request) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
@@ -151,7 +151,7 @@ func (rsa *RestServerAgent) Start() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", home) //index
-	mux.HandleFunc("/new_simulation", rsa.createNewSimulation)
+	mux.HandleFunc("/new_simulation", rsa.creerNouvelleSimulation)
 
 	// création du serveur http
 	s := &http.Server{
@@ -159,7 +159,8 @@ func (rsa *RestServerAgent) Start() {
 		Handler:        mux,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20}
+		MaxHeaderBytes: 1 << 20,
+	}
 
 	// lancement du serveur
 	log.Println("Listening on", rsa.addr)

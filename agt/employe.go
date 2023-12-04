@@ -2,6 +2,7 @@ package agt
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
@@ -30,9 +31,7 @@ type Employe struct {
 // Permet d'envoyer un certain message à un Employe. Ce message contient une action qu'il va effectuer
 // ainsi qu'un payload optionnel permettant de transmettre des informations en plus à l'agent.
 func EnvoyerMessage(dest *Employe, act Action, payload any) {
-	go func() {
-		dest.chnl <- Communicateur{act, payload}
-	}()
+	dest.chnl <- Communicateur{act, payload}
 }
 
 // ---------------------
@@ -159,7 +158,7 @@ func (e *Employe) travailler() {
 func (agresse *Employe) etreAgresse(agresseur *Employe) {
 
 	// Selon son comportement, il va porter plainte ou non
-	if rand.Float32() < float32(agresse.comportement) {
+	if rand.Float64() < float64(agresse.comportement) {
 		agresse.porterPlainte(agresseur)
 	}
 
@@ -175,11 +174,15 @@ func (agresseur *Employe) agresser() {
 	cible := agresseur.entreprise.EnvoyerEmploye()
 
 	// S'assure de ne pas s'agresser lui-même
-	for cible == agresseur {
+	for cible.id == agresseur.id {
 		cible = agresseur.entreprise.EnvoyerEmploye()
 	}
 
-	EnvoyerMessage(cible, AGRESSION, agresseur)
+	log.Printf("Employé %s agresse %s", agresseur.id, cible.id)
+
+	go func(cible *Employe) {
+		EnvoyerMessage(cible, AGRESSION, agresseur)
+	}(cible)
 }
 
 // ---------------------
@@ -188,16 +191,14 @@ func (agresseur *Employe) agresser() {
 
 // Lance la vie de l'agent
 func (e *Employe) Start() {
-	go func() {
+	log.Printf("Démarrage de l'employé %s", e.id)
 
-		// Initialisation
+	// Initialisation
 
-		// Boucle de vie
-		for {
-			e.agir()
-		}
-
-	}()
+	// Boucle de vie
+	for {
+		e.agir()
+	}
 }
 
 // Ce que l'employé fait à chaque tour

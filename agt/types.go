@@ -7,6 +7,7 @@ const (
 	NOOP Action = iota
 	LIBRE
 	AGRESSION
+	FIN
 )
 
 // Permet la communication entre agents
@@ -23,7 +24,7 @@ const (
 	Femme
 )
 
-type Comportement float32
+type Comportement float64
 
 // Probabilité de porter plainte pour les Employés
 const (
