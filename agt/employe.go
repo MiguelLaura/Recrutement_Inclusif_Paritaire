@@ -126,7 +126,6 @@ func (e *Employe) gagnerAnciennete() {
 	e.anciennete += 1
 }
 
-/*
 // L'Employé porte plainte à son entreprise au sujet d'un autre employé.
 func (plaignant *Employe) porterPlainte(accuse *Employe) {
 	plaignant.entreprise.RecevoirPlainte(plaignant, accuse)
@@ -239,4 +238,3 @@ func (e *Employe) agir() {
 	// Permet de notifier l'entreprise que l'agent vient de faire une action
 	e.entreprise.NotifierAction()
 }
-*/

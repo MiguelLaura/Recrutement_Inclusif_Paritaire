@@ -12,23 +12,6 @@ import (
 // Définition structures
 // ---------------------
 
-type StratParite int
-
-const (
-	StratVide StratParite = iota // décrit l'absence de StartParite
-	PrioHomme
-	PrioFemme
-	Hasard
-)
-
-type TypeRecrutement int
-
-const (
-	Vide TypeRecrutement = iota // décrit l'absence de TypeRecrutement
-	Competences
-	PlacesReservees
-)
-
 type Recrutement struct {
 	entreprise             *Entreprise
 	objectif               float64     // -1 si non renseigné, entre 0 et 1 sinon
