@@ -96,6 +96,7 @@ func genComportement() Comportement {
 
 func genCompetence() int {
 	// Loi normale définie pour modéliser les compétences
+	// On veut que les compétences tournent autour de 5 sans trop s’éparpiller autour
 	var loiNormale = distuv.Normal{
 		Mu:    5,
 		Sigma: 3,
