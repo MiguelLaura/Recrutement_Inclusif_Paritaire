@@ -4,6 +4,8 @@ import (
 	"math"
 )
 
+// ------------ SIMULATION ------------
+
 type Action int
 
 // Action est une enumeration
@@ -20,6 +22,23 @@ type Communicateur struct {
 }
 
 // ------------ EMPLOYE ------------
+
+type EmployeID string
+
+var agtCnt int = 0
+
+type Employe struct {
+	id           EmployeID
+	genre        Genre
+	anciennete   int //entre 0 et 40
+	santeMentale int //entre 0 et 100
+	agresseur    bool
+	comportement Comportement
+	competence   int //entre 0 et 10
+	entreprise   *Entreprise
+	chnl         chan Communicateur
+}
+
 type Genre int
 
 const (
@@ -89,4 +108,34 @@ func (e Entreprise) Recrutement() Recrutement {
 
 func (e Entreprise) Ca() float64 {
 	return e.ca
+}
+
+// ------------ RECRUTEMENT ------------
+
+type StratParite int
+
+const (
+	StratVide StratParite = iota // décrit l'absence de StartParite
+	PrioHomme
+	PrioFemme
+	Hasard
+)
+
+type TypeRecrutement int
+
+const (
+	Vide TypeRecrutement = iota // décrit l'absence de TypeRecrutement
+	Competences
+	PlacesReservees
+)
+
+type Recrutement struct {
+	entreprise             *Entreprise
+	objectif               float64     // -1 si non renseigné, entre 0 et 1 sinon
+	stratAvant             StratParite // stratVide si non renseigné
+	stratApres             StratParite
+	typeRecrutementAvant   TypeRecrutement // Vide si non renseigné
+	typeRecrutementApres   TypeRecrutement
+	pourcentagePlacesAvant float64 // -1 si non renseigné, entre 0 et 1 sinon
+	pourcentagePlacesApres float64
 }
