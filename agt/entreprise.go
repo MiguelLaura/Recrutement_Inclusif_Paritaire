@@ -4,25 +4,9 @@ import (
 	"log"
 	"math"
 	"math/rand"
-	"sync"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
 )
-
-type Entreprise struct {
-	sync.Mutex
-	employes      []Employe
-	departs       []Employe
-	plaintes      [][]Employe
-	nbDepressions int
-	nbRenvois     int
-	recrutement   Recrutement
-	ca            float64
-	nbActions     int
-	nbAgresseurs  int
-	chnl          chan Communicateur
-	chnlActions   chan Communicateur
-}
 
 // ---------------------
 //        Général

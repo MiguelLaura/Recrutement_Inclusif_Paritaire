@@ -1,5 +1,9 @@
 package agt
 
+import "sync"
+
+// ------------ SIMULATION ------------
+
 type Action int
 
 // Action est une enumeration
@@ -17,6 +21,23 @@ type Communicateur struct {
 }
 
 // ------------ EMPLOYE ------------
+
+type EmployeID string
+
+var agtCnt int = 0
+
+type Employe struct {
+	id           EmployeID
+	genre        Genre
+	anciennete   int //entre 0 et 40
+	santeMentale int //entre 0 et 100
+	agresseur    bool
+	comportement Comportement
+	competence   int //entre 0 et 10
+	entreprise   *Entreprise
+	chnl         chan Communicateur
+}
+
 type Genre int
 
 const (
@@ -35,7 +56,23 @@ const (
 	Plainte0   Comportement = 0.0
 )
 
+type Entreprise struct {
+	sync.Mutex
+	employes      []Employe
+	departs       []Employe
+	plaintes      [][]Employe
+	nbDepressions int
+	nbRenvois     int
+	recrutement   Recrutement
+	ca            float64
+	nbActions     int
+	nbAgresseurs  int
+	chnl          chan Communicateur
+	chnlActions   chan Communicateur
+}
+
 // ------------ RECRUTEMENT ------------
+
 type StratParite int
 
 const (
@@ -52,3 +89,14 @@ const (
 	Competences
 	PlacesReservees
 )
+
+type Recrutement struct {
+	entreprise             *Entreprise
+	objectif               float64     // -1 si non renseigné, entre 0 et 1 sinon
+	stratAvant             StratParite // stratVide si non renseigné
+	stratApres             StratParite
+	typeRecrutementAvant   TypeRecrutement // Vide si non renseigné
+	typeRecrutementApres   TypeRecrutement
+	pourcentagePlacesAvant float64 // -1 si non renseigné, entre 0 et 1 sinon
+	pourcentagePlacesApres float64
+}

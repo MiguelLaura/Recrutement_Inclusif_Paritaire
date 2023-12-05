@@ -9,21 +9,6 @@ import (
 )
 
 // ---------------------
-// Définition structures
-// ---------------------
-
-type Recrutement struct {
-	entreprise             *Entreprise
-	objectif               float64     // -1 si non renseigné, entre 0 et 1 sinon
-	stratAvant             StratParite // stratVide si non renseigné
-	stratApres             StratParite
-	typeRecrutementAvant   TypeRecrutement // Vide si non renseigné
-	typeRecrutementApres   TypeRecrutement
-	pourcentagePlacesAvant float64 // -1 si non renseigné, entre 0 et 1 sinon
-	pourcentagePlacesApres float64
-}
-
-// ---------------------
 //     Constructeurs
 // ---------------------
 

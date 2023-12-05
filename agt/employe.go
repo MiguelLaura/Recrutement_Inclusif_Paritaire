@@ -8,22 +8,6 @@ import (
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
 )
 
-type EmployeID string
-
-var agtCnt int = 0
-
-type Employe struct {
-	id           EmployeID
-	genre        Genre
-	anciennete   int //entre 0 et 40
-	santeMentale int //entre 0 et 100
-	agresseur    bool
-	comportement Comportement
-	competence   int //entre 0 et 10
-	entreprise   *Entreprise
-	chnl         chan Communicateur
-}
-
 // ---------------------
 //        Général
 // ---------------------
