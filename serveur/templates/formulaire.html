@@ -21,9 +21,10 @@
       <div class="form-container">
         <h2>Création d'une entreprise</h2>
         <form action="#" method="post">
+        <!--- INFOS GENERALES -->
           <div class="form-row">
             <div class="input-group">
-              <label for="nombreEmployes">Nombre d'employés :</label>
+              <label for="nombreEmployes">Nombre d'employé·es :</label>
               <input type="number" id="nombreEmployes" name="nombreEmployes" min="1" required>
             </div>
             <div class="input-group">
@@ -32,167 +33,205 @@
             </div>
           </div>
 
-    <label for="pourcentageFemmes">Pourcentage de femmes dans l'entreprise :</label>
-    <input type="range" id="pourcentageFemmes" name="pourcentageFemmes" min="0" max="100" onchange="updateTextInput(this.value);" required>
-    <span id="pourcentageFemmesValue"></span><br><br>
+            <label for="pourcentageFemmes">Pourcentage de femmes dans l'entreprise :</label>
+            <input type="range" id="pourcentageFemmes" name="pourcentageFemmes" min="0" max="100" value=20 oninput="updatePourcentage(this.value, 'pourcentageFemmesValue');" required>
+            <span id="pourcentageFemmesValue">20%</span><br><br>
+        <!--- FIN INFOS GENERALES -->
 
-    <label><b>Recrutement</b></label><br><br>
+        <label><b>Recrutement</b></label><br><br>
 
-    <div class="form-row">
-        <label for="objectifFemmes">L’entreprise souhaite-t-elle atteindre un % de femmes minimum (objectif) ?</label>
-        <div class="input-group">
-          <input type="radio" id="ouiObjectif" name="objectifFemmes" value="Oui" onclick="afficherPourcentageObjectif();" required>
-          <label for="ouiObjectif">Oui</label>
-        </div>
-        <div class="input-group">
-          <input type="radio" id="nonObjectif" name="objectifFemmes" value="Non" checked onclick="cacherPourcentageObjectif();">
-          <label for="nonObjectif">Non</label>
-        </div>
-      </div>
-  
-      <div id="pourcentageObjectif" style="display: none;">
-        <label for="pourcentageObjectif">Pourcentage objectif :</label>
-        <input type="range" id="pourcentageObjectifInput" name="pourcentageObjectif" min="0" max="100">
-        <span id="pourcentageObjectifValue"></span><br><br>
-      </div>
-
-      <div class="rounded-black-border">
+        <!--- OBJECTIF OUI / NON -->
         <div class="form-row">
-            <label for="typeRecrutement">Quel type de recrutement est mis en place ?</label>
+            <label for="objectifFemmes">L’entreprise souhaite-t-elle atteindre un % de femmes minimum (objectif) ?</label>
             <div class="input-group">
-              <input type="radio" id="competences" name="typeRecrutement" value="Compétences" onclick="afficherCompetences();" required>
-              <label for="competences">Compétences</label>
+            <input type="radio" id="ouiObjectif" name="objectifFemmes" value="Oui" required
+                onclick="afficher(idElemChecked='ouiObjectif', idAAfficher='RecrutementAvecObjectif', idACacher='RecrutementSansObjectif');">
+            <label for="ouiObjectif">Oui</label>
             </div>
             <div class="input-group">
-              <input type="radio" id="placesReservees" name="typeRecrutement" value="Places réservées" onclick="afficherPlacesReservees();">
-              <label for="placesReservees">Places réservées</label>
+            <input type="radio" id="nonObjectif" name="objectifFemmes" value="Non" 
+                onclick="afficher(idElemChecked='nonObjectif', idAAfficher='RecrutementSansObjectif', idACacher='RecrutementAvecObjectif');">
+            <label for="nonObjectif">Non</label>
             </div>
-          </div>
-
-        <div>
-            <div id="competencesDiv" style="display: none;">
-                <div class="question form-row">
-                  <label for="competencesEgales">A compétences égales ?</label>
-                  <div class="input-group">
-                    <input type="radio" id="femme" name="competencesEgales" value="Une femme" required>
-                    <label for="femme">Une femme</label>
-                  </div>
-                  <div class="input-group">
-                    <input type="radio" id="homme" name="competencesEgales" value="Un homme">
-                    <label for="homme">Un homme</label>
-                  </div>
-                  <div class="input-group">
-                    <input type="radio" id="hasard" name="competencesEgales" value="Au hasard">
-                    <label for="hasard">Au hasard</label>
-                  </div>
-                </div>
-              </div>
-          
-              <div id="placesReserveesDiv" style="display: none;">
-                <div class="form-row">
-                  <label for="pourcentagePlacesReservees">Pourcentage de places réservées :</label>
-                  <input type="range" id="pourcentagePlacesReservees" name="pourcentagePlacesReservees" min="0" max="100">
-                  <span id="pourcentagePlacesReserveesValue"></span><br><br>
-                </div>
-              </div>
         </div>
-      </div>
+    
+        <!--- RECRUTEMENT AVEC OBJECTIF -->
+        <div id="RecrutementAvecObjectif" style="display: none;">
+            <!--- POURCENTAGE OBJECTIF -->
+            <div id="pourcentageObjectif">
+                <label for="pourcentageObjectif">Pourcentage objectif :</label>
+                <input type="range" id="pourcentageObjectifInput" name="pourcentageObjectif" min="0" max="100" value=50 oninput="updatePourcentage(this.value, 'pourcentageObjectifValue');">
+                <span id="pourcentageObjectifValue">50%</span><br><br>
+            </div>
 
-      <input type="submit" id="submitButton" value="Envoyer" disabled>
+            <!--- RECRUTEMENT AVANT OBJECTIF -->
+            <div class="rounded-black-border">
+                <div class="form-row">
+                    <label for="typeRecrutementAvant"><b>Avant objectif.</b> Quel type de recrutement est mis en place ?</label>
+                    <div class="input-group">
+                    <input type="radio" id="competencesAvant" name="typeRecrutementAvant" value="Compétences" 
+                        onclick="afficher(idElemChecked='competencesAvant', idAAfficher='competencesAvantDiv', idACacher='placesReserveesAvantDiv');">
+                    <label for="competences">Compétences</label>
+                    </div>
+                    <div class="input-group">
+                    <input type="radio" id="placesReserveesAvant" name="typeRecrutementAvant" value="Places réservées" 
+                        onclick="afficher(idElemChecked='placesReserveesAvant', idAAfficher='placesReserveesAvantDiv', idACacher='competencesAvantDiv');">
+                    <label for="placesReservees">Places réservées</label>
+                    </div>
+                </div>
+    
+                <div>
+                    <div id="competencesAvantDiv" style="display: none;">
+                        <div class="question form-row">
+                        <label for="competencesEgalesAvant">A compétences égales ?</label>
+                        <div class="input-group">
+                            <input type="radio" id="femme" name="competencesEgalesAvant" value="Une femme">
+                            <label for="femme">Une femme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="homme" name="competencesEgalesAvant" value="Un homme">
+                            <label for="homme">Un homme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="hasard" name="competencesEgalesAvant" value="Au hasard">
+                            <label for="hasard">Au hasard</label>
+                        </div>
+                        </div>
+                    </div>
+                
+                    <div id="placesReserveesAvantDiv" style="display: none;">
+                        <div class="form-row">
+                        <label for="pourcentagePlacesReserveesAvant">Pourcentage de places réservées :</label>
+                        <input type="range" id="pourcentagePlacesReserveesAvant" name="pourcentagePlacesReserveesAvant" min="0" max="100" value=30 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesAvantValue');">
+                        <span id="pourcentagePlacesReserveesAvantValue">30%</span><br><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--- RECRUTEMENT APRES OBJECTIF -->
+            <div class="rounded-black-border">
+                <div class="form-row">
+                    <label for="typeRecrutementApres"><b>Apres objectif.</b> Quel type de recrutement est mis en place ?</label>
+                    <div class="input-group">
+                    <input type="radio" id="competencesApres" name="typeRecrutementApres" value="Compétences" 
+                        onclick="afficher(idElemChecked='competencesApres', idAAfficher='competencesApresDiv', idACacher='placesReserveesApresDiv');">
+                    <label for="competences">Compétences</label>
+                    </div>
+                    <div class="input-group">
+                    <input type="radio" id="placesReserveesApres" name="typeRecrutementApres" value="Places réservées" 
+                        onclick="afficher(idElemChecked='placesReserveesApres', idAAfficher='placesReserveesApresDiv', idACacher='competencesApresDiv');">
+                    <label for="placesReservees">Places réservées</label>
+                    </div>
+                </div>
+    
+                <div>
+                    <div id="competencesApresDiv" style="display: none;">
+                        <div class="question form-row">
+                        <label for="competencesEgalesApres">A compétences égales ?</label>
+                        <div class="input-group">
+                            <input type="radio" id="femme" name="competencesEgalesApres" value="Une femme">
+                            <label for="femme">Une femme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="homme" name="competencesEgalesApres" value="Un homme">
+                            <label for="homme">Un homme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="hasard" name="competencesEgalesApres" value="Au hasard">
+                            <label for="hasard">Au hasard</label>
+                        </div>
+                        </div>
+                    </div>
+                
+                    <div id="placesReserveesApresDiv" style="display: none;">
+                        <div class="form-row">
+                        <label for="pourcentagePlacesReserveesApres">Pourcentage de places réservées :</label>
+                        <input type="range" id="pourcentagePlacesReserveesApres" name="pourcentagePlacesReserveesApres" min="0" max="100" value=30 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesApresValue');">
+                        <span id="pourcentagePlacesReserveesApresValue">30%</span><br><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        </div>
+        <!--- FIN RECRUTEMENT AVEC OBJECTIF -->
+
+        <!--- RECRUTEMENT SANS OBJECTIF -->
+        <div id="RecrutementSansObjectif" style="display: none;">
+            <div class="rounded-black-border">
+                <div class="form-row">
+                    <label for="typeRecrutement">Quel type de recrutement est mis en place ?</label>
+                    <div class="input-group">
+                    <input type="radio" id="competences" name="typeRecrutement" value="Compétences" 
+                        onclick="afficher(idElemChecked='competences', idAAfficher='competencesDiv', idACacher='placesReserveesDiv');">
+                    <label for="competences">Compétences</label>
+                    </div>
+                    <div class="input-group">
+                    <input type="radio" id="placesReservees" name="typeRecrutement" value="Places réservées" 
+                        onclick="afficher(idElemChecked='placesReservees', idAAfficher='placesReserveesDiv', idACacher='competencesDiv');">
+                    <label for="placesReservees">Places réservées</label>
+                    </div>
+                </div>
+
+                <div>
+                    <div id="competencesDiv" style="display: none;">
+                        <div class="question form-row">
+                        <label for="competencesEgales">A compétences égales ?</label>
+                        <div class="input-group">
+                            <input type="radio" id="femme" name="competencesEgales" value="Une femme">
+                            <label for="femme">Une femme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="homme" name="competencesEgales" value="Un homme">
+                            <label for="homme">Un homme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="hasard" name="competencesEgales" value="Au hasard">
+                            <label for="hasard">Au hasard</label>
+                        </div>
+                        </div>
+                    </div>
+                
+                    <div id="placesReserveesDiv" style="display: none;">
+                        <div class="form-row">
+                        <label for="pourcentagePlacesReservees">Pourcentage de places réservées :</label>
+                        <input type="range" id="pourcentagePlacesReservees" name="pourcentagePlacesReservees" min="0" max="100" value=30 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesValue');">
+                        <span id="pourcentagePlacesReserveesValue">30%</span><br><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      <input type="submit" id="submitButton" value="Envoyer">
     <input type="reset" value="Réinitialiser">
   </form>
 </div>
 
 <script>
-  function updateTextInput(val) {
-    document.getElementById('pourcentageFemmesValue').innerText = val + '%';
-  }
-
-  function updateTextInput2(val) {
-    document.getElementById('pourcentageObjectifValue').innerText = val + '%';
+  function updatePourcentage(val, idValue) {
+    document.getElementById(idValue).innerText = val + '%';
   }
 </script>
 
 <script>
-    function afficherPourcentageObjectif() {
-    var pourcentageObjectifDiv = document.getElementById('pourcentageObjectif');
-    var ouiObjectif = document.getElementById('ouiObjectif');
-    var pourcentageObjectifInput = document.getElementById('pourcentageObjectifInput');
+    function afficher(idElemChecked, idAAfficher, idACacher) {
+        var elemChecked = document.getElementById(idElemChecked);
+        var aAfficher = document.getElementById(idAAfficher);
+        var aCacher = document.getElementById(idACacher);
 
-    if (ouiObjectif.checked) {
-      pourcentageObjectifDiv.style.display = 'block';
-      pourcentageObjectifInput.setAttribute('required', 'required');
-    } else {
-      pourcentageObjectifDiv.style.display = 'none';
-      pourcentageObjectifInput.removeAttribute('required');
-    }
-  }
-
-  function cacherPourcentageObjectif() {
-    var pourcentageObjectifDiv = document.getElementById('pourcentageObjectif');
-    var pourcentageObjectifInput = document.getElementById('pourcentageObjectifInput');
-
-    pourcentageObjectifDiv.style.display = 'none';
-    pourcentageObjectifInput.removeAttribute('required');
-  }
-  </script>
-
-  <script>
-    function validateForm() {
-    var inputs = document.querySelectorAll('input[required]');
-    for (var i = 0; i < inputs.length; i++) {
-      if (!inputs[i].value) {
-        alert('Veuillez remplir tous les champs requis.');
-        return false;
-      }
-    }
-    return true;
-  }
-
-  var formInputs = document.querySelectorAll('input[required]');
-  for (var i = 0; i < formInputs.length; i++) {
-    formInputs[i].addEventListener('input', function() {
-      var isValid = true;
-      for (var j = 0; j < formInputs.length; j++) {
-        if (!formInputs[j].value) {
-          isValid = false;
-          break;
+        if (elemChecked.checked) {
+            aAfficher.style.display = 'block';
+            aCacher.style.display = 'none'
+        } else {
+            aAfficher.style.display = 'none';
         }
-      }
-      document.getElementById('submitButton').disabled = !isValid;
-    });
-  }
+    }
+
   </script>
 
-  <script>
-    function afficherCompetences() {
-    var competencesDiv = document.getElementById('competencesDiv');
-    var placesReserveesDiv = document.getElementById('placesReserveesDiv');
 
-    competencesDiv.style.display = 'block';
-    placesReserveesDiv.style.display = 'none';
-
-    document.getElementById('pourcentagePlacesReservees').removeAttribute('required');
-    document.getElementById('submitButton').disabled = true;
-  }
-
-  function afficherPlacesReservees() {
-    var competencesDiv = document.getElementById('competencesDiv');
-    var placesReserveesDiv = document.getElementById('placesReserveesDiv');
-
-    competencesDiv.style.display = 'none';
-    placesReserveesDiv.style.display = 'block';
-
-    document.getElementById('pourcentagePlacesReservees').setAttribute('required', 'required');
-    document.getElementById('submitButton').disabled = true;
-  }
-
-  document.getElementById('pourcentagePlacesReservees').addEventListener('input', function() {
-    var pourcentagePlacesReserveesValue = document.getElementById('pourcentagePlacesReservees').value;
-    document.getElementById('pourcentagePlacesReserveesValue').innerHTML = pourcentagePlacesReserveesValue + "%";
-    document.getElementById('submitButton').disabled = false;
-  });
-  </script>
 
 </body>
 </html>
