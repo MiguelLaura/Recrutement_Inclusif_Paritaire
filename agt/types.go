@@ -4,6 +4,8 @@ import (
 	"math"
 )
 
+// ------------ SIMULATION ------------
+
 type Action int
 
 // Action est une enumeration
@@ -20,6 +22,23 @@ type Communicateur struct {
 }
 
 // ------------ EMPLOYE ------------
+
+type EmployeID string
+
+var agtCnt int = 0
+
+type Employe struct {
+	id           EmployeID
+	genre        Genre
+	anciennete   int //entre 0 et 40
+	santeMentale int //entre 0 et 100
+	agresseur    bool
+	comportement Comportement
+	competence   int //entre 0 et 10
+	entreprise   *Entreprise
+	chnl         chan Communicateur
+}
+
 type Genre int
 
 const (
@@ -37,64 +56,6 @@ const (
 	Plainte25  Comportement = 0.25
 	Plainte0   Comportement = 0.0
 )
-
-// ------------ RECRUTEMENT ------------
-type StratParite int
-
-const (
-	PrioHomme StratParite = iota
-	PrioFemme
-	Hasard
-)
-
-type TypeRecrutement int
-
-const (
-	Competences TypeRecrutement = iota
-	PlacesReservees
-)
-
-type Recrutement struct {
-	objectif               float32
-	stratAvant             StratParite
-	stratApres             StratParite
-	typeRecrutementAvant   TypeRecrutement
-	typeRecrutementApres   TypeRecrutement
-	pourcentagePlacesAvant float32
-	pourcentagePlacesApres float32
-}
-
-func NewRecrutement(obj float32, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float32, ppap float32) *Recrutement {
-	return &Recrutement{objectif: obj, stratAvant: sav, stratApres: sap, typeRecrutementAvant: trav, typeRecrutementApres: trap, pourcentagePlacesAvant: ppav, pourcentagePlacesApres: ppap}
-}
-
-func (r Recrutement) Objectif() float32 {
-	return r.objectif
-}
-
-func (r Recrutement) StratAvant() StratParite {
-	return r.stratAvant
-}
-
-func (r Recrutement) StratApres() StratParite {
-	return r.stratApres
-}
-
-func (r Recrutement) TypeRecrutementAvant() TypeRecrutement {
-	return r.typeRecrutementAvant
-}
-
-func (r Recrutement) TypeRecrutementApres() TypeRecrutement {
-	return r.typeRecrutementApres
-}
-
-func (r Recrutement) PourcentagePlacesAvant() float32 {
-	return r.pourcentagePlacesAvant
-}
-
-func (r Recrutement) PourcentagePlacesApres() float32 {
-	return r.pourcentagePlacesApres
-}
 
 // ------------ ENTREPRISE ------------
 
@@ -116,10 +77,10 @@ func NewEntreprise(nbEmployesInit int, pariteInit float32, recrut Recrutement) *
 	var employesInit []Employe
 
 	for i := 0; i < nbFemmes; i++ {
-		employesInit = append(employesInit, *GenererEmployeInit(e, Femme))
+		employesInit = append(employesInit, *GenererEmployeInit(&e, Femme))
 	}
 	for i := 0; i < nbHommes; i++ {
-		employesInit = append(employesInit, *GenererEmployeInit(e, Homme))
+		employesInit = append(employesInit, *GenererEmployeInit(&e, Homme))
 	}
 	e.employes = employesInit
 	e.departs = make([]Employe, 0)
@@ -147,4 +108,34 @@ func (e Entreprise) Recrutement() Recrutement {
 
 func (e Entreprise) Ca() float64 {
 	return e.ca
+}
+
+// ------------ RECRUTEMENT ------------
+
+type StratParite int
+
+const (
+	StratVide StratParite = iota // décrit l'absence de StartParite
+	PrioHomme
+	PrioFemme
+	Hasard
+)
+
+type TypeRecrutement int
+
+const (
+	Vide TypeRecrutement = iota // décrit l'absence de TypeRecrutement
+	Competences
+	PlacesReservees
+)
+
+type Recrutement struct {
+	entreprise             *Entreprise
+	objectif               float64     // -1 si non renseigné, entre 0 et 1 sinon
+	stratAvant             StratParite // stratVide si non renseigné
+	stratApres             StratParite
+	typeRecrutementAvant   TypeRecrutement // Vide si non renseigné
+	typeRecrutementApres   TypeRecrutement
+	pourcentagePlacesAvant float64 // -1 si non renseigné, entre 0 et 1 sinon
+	pourcentagePlacesApres float64
 }

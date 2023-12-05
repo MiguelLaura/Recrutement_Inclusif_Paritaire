@@ -11,7 +11,4 @@ func main() {
 	loggers := logger.Loggers{}
 	loggers.AjouterLogger(&leLogger)
 
-	//loggers.Log("cc", "comment", "ça", "va", "?")
-
-	//leLogger.Log("cc", "comment", "ça", "va", "?")
 }

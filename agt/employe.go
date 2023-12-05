@@ -2,22 +2,14 @@ package agt
 
 import (
 	"fmt"
-	"math"
 	"math/rand"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
-	"gonum.org/v1/gonum/stat/distuv"
 )
 
 type EmployeID string
 
 var agtCnt int = 0
-
-// On veut que les compétences tournent autour de 5 sans trop s’éparpiller autour
-var loiNormale = distuv.Normal{
-	Mu:    5,
-	Sigma: 3,
-}
 
 type Employe struct {
 	id           EmployeID
@@ -54,45 +46,21 @@ func genererIDEmploye() EmployeID {
 	return EmployeID(res)
 }
 
-func GenererEmployeInit(ent *Entreprise, genre Genre) *Employe {
-
-	var agg bool // false par défaut
+func GenererEmployeInit(ent **Entreprise, genre Genre) *Employe {
 	// Génération aléatoire de l'attribut agresseur
-	if genre == Homme {
-		if rand.Float64() <= constantes.POURCENTAGE_AGRESSEUR_H {
-			agg = true
-		}
-	} else {
-		if rand.Float64() <= constantes.POURCENTAGE_AGRESSEUR_H {
-			agg = true
-		}
-	}
+	agg := genAgresseur(genre)
 
 	// Génération aléatoire de l'ancienneté de l'employé entre 0 et ANCIENNETE_MAX
 	anc := rand.Intn(constantes.ANCIENNETE_MAX)
 
 	// Génération aléatoire du comportement de l'employé
 	// On considère une proba égale d'avoir les différents comportements
-	r := rand.Float64()
-	var compor Comportement
-	if r >= 0 && r < 0.2 {
-		compor = Plainte0
-	} else if r >= 0.2 && r < 0.4 {
-		compor = Plainte25
-	} else if r >= 0.4 && r < 0.6 {
-		compor = Plainte50
-	} else if r >= 0.6 && r < 0.8 {
-		compor = Plainte75
-	} else {
-		compor = Plainte100
-	}
+	compor := genComportement()
 
 	// Génération aléatoire de la compétence de l'employé
+	competence := genCompetence()
 
-	// Permet de ne pas avoir de compétence négative et de ne pas aller au dessus du seuil max de compétence
-	competence := int(math.Abs(loiNormale.Rand())) % (constantes.COMPETENCE_MAX + 1)
-
-	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, compor, competence, ent)
+	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, compor, competence, *ent)
 }
 
 func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compet int, ent *Entreprise) *Employe {
@@ -112,6 +80,10 @@ func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compe
 // ---------------------
 //        Getters
 // ---------------------
+
+func (e *Employe) Id() EmployeID {
+	return e.id
+}
 
 func (e *Employe) Genre() Genre {
 	return e.genre
@@ -154,6 +126,7 @@ func (e *Employe) gagnerAnciennete() {
 	e.anciennete += 1
 }
 
+/*
 // L'Employé porte plainte à son entreprise au sujet d'un autre employé.
 func (plaignant *Employe) porterPlainte(accuse *Employe) {
 	plaignant.entreprise.RecevoirPlainte(plaignant, accuse)
@@ -266,3 +239,4 @@ func (e *Employe) agir() {
 	// Permet de notifier l'entreprise que l'agent vient de faire une action
 	e.entreprise.NotifierAction()
 }
+*/
