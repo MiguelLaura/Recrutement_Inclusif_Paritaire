@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Formulaire</title>
+  <link rel="stylesheet" type="text/css" href="../static/css/formulaire.css">
+  <link href='https://fonts.googleapis.com/css?family=Josefin Sans' rel='stylesheet'>
+</head>
+<body>
+
+    <div class="banner">
+        <div class="left-section">
+          <h1>La parité en entreprise</h1>
+          <h3>Quelles sont les conséquences d’un recrutement tenant compte de la parité sur la santé d’une entreprise ?</h3>
+        </div>
+        <div class="right-section">
+          <h1>IA04 - A23</h1>
+          <h3>Mathilde Lange, Solenn Lenoir, Nathan Menny, Laura Miguel</h3>
+        </div>
+      </div>
+
+      <div class="form-container">
+        <h2>Création d'une entreprise</h2>
+        <form action="#" method="post">
+          <div class="form-row">
+            <div class="input-group">
+              <label for="nombreEmployes">Nombre d'employés :</label>
+              <input type="number" id="nombreEmployes" name="nombreEmployes" min="1" required>
+            </div>
+            <div class="input-group">
+              <label for="nombreAnnees">Nombre d'années :</label>
+              <input type="number" id="nombreAnnees" name="nombreAnnees" min="1" required>
+            </div>
+          </div>
+
+    <label for="pourcentageFemmes">Pourcentage de femmes dans l'entreprise :</label>
+    <input type="range" id="pourcentageFemmes" name="pourcentageFemmes" min="0" max="100" onchange="updateTextInput(this.value);" required>
+    <span id="pourcentageFemmesValue"></span><br><br>
+
+    <label><b>Recrutement</b></label><br><br>
+
+    <div class="form-row">
+        <label for="objectifFemmes">L’entreprise souhaite-t-elle atteindre un % de femmes minimum (objectif) ?</label>
+        <div class="input-group">
+          <input type="radio" id="ouiObjectif" name="objectifFemmes" value="Oui" onclick="afficherPourcentageObjectif();" required>
+          <label for="ouiObjectif">Oui</label>
+        </div>
+        <div class="input-group">
+          <input type="radio" id="nonObjectif" name="objectifFemmes" value="Non" checked onclick="cacherPourcentageObjectif();">
+          <label for="nonObjectif">Non</label>
+        </div>
+      </div>
+  
+      <div id="pourcentageObjectif" style="display: none;">
+        <label for="pourcentageObjectif">Pourcentage objectif :</label>
+        <input type="range" id="pourcentageObjectifInput" name="pourcentageObjectif" min="0" max="100">
+        <span id="pourcentageObjectifValue"></span><br><br>
+      </div>
+
+      <div class="rounded-black-border">
+        <div class="form-row">
+            <label for="typeRecrutement">Quel type de recrutement est mis en place ?</label>
+            <div class="input-group">
+              <input type="radio" id="competences" name="typeRecrutement" value="Compétences" onclick="afficherCompetences();" required>
+              <label for="competences">Compétences</label>
+            </div>
+            <div class="input-group">
+              <input type="radio" id="placesReservees" name="typeRecrutement" value="Places réservées" onclick="afficherPlacesReservees();">
+              <label for="placesReservees">Places réservées</label>
+            </div>
+          </div>
+
+        <div>
+            <div id="competencesDiv" style="display: none;">
+                <div class="question form-row">
+                  <label for="competencesEgales">A compétences égales ?</label>
+                  <div class="input-group">
+                    <input type="radio" id="femme" name="competencesEgales" value="Une femme" required>
+                    <label for="femme">Une femme</label>
+                  </div>
+                  <div class="input-group">
+                    <input type="radio" id="homme" name="competencesEgales" value="Un homme">
+                    <label for="homme">Un homme</label>
+                  </div>
+                  <div class="input-group">
+                    <input type="radio" id="hasard" name="competencesEgales" value="Au hasard">
+                    <label for="hasard">Au hasard</label>
+                  </div>
+                </div>
+              </div>
+          
+              <div id="placesReserveesDiv" style="display: none;">
+                <div class="form-row">
+                  <label for="pourcentagePlacesReservees">Pourcentage de places réservées :</label>
+                  <input type="range" id="pourcentagePlacesReservees" name="pourcentagePlacesReservees" min="0" max="100">
+                  <span id="pourcentagePlacesReserveesValue"></span><br><br>
+                </div>
+              </div>
+        </div>
+      </div>
+
+      <input type="submit" id="submitButton" value="Envoyer" disabled>
+    <input type="reset" value="Réinitialiser">
+  </form>
+</div>
+
+<script>
+  function updateTextInput(val) {
+    document.getElementById('pourcentageFemmesValue').innerText = val + '%';
+  }
+
+  function updateTextInput2(val) {
+    document.getElementById('pourcentageObjectifValue').innerText = val + '%';
+  }
+</script>
+
+<script>
+    function afficherPourcentageObjectif() {
+    var pourcentageObjectifDiv = document.getElementById('pourcentageObjectif');
+    var ouiObjectif = document.getElementById('ouiObjectif');
+    var pourcentageObjectifInput = document.getElementById('pourcentageObjectifInput');
+
+    if (ouiObjectif.checked) {
+      pourcentageObjectifDiv.style.display = 'block';
+      pourcentageObjectifInput.setAttribute('required', 'required');
+    } else {
+      pourcentageObjectifDiv.style.display = 'none';
+      pourcentageObjectifInput.removeAttribute('required');
+    }
+  }
+
+  function cacherPourcentageObjectif() {
+    var pourcentageObjectifDiv = document.getElementById('pourcentageObjectif');
+    var pourcentageObjectifInput = document.getElementById('pourcentageObjectifInput');
+
+    pourcentageObjectifDiv.style.display = 'none';
+    pourcentageObjectifInput.removeAttribute('required');
+  }
+  </script>
+
+  <script>
+    function validateForm() {
+    var inputs = document.querySelectorAll('input[required]');
+    for (var i = 0; i < inputs.length; i++) {
+      if (!inputs[i].value) {
+        alert('Veuillez remplir tous les champs requis.');
+        return false;
+      }
+    }
+    return true;
+  }
+
+  var formInputs = document.querySelectorAll('input[required]');
+  for (var i = 0; i < formInputs.length; i++) {
+    formInputs[i].addEventListener('input', function() {
+      var isValid = true;
+      for (var j = 0; j < formInputs.length; j++) {
+        if (!formInputs[j].value) {
+          isValid = false;
+          break;
+        }
+      }
+      document.getElementById('submitButton').disabled = !isValid;
+    });
+  }
+  </script>
+
+  <script>
+    function afficherCompetences() {
+    var competencesDiv = document.getElementById('competencesDiv');
+    var placesReserveesDiv = document.getElementById('placesReserveesDiv');
+
+    competencesDiv.style.display = 'block';
+    placesReserveesDiv.style.display = 'none';
+
+    document.getElementById('pourcentagePlacesReservees').removeAttribute('required');
+    document.getElementById('submitButton').disabled = true;
+  }
+
+  function afficherPlacesReservees() {
+    var competencesDiv = document.getElementById('competencesDiv');
+    var placesReserveesDiv = document.getElementById('placesReserveesDiv');
+
+    competencesDiv.style.display = 'none';
+    placesReserveesDiv.style.display = 'block';
+
+    document.getElementById('pourcentagePlacesReservees').setAttribute('required', 'required');
+    document.getElementById('submitButton').disabled = true;
+  }
+
+  document.getElementById('pourcentagePlacesReservees').addEventListener('input', function() {
+    var pourcentagePlacesReserveesValue = document.getElementById('pourcentagePlacesReservees').value;
+    document.getElementById('pourcentagePlacesReserveesValue').innerHTML = pourcentagePlacesReserveesValue + "%";
+    document.getElementById('submitButton').disabled = false;
+  });
+  </script>
+
+</body>
+</html>
