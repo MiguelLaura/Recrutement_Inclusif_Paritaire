@@ -6,15 +6,6 @@ import (
 	"time"
 )
 
-type Simulation struct {
-	ent         Entreprise
-	pariteInit  float64
-	maxStep     int
-	maxDuration time.Duration
-	step        int // Stats
-	start       time.Time
-}
-
 // retourne un pointeur sur une nouvelle simulation
 func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64, maxStep int, maxDuration time.Duration) (simu *Simulation) {
 	simu = &Simulation{}

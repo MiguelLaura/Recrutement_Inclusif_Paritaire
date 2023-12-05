@@ -1,8 +1,20 @@
 package agt
 
-import "sync"
+import (
+	"sync"
+	"time"
+)
 
 // ------------ SIMULATION ------------
+
+type Simulation struct {
+	ent         Entreprise
+	pariteInit  float64
+	maxStep     int
+	maxDuration time.Duration
+	step        int // Stats
+	start       time.Time
+}
 
 type Action int
 
@@ -55,6 +67,8 @@ const (
 	Plainte25  Comportement = 0.25
 	Plainte0   Comportement = 0.0
 )
+
+// ------------ ENTREPRISE ------------
 
 type Entreprise struct {
 	sync.Mutex
