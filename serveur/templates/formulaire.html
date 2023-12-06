@@ -31,8 +31,8 @@
               <input type="number" id="nb_employes" name="nb_employes" min="1" required>
             </div>
             <div class="input-group">
-              <label for="nombreAnnees">Nombre d'années :</label>
-              <input type="number" id="nombreAnnees" name="nombreAnnees" min="1" required>
+              <label for="nb_annees">Nombre d'années :</label>
+              <input type="number" id="nb_annees" name="nb_annees" min="1" required>
             </div>
           </div>
 
@@ -70,14 +70,14 @@
             <!--- RECRUTEMENT AVANT OBJECTIF -->
             <div class="rounded-black-border">
                 <div class="form-row">
-                    <label for="typeRecrutementAvant"><b>Avant objectif.</b> Quel type de recrutement est mis en place ?</label>
+                    <label for="type_recrutement_avant"><b>Avant objectif.</b> Quel type de recrutement est mis en place ?</label>
                     <div class="input-group">
-                    <input type="radio" id="competencesAvant" name="typeRecrutementAvant" value="Compétences" 
+                    <input type="radio" id="competencesAvant" name="type_recrutement_avant" value=0 
                         onclick="afficher(idElemChecked='competencesAvant', idAAfficher='competencesAvantDiv', idACacher='placesReserveesAvantDiv');">
                     <label for="competences">Compétences</label>
                     </div>
                     <div class="input-group">
-                    <input type="radio" id="placesReserveesAvant" name="typeRecrutementAvant" value="Places réservées" 
+                    <input type="radio" id="placesReserveesAvant" name="type_recrutement_avant" value=1
                         onclick="afficher(idElemChecked='placesReserveesAvant', idAAfficher='placesReserveesAvantDiv', idACacher='competencesAvantDiv');">
                     <label for="placesReservees">Places réservées</label>
                     </div>
@@ -86,17 +86,17 @@
                 <div>
                     <div id="competencesAvantDiv" style="display: none;">
                         <div class="question form-row">
-                        <label for="competencesEgalesAvant">A compétences égales ?</label>
+                        <label for="strat_avant">A compétences égales ?</label>
                         <div class="input-group">
-                            <input type="radio" id="femme" name="competencesEgalesAvant" value="Une femme">
-                            <label for="femme">Une femme</label>
-                        </div>
-                        <div class="input-group">
-                            <input type="radio" id="homme" name="competencesEgalesAvant" value="Un homme">
+                            <input type="radio" id="homme" name="strat_avant" value=0>
                             <label for="homme">Un homme</label>
                         </div>
                         <div class="input-group">
-                            <input type="radio" id="hasard" name="competencesEgalesAvant" value="Au hasard">
+                            <input type="radio" id="femme" name="strat_avant" value=1>
+                            <label for="femme">Une femme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="hasard" name="strat_avant" value=2>
                             <label for="hasard">Au hasard</label>
                         </div>
                         </div>
@@ -104,8 +104,8 @@
                 
                     <div id="placesReserveesAvantDiv" style="display: none;">
                         <div class="form-row">
-                        <label for="pourcentagePlacesReserveesAvant">Pourcentage de places réservées :</label>
-                        <input type="range" id="pourcentagePlacesReserveesAvant" name="pourcentagePlacesReserveesAvant" min="0" max="100" value=30 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesAvantValue');">
+                        <label for="pourcentage_places_avant">Pourcentage de places réservées :</label>
+                        <input type="range" id="pourcentage_places_avant" name="pourcentage_places_avant" min="0" max="100" value=30 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesAvantValue');">
                         <span id="pourcentagePlacesReserveesAvantValue">30%</span><br><br>
                         </div>
                     </div>
@@ -115,14 +115,14 @@
             <!--- RECRUTEMENT APRES OBJECTIF -->
             <div class="rounded-black-border">
                 <div class="form-row">
-                    <label for="typeRecrutementApres"><b>Apres objectif.</b> Quel type de recrutement est mis en place ?</label>
+                    <label for="type_recrutement_apres"><b>Apres objectif.</b> Quel type de recrutement est mis en place ?</label>
                     <div class="input-group">
-                    <input type="radio" id="competencesApres" name="typeRecrutementApres" value="Compétences" 
+                    <input type="radio" id="competencesApres" name="type_recrutement_apres" value=0
                         onclick="afficher(idElemChecked='competencesApres', idAAfficher='competencesApresDiv', idACacher='placesReserveesApresDiv');">
                     <label for="competences">Compétences</label>
                     </div>
                     <div class="input-group">
-                    <input type="radio" id="placesReserveesApres" name="typeRecrutementApres" value="Places réservées" 
+                    <input type="radio" id="placesReserveesApres" name="type_recrutement_apres" value=1 
                         onclick="afficher(idElemChecked='placesReserveesApres', idAAfficher='placesReserveesApresDiv', idACacher='competencesApresDiv');">
                     <label for="placesReservees">Places réservées</label>
                     </div>
@@ -131,17 +131,17 @@
                 <div>
                     <div id="competencesApresDiv" style="display: none;">
                         <div class="question form-row">
-                        <label for="competencesEgalesApres">A compétences égales ?</label>
+                        <label for="strat_apres">A compétences égales ?</label>
                         <div class="input-group">
-                            <input type="radio" id="femme" name="competencesEgalesApres" value="Une femme">
-                            <label for="femme">Une femme</label>
-                        </div>
-                        <div class="input-group">
-                            <input type="radio" id="homme" name="competencesEgalesApres" value="Un homme">
+                            <input type="radio" id="homme" name="strat_apres" value=0>
                             <label for="homme">Un homme</label>
                         </div>
                         <div class="input-group">
-                            <input type="radio" id="hasard" name="competencesEgalesApres" value="Au hasard">
+                            <input type="radio" id="femme" name="strat_apres" value=1>
+                            <label for="femme">Une femme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="hasard" name="strat_apres" value=2>
                             <label for="hasard">Au hasard</label>
                         </div>
                         </div>
@@ -149,8 +149,8 @@
                 
                     <div id="placesReserveesApresDiv" style="display: none;">
                         <div class="form-row">
-                        <label for="pourcentagePlacesReserveesApres">Pourcentage de places réservées :</label>
-                        <input type="range" id="pourcentagePlacesReserveesApres" name="pourcentagePlacesReserveesApres" min="0" max="100" value=30 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesApresValue');">
+                        <label for="pourcentage_places_apres">Pourcentage de places réservées :</label>
+                        <input type="range" id="pourcentage_places_apres" name="pourcentage_places_apres" min="0" max="100" value=30 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesApresValue');">
                         <span id="pourcentagePlacesReserveesApresValue">30%</span><br><br>
                         </div>
                     </div>
@@ -164,14 +164,14 @@
         <div id="RecrutementSansObjectif" style="display: none;">
             <div class="rounded-black-border">
                 <div class="form-row">
-                    <label for="typeRecrutement">Quel type de recrutement est mis en place ?</label>
+                    <label for="type_recrutement_sans">Quel type de recrutement est mis en place ?</label>
                     <div class="input-group">
-                    <input type="radio" id="competences" name="typeRecrutement" value="Compétences" 
+                    <input type="radio" id="competences" name="type_recrutement_sans" value=0
                         onclick="afficher(idElemChecked='competences', idAAfficher='competencesDiv', idACacher='placesReserveesDiv');">
                     <label for="competences">Compétences</label>
                     </div>
                     <div class="input-group">
-                    <input type="radio" id="placesReservees" name="typeRecrutement" value="Places réservées" 
+                    <input type="radio" id="placesReservees" name="type_recrutement_sans" value=1 
                         onclick="afficher(idElemChecked='placesReservees', idAAfficher='placesReserveesDiv', idACacher='competencesDiv');">
                     <label for="placesReservees">Places réservées</label>
                     </div>
@@ -180,17 +180,17 @@
                 <div>
                     <div id="competencesDiv" style="display: none;">
                         <div class="question form-row">
-                        <label for="competencesEgales">A compétences égales ?</label>
+                        <label for="strat_sans">A compétences égales ?</label>
                         <div class="input-group">
-                            <input type="radio" id="femme" name="competencesEgales" value="Une femme">
-                            <label for="femme">Une femme</label>
-                        </div>
-                        <div class="input-group">
-                            <input type="radio" id="homme" name="competencesEgales" value="Un homme">
+                            <input type="radio" id="homme" name="strat_sans" value=0>
                             <label for="homme">Un homme</label>
                         </div>
                         <div class="input-group">
-                            <input type="radio" id="hasard" name="competencesEgales" value="Au hasard">
+                            <input type="radio" id="femme" name="strat_sans" value=1>
+                            <label for="femme">Une femme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="hasard" name="strat_sans" value=2>
                             <label for="hasard">Au hasard</label>
                         </div>
                         </div>
@@ -198,8 +198,8 @@
                 
                     <div id="placesReserveesDiv" style="display: none;">
                         <div class="form-row">
-                        <label for="pourcentagePlacesReservees">Pourcentage de places réservées :</label>
-                        <input type="range" id="pourcentagePlacesReservees" name="pourcentagePlacesReservees" min="0" max="100" value=30 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesValue');">
+                        <label for="pourcentage_places_sans">Pourcentage de places réservées :</label>
+                        <input type="range" id="pourcentage_places_sans" name="pourcentage_places_sans" min="0" max="100" value=30 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesValue');">
                         <span id="pourcentagePlacesReserveesValue">30%</span><br><br>
                         </div>
                     </div>
@@ -212,29 +212,7 @@
   </form>
 </div>
 
-<script>
-  function updatePourcentage(val, idValue) {
-    document.getElementById(idValue).innerText = val + '%';
-  }
-</script>
-
-<script>
-    function afficher(idElemChecked, idAAfficher, idACacher) {
-        var elemChecked = document.getElementById(idElemChecked);
-        var aAfficher = document.getElementById(idAAfficher);
-        var aCacher = document.getElementById(idACacher);
-
-        if (elemChecked.checked) {
-            aAfficher.style.display = 'block';
-            aCacher.style.display = 'none'
-        } else {
-            aAfficher.style.display = 'none';
-        }
-    }
-
-  </script>
-
-
+<script src="../static/js/formulaire.js"></script>
 
 </body>
 </html>
