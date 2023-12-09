@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulaire Entreprise</title>
+</head>
+<body>
+
+  <h1>Formulaire pour la création d'une entreprise !!!</h1>
+
+  <form onsubmit="sendData(event)">
+
+    <input type="hidden" name="id_simulation" id="id_simulation" value="id_1">
+
+    <label for="nb_employes">Nombre d'employés :</label>
+    <input type="number" id="nb_employes" name="nb_employes" min="1" required><br><br>
+
+    <label for="pourcentage_femmes">Pourcentage de femmes :</label>
+    <input type="number" id="pourcentage_femmes" name="pourcentage_femmes" min="0" max="1" step="0.01" required> [0;1]<br><br>
+
+    <label for="objectif">Objectif - pourcentage minimum de femmes :</label>
+    <input type="number" id="objectif" name="objectif" min="0" max="1" step="0.01" required> [0;1]<br><br>
+
+    <label for="type_recrutement_avant">Type de recrutement avant l'objectif :</label>
+    <select id="type_recrutement_avant" name="type_recrutement_avant" required>
+      <option value="CompetencesEgales">Compétences égales</option>
+      <option value="PlacesReservees">Places réservées aux femmes</option>
+    </select><br><br>
+
+    <label for="type_recrutement_apres">Type de recrutement après l'objectif :</label>
+    <select id="type_recrutement_apres" name="type_recrutement_apres" required>
+      <option value=0>Compétences égales</option>
+      <option value=1>Places réservées aux femmes</option>
+    </select><br><br>
+
+    <label for="strat_avant">Stratégie de recrutement à compétences égales avant l'objectif :</label>
+    <select id="strat_avant" name="strat_avant" required>
+      <option value=0>Priorité aux hommes</option>
+      <option value=1>Priorité aux femmes</option>
+      <option value=2>Hasard</option>
+    </select><br><br>
+
+    <label for="strat_apres">Stratégie de recrutement à compétences égales après l'objectif :</label>
+    <select id="strat_apres" name="strat_apres" required>
+        <option value=0>Priorité aux hommes</option>
+        <option value=1>Priorité aux femmes</option>
+        <option value=2>Hasard</option>
+    </select><br><br>
+
+    <label for="pourcentage_places_avant">Pourcentage de places réservées pour les femmes dans le recurtement (avant objectif) :</label>
+    <input type="number" id="pourcentage_places_avant" name="pourcentage_places_avant" min="0" max="1" step="0.01" required> [0;1]<br><br>
+
+    <label for="pourcentage_places_apres">Pourcentage de places réservées pour les femmes dans le recurtement (après objectif) :</label>
+    <input type="number" id="pourcentage_places_apres" name="pourcentage_places_apres" min="0" max="1" step="0.01" required> [0;1]<br><br>
+
+    <input type="submit" value="Envoyer">
+    <input type="reset" value="Réinitialiser">
+
+  </form>
+
+</body>
+
+<script>
+    function sendData(event) {
+      event.preventDefault();
+
+      const id_simulation = document.getElementById('id_simulation').value;
+      const nb_employes = document.getElementById('nb_employes').value;
+      const pourcentage_femmes = document.getElementById('pourcentage_femmes').value;
+      const objectif = document.getElementById('objectif').value;
+      const strat_avant = document.getElementById('strat_avant').value;
+      const strat_apres = document.getElementById('strat_apres').value;
+      const type_recrutement_avant = document.getElementById('type_recrutement_avant').value;
+      const type_recrutement_apres = document.getElementById('type_recrutement_apres').value;
+      const pourcentage_places_avant = document.getElementById('pourcentage_places_avant').value;
+      const pourcentage_places_apres = document.getElementById('pourcentage_places_apres').value;
+
+      const formData = {
+        id_simulation : id_simulation,
+        nb_employes : Number(nb_employes),
+        pourcentage_femmes : Number(pourcentage_femmes),
+        objectif : Number(objectif),
+        strat_avant : Number(strat_avant),
+        strat_apres : Number(strat_apres),
+        type_recrutement_avant : Number(type_recrutement_avant),
+        type_recrutement_apres : Number(type_recrutement_apres),
+        pourcentage_places_avant : Number(pourcentage_places_avant),
+        pourcentage_places_apres : Number(pourcentage_places_apres)
+      };
+
+      // Envoi des données au serveur en utilisant la méthode fetch avec la méthode POST
+      fetch('http://localhost:8080/new_simulation', {
+        method: 'POST',
+        headers: {
+			"Content-Type": "application/json",
+			"Accept": "application/json",
+            "Access-Control-Allow-Origin":'*'
+		},
+        body: JSON.stringify(formData)
+      })
+      .then((response) => {
+        if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+        } else {
+            response.json().then(data => console.log(data))
+        }
+        })
+    }
+  </script>
+
+</html>
