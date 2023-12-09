@@ -1,3 +1,5 @@
+let id_simulation = 0
+
 function updatePourcentage(val, idValue) {
     document.getElementById(idValue).innerText = val + '%';
 }
@@ -18,7 +20,6 @@ function afficher(idElemChecked, idAAfficher, idACacher) {
 function sendData(event) {
     event.preventDefault();
 
-    const id_simulation = document.getElementById('id_simulation').value;
     const nb_employes = document.getElementById('nb_employes').value;
     const nb_annees = document.getElementById('nb_annees').value;
     const pourcentage_femmes = document.getElementById('pourcentage_femmes').value;
@@ -39,39 +40,42 @@ function sendData(event) {
         if(document.getElementById('competences').checked) { //ON A CHOISI 'COMPETENCES EGALES
             strat_avant = document.querySelector('input[name="strat_sans"]:checked').value;
         } else {
-            strat_avant = -1;
+            strat_avant = 0; //StratVide dans l'énumération
         }
 
         if(document.getElementById('placesReservees').checked) { //ON A CHOISI PLACES RESERVEES
             pourcentage_places_avant = document.getElementById('pourcentage_places_sans').value;
+            pourcentage_places_avant = Number(pourcentage_places_avant)/100
         } else {
-            pourcentage_places_avant = 0;
+            pourcentage_places_avant = -1;
         }
 
         // On met tout à vide pour la partie "Après"
-        objectif = 0
-        type_recrutement_apres = -1
-        strat_apres = -1
-        pourcentage_places_apres = 0
+        objectif = -1
+        type_recrutement_apres = 0
+        strat_apres = 0
+        pourcentage_places_apres = -1
 
     } else {
 
         /*AVEC OBJECTIF : ON MET DANS 'AVANT'*/
 
         objectif = document.getElementById('objectif').value;
+        objectif = Number(objectif)/100,
 
         /*RECRUTEMENT AVANT*/
         type_recrutement_avant = document.querySelector('input[name="type_recrutement_avant"]:checked').value;
         if(document.getElementById('competencesAvant').checked) { //ON A CHOISI 'COMPETENCES EGALES
             strat_avant = document.querySelector('input[name="strat_avant"]:checked').value;
         } else {
-            strat_avant = -1;
+            strat_avant = 0;
         }
 
         if(document.getElementById('placesReserveesAvant').checked) { //ON A CHOISI PLACES RESERVEES
             pourcentage_places_avant = document.getElementById('pourcentage_places_avant').value;
+            pourcentage_places_avant = Number(pourcentage_places_avant)/100
         } else {
-            pourcentage_places_avant = 0;
+            pourcentage_places_avant = -1;
         }
 
         /*RECRUTEMENT APRES*/
@@ -79,29 +83,31 @@ function sendData(event) {
         if(document.getElementById('competencesApres').checked) { //ON A CHOISI 'COMPETENCES EGALES
             strat_apres = document.querySelector('input[name="strat_apres"]:checked').value;
         } else {
-            strat_apres = -1;
-            console.log("ici")
+            strat_apres = 0;
         }
 
         if(document.getElementById('placesReserveesApres').checked) { //ON A CHOISI PLACES RESERVEES
             pourcentage_places_apres = document.getElementById('pourcentage_places_apres').value;
+            pourcentage_places_apres = Number(pourcentage_places_apres)/100
         } else {
-            pourcentage_places_apres = 0;
+            pourcentage_places_apres = -1;
         }
     }
 
+    id_simulation +=1
+
     const formData = {
-      id_simulation : id_simulation,
+      id_simulation : "id_simulation_"+id_simulation,
       nb_employes : Number(nb_employes),
       nb_annees : Number(nb_annees),
       pourcentage_femmes : Number(pourcentage_femmes)/100,
-      objectif : Number(objectif)/100,
+      objectif : objectif,
       strat_avant : Number(strat_avant),
       strat_apres : Number(strat_apres),
       type_recrutement_avant : Number(type_recrutement_avant),
       type_recrutement_apres : Number(type_recrutement_apres),
-      pourcentage_places_avant : Number(pourcentage_places_avant)/100,
-      pourcentage_places_apres : Number(pourcentage_places_apres)/100
+      pourcentage_places_avant : pourcentage_places_avant,
+      pourcentage_places_apres : pourcentage_places_apres
     };
 
     console.log(formData)

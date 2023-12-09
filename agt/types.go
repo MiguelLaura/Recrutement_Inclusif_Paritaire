@@ -90,18 +90,18 @@ type Entreprise struct {
 type StratParite int
 
 const (
-	StratVide StratParite = iota // décrit l'absence de StartParite
-	PrioHomme
-	PrioFemme
-	Hasard
+	StratVide StratParite = iota // décrit l'absence de StartParite = 0
+	PrioHomme                    // = 1
+	PrioFemme                    // = 2
+	Hasard                       // = 3
 )
 
 type TypeRecrutement int
 
 const (
-	Vide TypeRecrutement = iota // décrit l'absence de TypeRecrutement
-	Competences
-	PlacesReservees
+	Vide            TypeRecrutement = iota // décrit l'absence de TypeRecrutement = 0
+	Competences                            // = 1
+	PlacesReservees                        // = 2
 )
 
 type Recrutement struct {

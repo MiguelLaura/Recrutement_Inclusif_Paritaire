@@ -21,7 +21,7 @@ type RestServerAgent struct {
 	sync.Mutex
 	id         string
 	addr       string
-	simulation agt.Simulation
+	simulation *agt.Simulation
 }
 
 // retourne un pointeur sur un nouveau ServeurAgent
@@ -120,8 +120,8 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 		fmt.Println("\nOK création et lancement simulation")
 
 		//*********** CREATION & LANCEMENT SIMULATION ****************************
-		s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, req.Objectif, req.StratAvant, req.StratApres, req.TypeRecrutementAvant, req.TypeRecrutementApres, req.PourcentagePlacesAvant, req.PourcentagePlacesApres, 3, 10*time.Second)
-		rsa.simulation = *s //la simulation (non un pointeur)
+		s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, req.Objectif, req.StratAvant, req.StratApres, req.TypeRecrutementAvant, req.TypeRecrutementApres, req.PourcentagePlacesAvant, req.PourcentagePlacesApres, req.NbAnnees, 10*time.Second)
+		rsa.simulation = s //la simulation (un pointeur)
 		s.Run()
 	}
 }
@@ -152,6 +152,8 @@ func (rsa *RestServerAgent) Start() {
 
 	mux.HandleFunc("/", home) //index
 	mux.HandleFunc("/new_simulation", rsa.creerNouvelleSimulation)
+
+	mux.Handle("/static/css/", http.StripPrefix("/static/css/", http.FileServer(http.Dir("./serveur/static/css/"))))
 
 	// création du serveur http
 	s := &http.Server{

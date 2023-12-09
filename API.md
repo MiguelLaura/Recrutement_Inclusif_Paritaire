@@ -17,13 +17,13 @@
 | `nb_employes` | `int` | **Required**. Nombre d'employés total dans l'entreprise |
 | `nb_annees` | `int` | **Required**. Nombre d'années pour la simulation |
 | `pourcentage_femmes` | `float` | **Required**. Pourcentage de femmes au début |
-| `objectif` | `float` | **Required**. Objectif pourcentage min de femmes dans l'entreprise. Peut-être 0% (pas d'objectif) |
-| `strat_avant` | `int` | **Required**. PrioHommes = 0 / PrioFemmes = 1 / Hasard = 2 / Vide = -1 |
-| `strat_apres` | `int` | **Required**. PrioHommes = 0 / PrioFemmes = 1 / Hasard = 2 / Vide = -1 |
-| `type_recrutement_avant` | `int` | **Required**. CompetencesEgales = 0 / PlacesReservees = 1 / Vide = -1 |
-| `type_recrutement_apres` | `int` | **Required**. CompetencesEgales = 0 / PlacesReservees = 1 / Vide = -1 |
-| `pourcentage_places_avant` | `float` | **Required**. Pourcentages de places réservées dans le recrutement |
-| `pourcentage_places_apres` | `float` | **Required**. Pourcentages de places réservées dans le recrutement |
+| `objectif` | `float` | **Required**. Objectif pourcentage min de femmes dans l'entreprise. Peut-être -1 (pas d'objectif) |
+| `strat_avant` | `int` | **Required**. Vide = 0 / PrioHommes = 1 / PrioFemmes = 2 / Hasard = 3 / |
+| `strat_apres` | `int` | **Required**. Vide = 0 / PrioHommes = 1 / PrioFemmes = 2 / Hasard = 3 / |
+| `type_recrutement_avant` | `int` | **Required**.  Vide = 0 / CompetencesEgales = 1 / PlacesReservees = 2 / |
+| `type_recrutement_apres` | `int` | **Required**. Vide = 0 / CompetencesEgales = 1 / PlacesReservees = 2 / |
+| `pourcentage_places_avant` | `float` | **Required**. Pourcentages de places réservées dans le recrutement. Peut-être -1 (pas de places réservées) |
+| `pourcentage_places_apres` | `float` | **Required**. Pourcentages de places réservées dans le recrutement. Peut-être -1 (pas de places réservées) |
 
 - Code retour
 
@@ -36,7 +36,7 @@
 
 | propriété  | type | exemple de valeurs possibles                                  |
 |------------|-------------|-----------------------------------------------------|
-| `simulation-id`    | `string` | `"simulation-1"` |
+| `simulation-id`    | `string` | `"id_simulation_1"` |
 
 
 
