@@ -9,11 +9,18 @@ function afficher(idElemChecked, idAAfficher, idACacher) {
     var aAfficher = document.getElementById(idAAfficher);
     var aCacher = document.getElementById(idACacher);
 
+    var inputsAAfficher = aAfficher.querySelectorAll('input');
+    var inputsACacheer = aCacher.querySelectorAll('input');
+
     if (elemChecked.checked) {
         aAfficher.style.display = 'block';
+        inputsAAfficher.forEach(function(inputsAAfficher) {
+            inputsAAfficher.required = true;
+        });
         aCacher.style.display = 'none'
-    } else {
-        aAfficher.style.display = 'none';
+        inputsACacheer.forEach(function(inputsACacheer) {
+            inputsACacheer.required = false;
+        });
     }
 }
 
@@ -122,12 +129,26 @@ function sendData(event) {
       },
       body: JSON.stringify(formData)
     })
-    .then((response) => {
-      if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-      } else {
-          response.json().then(data => console.log(data))
-      }
+    .then(response => {
+        if (!response.ok) {
+          return response.text();
+        } else {
+          return response.json();
+        }
       })
+      .then(data => {
+        console.log(data);
+        var respValue = document.getElementById("responseFormValue");
+        if(typeof data === 'object') { 
+            respValue.style.color = "black";
+            respValue.innerText = `Simulation créée ! [ID : ${data.id_simulation}]`;
+        } else { //Erreur
+            respValue.style.color = "red";
+            respValue.innerText = data;
+        }
+      })
+      .catch(error => {
+        console.error('Erreur HTTP:', error);
+      });
       
   }

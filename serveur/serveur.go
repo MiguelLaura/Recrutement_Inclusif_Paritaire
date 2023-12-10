@@ -90,26 +90,32 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 	} else if req.NbEmployes <= 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : le nombre d'employés doit être > 0"
+		fmt.Println(msg)
 		w.Write([]byte(msg))
 		return
 	} else if req.PourcentageFemmes < 0.0 || req.PourcentageFemmes > 1.0 {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : le pourcentage de femmes doit être entre 0 et 1"
+		fmt.Println(msg)
 		w.Write([]byte(msg))
 		return
-	} else if req.Objectif < 0.0 || req.Objectif > 1.0 {
+	} else if req.Objectif != -1 && !(req.Objectif >= 0.0 && req.Objectif <= 1.0) {
 		w.WriteHeader(http.StatusBadRequest)
+		fmt.Println(req.Objectif)
 		msg := "erreur : l'objectif doit être entre 0 et 1"
+		fmt.Println(msg)
 		w.Write([]byte(msg))
 		return
-	} else if req.PourcentagePlacesAvant < 0.0 || req.PourcentagePlacesAvant > 1.0 {
+	} else if req.PourcentagePlacesAvant != -1 && !(req.PourcentagePlacesAvant >= 0.0 && req.PourcentagePlacesAvant <= 1.0) {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : le pourcentage de places avant doit être entre 0 et 1"
+		fmt.Println(msg)
 		w.Write([]byte(msg))
 		return
-	} else if req.PourcentagePlacesApres < 0.0 || req.PourcentagePlacesApres > 1.0 {
+	} else if req.PourcentagePlacesApres != -1 && !(req.PourcentagePlacesApres >= 0.0 && req.PourcentagePlacesApres <= 1.0) {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : le pourcentage de places après doit être entre 0 et 1"
+		fmt.Println(msg)
 		w.Write([]byte(msg))
 		return
 	} else {

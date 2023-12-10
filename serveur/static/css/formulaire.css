@@ -74,4 +74,25 @@ body {
     display: block;
     margin-bottom: 5px;
   }
+
+  .list_buttons_form {
+    text-align: center;
+  }
+
+  .button_form {
+    background-color: #7949FF;
+    border-radius: 5px;
+    border: none;
+    color: white;
+    padding: 8px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+
+  .response_form {
+    text-align: center;
+  }
   
