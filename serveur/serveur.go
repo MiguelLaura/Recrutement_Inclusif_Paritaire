@@ -153,7 +153,8 @@ func (rsa *RestServerAgent) Start() {
 	mux.HandleFunc("/", home) //index
 	mux.HandleFunc("/new_simulation", rsa.creerNouvelleSimulation)
 
-	mux.Handle("/static/css/", http.StripPrefix("/static/css/", http.FileServer(http.Dir("./serveur/static/css/"))))
+	fileHandler := http.StripPrefix("/static/", http.FileServer(http.Dir("./serveur/static/")))
+	mux.Handle("/static/", fileHandler)
 
 	// création du serveur http
 	s := &http.Server{

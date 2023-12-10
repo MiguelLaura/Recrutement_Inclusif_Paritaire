@@ -14,7 +14,7 @@ func main() {
 	loggers := logger.Loggers{}
 	loggers.AjouterLogger(&leLogger)
 
-	server := serveur.NewRestServerAgent(":8080")
+	server := serveur.NewRestServerAgent("localhost:8080")
 	server.Start()
 	fmt.Scanln()
 }
