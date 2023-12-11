@@ -14,7 +14,7 @@ import (
 // ---------------------
 
 func NewRecrutement(ent *Entreprise, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64) *Recrutement {
-	return &Recrutement{entreprise: ent, objectif: obj, stratAvant: sav, stratApres: sap, typeRecrutementAvant: trav, typeRecrutementApres: trap, pourcentagePlacesAvant: ppav, pourcentagePlacesApres: ppap}
+	return &Recrutement{entreprise: ent, objectif: obj, stratAvant: sav, stratApres: sap, typeRecrutementAvant: trav, typeRecrutementApres: trap, pourcentagePlacesAvant: ppav, pourcentagePlacesApres: ppap, chnl: ent.chnlRecrutement}
 }
 
 // ---------------------
@@ -330,4 +330,21 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 
 func (r *Recrutement) Start() {
 	log.Printf("Le service de recrutement est opérationnel")
+
+	// Boucle de vie
+	for {
+		// Attend un message pour agir
+		msg := <-r.chnl
+		if msg.Act == RECRUTEMENT {
+			embauches, err := r.Recruter(msg.Payload.(int))
+			if err != nil {
+				r.chnl <- Communicateur_recrutement{ERREUR_RECRUTEMENT, err}
+			} else {
+				r.chnl <- Communicateur_recrutement{FIN_RECRUTEMENT, embauches}
+			}
+		} else {
+			err := errors.New("Mauvaise action du channel")
+			r.chnl <- Communicateur_recrutement{ERREUR_RECRUTEMENT, err}
+		}
+	}
 }

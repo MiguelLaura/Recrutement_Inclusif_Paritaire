@@ -26,9 +26,23 @@ const (
 	FIN
 )
 
-// Permet la communication entre agents
+// Permet la communication entre entreprise et employé
 type Communicateur struct {
 	Act     Action
+	Payload any
+}
+
+type Action_recrutement int
+
+const (
+	RECRUTEMENT Action_recrutement = iota
+	FIN_RECRUTEMENT
+	ERREUR_RECRUTEMENT
+)
+
+// Permet la communication entre agents
+type Communicateur_recrutement struct {
+	Act     Action_recrutement
 	Payload any
 }
 
@@ -72,17 +86,18 @@ const (
 
 type Entreprise struct {
 	sync.Mutex
-	employes      []Employe
-	departs       []Employe
-	plaintes      [][]Employe
-	nbDepressions int
-	nbRenvois     int
-	recrutement   Recrutement
-	ca            float64
-	nbActions     int
-	nbAgresseurs  int
-	chnl          chan Communicateur
-	chnlActions   chan Communicateur
+	employes        []Employe
+	departs         []Employe
+	plaintes        [][]Employe
+	nbDepressions   int
+	nbRenvois       int
+	recrutement     Recrutement
+	ca              float64
+	nbActions       int
+	nbAgresseurs    int
+	chnl            chan Communicateur
+	chnlActions     chan Communicateur
+	chnlRecrutement chan Communicateur_recrutement
 }
 
 // ------------ RECRUTEMENT ------------
@@ -113,4 +128,5 @@ type Recrutement struct {
 	typeRecrutementApres   TypeRecrutement
 	pourcentagePlacesAvant float64 // -1 si non renseigné, entre 0 et 1 sinon
 	pourcentagePlacesApres float64
+	chnl                   chan Communicateur_recrutement
 }
