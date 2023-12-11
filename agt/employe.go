@@ -68,6 +68,10 @@ func (e *Employe) Id() EmployeID {
 	return e.id
 }
 
+func (e *Employe) TestThing() {
+	e.id = "J'ai été hacké !!!"
+}
+
 func (e *Employe) Genre() Genre {
 	return e.genre
 }
@@ -155,11 +159,18 @@ func (agresse *Employe) etreAgresse(agresseur *Employe) {
 
 // L'agent agresse quelqu'un pris au hasard dans son entreprise
 func (agresseur *Employe) agresser() {
-	cible := agresseur.entreprise.EnvoyerEmploye()
+	var genreAgresse Genre
+	if agresseur.genre == Femme {
+		genreAgresse = Homme
+	} else {
+		genreAgresse = Femme
+	}
+
+	cible := agresseur.entreprise.EnvoyerEmploye(genreAgresse)
 
 	// S'assure de ne pas s'agresser lui-même
 	for cible.id == agresseur.id {
-		cible = agresseur.entreprise.EnvoyerEmploye()
+		cible = agresseur.entreprise.EnvoyerEmploye(genreAgresse)
 	}
 
 	log.Printf("Employé %s agresse %s", agresseur.id, cible.id)

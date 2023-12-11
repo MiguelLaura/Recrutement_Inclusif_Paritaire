@@ -26,6 +26,7 @@ func TestFiltreFemme(t *testing.T) {
 	employes = append(employes, e5)
 	employes = append(employes, e6)
 	femmes := agt.FiltreFemme(employes)
+
 	if len(femmes) != 3 {
 		t.Errorf("erreur : le slice renvoyé ne contient pas le bon nombre d'élement")
 	}
