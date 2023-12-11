@@ -55,6 +55,7 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64) *Entreprise {
 	ent.nbActions = 0
 	ent.chnl = make(chan Communicateur)
 	ent.chnlActions = make(chan Communicateur)
+	ent.fin = false
 	return ent
 }
 
@@ -224,9 +225,10 @@ func (ent *Entreprise) Start() {
 
 	// ent.recrutement.Start()
 
-	for {
+	for !ent.fin {
 		ent.agir()
 	}
+	log.Printf("Fin d'entreprise")
 }
 
 func (ent *Entreprise) agir() {
@@ -237,6 +239,8 @@ func (ent *Entreprise) agir() {
 		ent.bonneAnnee()
 		<-ent.chnlActions
 		ent.finirCycle()
+	} else if msg.Act == FIN {
+		ent.fin = true
 	}
 }
 

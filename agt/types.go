@@ -83,6 +83,7 @@ type Entreprise struct {
 	nbAgresseurs  int
 	chnl          chan Communicateur
 	chnlActions   chan Communicateur
+	fin           bool
 }
 
 // ------------ RECRUTEMENT ------------
