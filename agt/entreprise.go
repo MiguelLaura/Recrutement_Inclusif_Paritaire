@@ -295,7 +295,7 @@ func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
 	case Homme:
 		empList = FiltreHommePtr(ent.employes)
 	case Femme:
-		empList = FiltreHommePtr(ent.employes)
+		empList = FiltreFemmePtr(ent.employes)
 	}
 
 	if empList == nil {
