@@ -156,9 +156,8 @@ func (ent *Entreprise) NotifierAction() {
 
 	ent.nbActions += 1
 
-	log.Printf("Nb actions %d/%d", ent.nbActions, (ent.nbEmployes() + ent.nbAgresseurs))
-
 	if ent.nbActions == (ent.nbEmployes() + ent.nbAgresseurs) {
+		log.Printf("Nb actions %d/%d", ent.nbActions, (ent.nbEmployes() + ent.nbAgresseurs))
 		ent.nbActions = 0
 		go CollecterActions(ent, LIBRE, nil)
 	}
@@ -202,6 +201,9 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 			if emp.agresseur {
 				ent.nbAgresseurs += 1
 			}
+			go func(emp Employe) {
+				emp.Start()
+			}(emp)
 		}
 		return nil
 	}
