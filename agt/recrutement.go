@@ -343,7 +343,7 @@ func (r *Recrutement) Start() {
 				r.chnl <- Communicateur_recrutement{FIN_RECRUTEMENT, embauches}
 			}
 		} else {
-			err := errors.New("Mauvaise action du channel")
+			err := errors.New("erreur : mauvaise action du channel")
 			r.chnl <- Communicateur_recrutement{ERREUR_RECRUTEMENT, err}
 		}
 	}

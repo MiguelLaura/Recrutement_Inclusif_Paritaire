@@ -191,9 +191,6 @@ func (ent *Entreprise) gestionDeparts() {
 }
 
 func (ent *Entreprise) gestionRecrutements() (err error) {
-	nbARecruter := float64(ent.nbEmployes()) * constantes.POURCENTAGE_RECRUTEMENT
-
-	EnvoyerMessageRecrutement(&ent.recrutement, RECRUTEMENT, nbARecruter)
 	msg := <-ent.chnlRecrutement
 	if msg.Act == ERREUR_RECRUTEMENT {
 		return msg.Payload.(error)
@@ -208,8 +205,14 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 		return nil
 	}
 
-	err = errors.New("Erreur recrutement")
+	err = errors.New("erreur : erreur recrutement")
 	return err
+}
+
+func (ent *Entreprise) lancerRecrutements() {
+	nbARecruter := float64(ent.nbEmployes()) * constantes.POURCENTAGE_RECRUTEMENT
+
+	go EnvoyerMessageRecrutement(&ent.recrutement, RECRUTEMENT, int(nbARecruter))
 }
 
 func (ent *Entreprise) bonneAnnee() {
@@ -221,6 +224,8 @@ func (ent *Entreprise) bonneAnnee() {
 			EnvoyerMessage(&emp, LIBRE, nil)
 		}(emp)
 	}
+
+	ent.lancerRecrutements()
 }
 
 // ---------------------
@@ -234,7 +239,7 @@ func (ent *Entreprise) Start() {
 		}(emp)
 	}
 
-	ent.recrutement.Start()
+	go ent.recrutement.Start()
 
 	for {
 		ent.agir()
