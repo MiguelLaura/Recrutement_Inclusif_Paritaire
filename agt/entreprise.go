@@ -285,11 +285,26 @@ func (ent *Entreprise) PourcentageFemmes() float64 {
 	return float64(len(femmes)) / float64(len(ent.employes))
 }
 
-func (ent *Entreprise) EnvoyerEmploye() *Employe {
+func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
 	ent.Lock()
 	defer ent.Unlock()
 
-	idx := rand.Intn(len(ent.employes))
-	emp := ent.employes[idx]
-	return &emp
+	var empList []*Employe = nil
+
+	switch g {
+	case Homme:
+		empList = FiltreHommePtr(ent.employes)
+	case Femme:
+		empList = FiltreHommePtr(ent.employes)
+	}
+
+	if empList == nil {
+		idx := rand.Intn(len(ent.employes))
+		emp := ent.employes[idx]
+		return &emp
+	}
+
+	idx := rand.Intn(len(empList))
+	emp := empList[idx]
+	return emp
 }
