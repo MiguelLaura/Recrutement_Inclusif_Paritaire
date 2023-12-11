@@ -129,6 +129,7 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	defer ent.Unlock()
 
 	ent.departs = append(ent.departs, *emp)
+	log.Printf("nb départs dans recevoirRetraite %d", len(ent.departs))
 
 	// log.Printf("L'entreprise récupère retraite d'employé %s", emp.Id())
 }
@@ -182,12 +183,15 @@ func (ent *Entreprise) NotifierAction() {
 // }
 
 func (ent *Entreprise) gestionDeparts() {
+	log.Printf("nb départs dans gestionDeparts dbt %d", len(ent.departs))
 	for _, emp := range ent.departs {
 		ent.employes = enleverEmploye(ent.employes, emp)
+		ent.departs = enleverEmploye(ent.departs, emp)
 		if emp.agresseur {
 			ent.nbAgresseurs -= 1
 		}
 	}
+	log.Printf("nb départs dans gestionDeparts fin %d", len(ent.departs))
 }
 
 func (ent *Entreprise) gestionRecrutements() (err error) {
@@ -224,6 +228,7 @@ func (ent *Entreprise) bonneAnnee() {
 			EnvoyerMessage(&emp, LIBRE, nil)
 		}(emp)
 	}
+	log.Printf("nb départs dans gestionDeparts fin %d", len(ent.departs))
 
 	ent.lancerRecrutements()
 }
