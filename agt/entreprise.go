@@ -1,6 +1,7 @@
 package agt
 
 import (
+	"errors"
 	"log"
 	"math"
 	"math/rand"
@@ -18,6 +19,10 @@ func EnvoyerMessageEntreprise(dest *Entreprise, act Action, payload any) {
 
 func CollecterActions(dest *Entreprise, act Action, payload any) {
 	dest.chnlActions <- Communicateur{act, payload}
+}
+
+func EnvoyerMessageRecrutement(dest *Recrutement, act Action_recrutement, payload any) {
+	dest.chnl <- Communicateur_recrutement{act, payload}
 }
 
 // ---------------------
@@ -53,9 +58,10 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64) *Entreprise {
 	ent.nbRenvois = 0
 	ent.ca = 0.0
 	ent.nbActions = 0
+	ent.fin = false
 	ent.chnl = make(chan Communicateur)
 	ent.chnlActions = make(chan Communicateur)
-	ent.fin = false
+	ent.chnlRecrutement = make(chan Communicateur_recrutement)
 	return ent
 }
 
@@ -186,19 +192,28 @@ func (ent *Entreprise) gestionDeparts() {
 }
 
 func (ent *Entreprise) gestionRecrutements() (err error) {
-	nbARecruter := float64(ent.nbEmployes()) * constantes.POURCENTAGE_RECRUTEMENT
-	embauches, err := ent.recrutement.Recruter(int(math.Round(nbARecruter)))
-	if err != nil {
-		return err
+	msg := <-ent.chnlRecrutement
+	if msg.Act == ERREUR_RECRUTEMENT {
+		return msg.Payload.(error)
+	} else if msg.Act == FIN_RECRUTEMENT {
+		embauches := msg.Payload.([]Employe)
+		for _, emp := range embauches {
+			ent.employes = append(ent.employes, emp)
+			if emp.agresseur {
+				ent.nbAgresseurs += 1
+			}
+		}
+		return nil
 	}
 
-	for _, emp := range embauches {
-		ent.employes = append(ent.employes, emp)
-		if emp.agresseur {
-			ent.nbAgresseurs += 1
-		}
-	}
-	return nil
+	err = errors.New("erreur : erreur recrutement")
+	return err
+}
+
+func (ent *Entreprise) lancerRecrutements() {
+	nbARecruter := float64(ent.nbEmployes()) * constantes.POURCENTAGE_RECRUTEMENT
+
+	go EnvoyerMessageRecrutement(&ent.recrutement, RECRUTEMENT, int(nbARecruter))
 }
 
 func (ent *Entreprise) bonneAnnee() {
@@ -210,6 +225,8 @@ func (ent *Entreprise) bonneAnnee() {
 			EnvoyerMessage(&emp, LIBRE, nil)
 		}(emp)
 	}
+
+	ent.lancerRecrutements()
 }
 
 // ---------------------
@@ -223,7 +240,7 @@ func (ent *Entreprise) Start() {
 		}(emp)
 	}
 
-	// ent.recrutement.Start()
+	go ent.recrutement.Start()
 
 	for !ent.fin {
 		ent.agir()
