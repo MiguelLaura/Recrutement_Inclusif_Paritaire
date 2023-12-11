@@ -2,6 +2,7 @@ package agt
 
 import (
 	"errors"
+	"log"
 	"math"
 	"math/rand"
 
@@ -196,10 +197,7 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 
 	// Génération des candidats
 
-	// Voir si on garde le système de constantes pour le nombre de candidats générés
-	// (si le nombre de personnes recrutées augmente, il vaut mieux que le nombre de
-	// candidats augmente aussi)
-	candidats, err := r.GenererCandidats(constantes.NBCANDIDATS)
+	candidats, err := r.GenererCandidats(constantes.NB_CANDIDATS_PAR_OFFRE * nbARecruter)
 	if err != nil {
 		return nil, err
 	}
@@ -330,4 +328,6 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 //  Logique de simulation
 // ---------------------
 
-// Faire une fonction Start() quand on aura établi l'échange d'infos entre Recrutement et Entreprise
+func (r *Recrutement) Start() {
+	log.Printf("Le service de recrutement est opérationnel")
+}
