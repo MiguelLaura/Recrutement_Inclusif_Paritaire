@@ -171,9 +171,7 @@ func (agresseur *Employe) agresser() {
 
 	log.Printf("Employé %s agresse %s", agresseur.id, cible.id)
 
-	go func(cible *Employe) {
-		EnvoyerMessage(cible, AGRESSION, agresseur)
-	}(cible)
+	go EnvoyerMessage(cible, AGRESSION, agresseur)
 }
 
 // ---------------------
