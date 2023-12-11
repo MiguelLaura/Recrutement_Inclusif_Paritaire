@@ -176,9 +176,6 @@ func (ent *Entreprise) NotifierAction() {
 // }
 
 func (ent *Entreprise) gestionDeparts() {
-	ent.Lock()
-	defer ent.Unlock()
-
 	for _, emp := range ent.departs {
 		ent.employes = enleverEmploye(ent.employes, emp)
 		if emp.agresseur {
@@ -188,9 +185,6 @@ func (ent *Entreprise) gestionDeparts() {
 }
 
 func (ent *Entreprise) gestionRecrutements() (err error) {
-	ent.Lock()
-	defer ent.Unlock()
-
 	nbARecruter := float64(ent.nbEmployes()) * constantes.POURCENTAGE_RECRUTEMENT
 	embauches, err := ent.recrutement.Recruter(int(math.Round(nbARecruter)))
 	if err != nil {
@@ -207,9 +201,6 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 }
 
 func (ent *Entreprise) bonneAnnee() {
-	ent.Lock()
-	defer ent.Unlock()
-
 	ent.nbDepressions = 0
 	ent.nbRenvois = 0
 
@@ -267,9 +258,6 @@ func (ent *Entreprise) finirCycle() {
 // ---------------------
 
 func (ent *Entreprise) AjouterRecrutement(recrut Recrutement) {
-	ent.Lock()
-	defer ent.Unlock()
-
 	ent.recrutement = recrut
 }
 
@@ -278,17 +266,11 @@ func (ent *Entreprise) nbEmployes() int {
 }
 
 func (ent *Entreprise) PourcentageFemmes() float64 {
-	ent.Lock()
-	defer ent.Unlock()
-
 	femmes := FiltreFemme(ent.employes)
 	return float64(len(femmes)) / float64(len(ent.employes))
 }
 
 func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
-	ent.Lock()
-	defer ent.Unlock()
-
 	var empList []*Employe = nil
 
 	switch g {
