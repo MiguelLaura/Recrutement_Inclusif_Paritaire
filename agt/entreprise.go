@@ -17,6 +17,10 @@ func EnvoyerMessageEntreprise(dest *Entreprise, act Action, payload any) {
 	dest.chnl <- Communicateur{act, payload}
 }
 
+func EnvoyerNotifActions(dest *Entreprise, act Action, payload any) {
+	dest.chnlNotifAction <- Communicateur{act, payload}
+}
+
 func CollecterActions(dest *Entreprise, act Action, payload any) {
 	dest.chnlActions <- Communicateur{act, payload}
 }
@@ -51,9 +55,11 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64) *Entreprise {
 			ent.nbAgresseurs += 1
 		}
 	}
-	ent.employes = employesInit
-	ent.departs = make([]Employe, 0)
-	ent.plaintes = make([][]Employe, 0)
+	ent.employes = &employesInit
+	departs := make([]Employe, 0)
+	ent.departs = &departs
+	plaintes := make([][]Employe, 0)
+	ent.plaintes = &plaintes
 	ent.nbDepressions = 0
 	ent.nbRenvois = 0
 	ent.ca = 0.0
@@ -62,6 +68,7 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64) *Entreprise {
 	ent.chnl = make(chan Communicateur)
 	ent.chnlActions = make(chan Communicateur)
 	ent.chnlRecrutement = make(chan Communicateur_recrutement)
+	ent.chnlNotifAction = make(chan Communicateur)
 	return ent
 }
 
@@ -70,15 +77,15 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64) *Entreprise {
 // ---------------------
 
 func (ent *Entreprise) Employes() []Employe {
-	return ent.employes
+	return *ent.employes
 }
 
 func (ent *Entreprise) Departs() []Employe {
-	return ent.departs
+	return *ent.departs
 }
 
 func (ent *Entreprise) Plaintes() [][]Employe {
-	return ent.plaintes
+	return *ent.plaintes
 }
 
 func (ent *Entreprise) NbDepressions() int {
@@ -113,7 +120,7 @@ func (ent *Entreprise) RecevoirDemission(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
 
-	ent.departs = append(ent.departs, *emp)
+	*ent.departs = append(*ent.departs, *emp)
 }
 
 func (ent *Entreprise) RecevoirDepression(emp *Employe) {
@@ -121,15 +128,15 @@ func (ent *Entreprise) RecevoirDepression(emp *Employe) {
 	defer ent.Unlock()
 
 	ent.nbDepressions += 1
-	ent.departs = append(ent.departs, *emp)
+	*ent.departs = append(*ent.departs, *emp)
 }
 
 func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
 
-	ent.departs = append(ent.departs, *emp)
-	log.Printf("nb départs dans recevoirRetraite %d", len(ent.departs))
+	*ent.departs = append(*ent.departs, *emp)
+	log.Printf("nb départs dans recevoirRetraite %d", len(*ent.departs))
 
 	// log.Printf("L'entreprise récupère retraite d'employé %s", emp.Id())
 }
@@ -138,9 +145,7 @@ func (ent *Entreprise) RecevoirPlainte(plaignant *Employe, accuse *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
 
-	ent.plaintes = append(ent.plaintes, []Employe{*plaignant, *accuse})
-
-	// log.Printf("L'entreprise récupère plainte d'employé %s contre amployé %s", plaignant.Id(), accuse.Id())
+	*ent.plaintes = append(*ent.plaintes, []Employe{*plaignant, *accuse})
 }
 
 // Mettre à jour la formule
@@ -151,16 +156,18 @@ func (ent *Entreprise) MettreAJourCA(santeMentale int, competence int) {
 	ent.ca += float64(santeMentale) * float64(competence)
 }
 
-func (ent *Entreprise) NotifierAction() {
-	ent.Lock()
-	defer ent.Unlock()
+func (ent *Entreprise) RecevoirActions() {
+	for {
+		<-ent.chnlNotifAction
 
-	ent.nbActions += 1
+		ent.nbActions += 1
 
-	if ent.nbActions == (ent.nbEmployes() + ent.nbAgresseurs) {
 		log.Printf("Nb actions %d/%d", ent.nbActions, (ent.nbEmployes() + ent.nbAgresseurs))
-		ent.nbActions = 0
-		go CollecterActions(ent, LIBRE, nil)
+
+		if ent.nbActions == (ent.nbEmployes() + ent.nbAgresseurs) {
+			ent.nbActions = 0
+			return
+		}
 	}
 }
 
@@ -183,15 +190,15 @@ func (ent *Entreprise) NotifierAction() {
 // }
 
 func (ent *Entreprise) gestionDeparts() {
-	log.Printf("nb départs dans gestionDeparts dbt %d", len(ent.departs))
-	for _, emp := range ent.departs {
-		ent.employes = enleverEmploye(ent.employes, emp)
-		ent.departs = enleverEmploye(ent.departs, emp)
+	log.Printf("nb départs dans gestionDeparts dbt %d", len(*ent.departs))
+	for _, emp := range *ent.departs {
+		*ent.employes = enleverEmploye(*ent.employes, emp)
+		*ent.departs = enleverEmploye(*ent.departs, emp)
 		if emp.agresseur {
 			ent.nbAgresseurs -= 1
 		}
 	}
-	log.Printf("nb départs dans gestionDeparts fin %d", len(ent.departs))
+	log.Printf("nb départs dans gestionDeparts fin %d", len(*ent.departs))
 }
 
 func (ent *Entreprise) gestionRecrutements() (err error) {
@@ -200,8 +207,9 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 		return msg.Payload.(error)
 	} else if msg.Act == FIN_RECRUTEMENT {
 		embauches := msg.Payload.([]Employe)
+		log.Printf("embauche %d, employés %d", len(embauches), ent.nbEmployes())
 		for _, emp := range embauches {
-			ent.employes = append(ent.employes, emp)
+			*ent.employes = append(*ent.employes, emp)
 			if emp.agresseur {
 				ent.nbAgresseurs += 1
 			}
@@ -223,12 +231,12 @@ func (ent *Entreprise) bonneAnnee() {
 	ent.nbDepressions = 0
 	ent.nbRenvois = 0
 
-	for _, emp := range ent.employes {
+	log.Printf("len emp %d", ent.nbEmployes())
+	for _, emp := range *ent.employes {
 		go func(emp Employe) {
 			EnvoyerMessage(&emp, LIBRE, nil)
 		}(emp)
 	}
-	log.Printf("nb départs dans gestionDeparts fin %d", len(ent.departs))
 
 	ent.lancerRecrutements()
 }
@@ -238,7 +246,7 @@ func (ent *Entreprise) bonneAnnee() {
 // ---------------------
 
 func (ent *Entreprise) Start() {
-	for _, emp := range ent.employes {
+	for _, emp := range *ent.employes {
 		go func(emp Employe) {
 			emp.Start()
 		}(emp)
@@ -258,7 +266,7 @@ func (ent *Entreprise) agir() {
 		log.Printf("Commence l'année")
 		// Envoyer le message aux employés pour qu'ils agissent
 		ent.bonneAnnee()
-		<-ent.chnlActions
+		ent.RecevoirActions()
 		ent.finirCycle()
 	} else if msg.Act == FIN {
 		ent.fin = true
@@ -287,12 +295,12 @@ func (ent *Entreprise) AjouterRecrutement(recrut Recrutement) {
 }
 
 func (ent *Entreprise) nbEmployes() int {
-	return len(ent.employes)
+	return len(*ent.employes)
 }
 
 func (ent *Entreprise) PourcentageFemmes() float64 {
-	femmes := FiltreFemme(ent.employes)
-	return float64(len(femmes)) / float64(len(ent.employes))
+	femmes := FiltreFemme(*ent.employes)
+	return float64(len(femmes)) / float64(len(*ent.employes))
 }
 
 func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
@@ -300,14 +308,14 @@ func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
 
 	switch g {
 	case Homme:
-		empList = FiltreHommePtr(ent.employes)
+		empList = FiltreHommePtr(*ent.employes)
 	case Femme:
-		empList = FiltreFemmePtr(ent.employes)
+		empList = FiltreFemmePtr(*ent.employes)
 	}
 
 	if empList == nil {
-		idx := rand.Intn(len(ent.employes))
-		emp := ent.employes[idx]
+		idx := rand.Intn(len(*ent.employes))
+		emp := (*ent.employes)[idx]
 		return &emp
 	}
 

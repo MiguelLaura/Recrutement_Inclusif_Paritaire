@@ -86,9 +86,9 @@ const (
 
 type Entreprise struct {
 	sync.Mutex
-	employes        []Employe
-	departs         []Employe
-	plaintes        [][]Employe
+	employes        *[]Employe
+	departs         *[]Employe
+	plaintes        *[][]Employe
 	nbDepressions   int
 	nbRenvois       int
 	recrutement     Recrutement
@@ -99,6 +99,7 @@ type Entreprise struct {
 	chnl            chan Communicateur
 	chnlActions     chan Communicateur
 	chnlRecrutement chan Communicateur_recrutement
+	chnlNotifAction chan Communicateur
 }
 
 // ------------ RECRUTEMENT ------------

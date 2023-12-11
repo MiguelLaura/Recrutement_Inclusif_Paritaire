@@ -226,5 +226,5 @@ func (e *Employe) agir() {
 	}
 
 	// Permet de notifier l'entreprise que l'agent vient de faire une action
-	e.entreprise.NotifierAction()
+	EnvoyerNotifActions(e.entreprise, LIBRE, nil)
 }
