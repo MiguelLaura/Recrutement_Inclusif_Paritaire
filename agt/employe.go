@@ -68,10 +68,6 @@ func (e *Employe) Id() EmployeID {
 	return e.id
 }
 
-func (e *Employe) TestThing() {
-	e.id = "J'ai été hacké !!!"
-}
-
 func (e *Employe) Genre() Genre {
 	return e.genre
 }
