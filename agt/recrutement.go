@@ -337,6 +337,11 @@ func (r *Recrutement) Start() {
 		msg := <-r.chnl
 		if msg.Act == RECRUTEMENT {
 			embauches, err := r.Recruter(msg.Payload.(int))
+			for _, emp := range embauches {
+				go func(emp Employe) {
+					emp.Start()
+				}(emp)
+			}
 			if err != nil {
 				r.chnl <- Communicateur_recrutement{ERREUR_RECRUTEMENT, err}
 			} else {

@@ -201,9 +201,6 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 			if emp.agresseur {
 				ent.nbAgresseurs += 1
 			}
-			go func(emp Employe) {
-				emp.Start()
-			}(emp)
 		}
 		return nil
 	}
