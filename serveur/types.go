@@ -9,6 +9,7 @@ import "gitlab.utc.fr/mennynat/ia04-project/agt"
 type requeteNouvelleSimulation struct {
 	ID                     string              `json:"id_simulation"`
 	NbEmployes             int                 `json:"nb_employes"`
+	NbAnnees               int                 `json:"nb_annees"`
 	PourcentageFemmes      float64             `json:"pourcentage_femmes"`
 	Objectif               float64             `json:"objectif"`
 	StratAvant             agt.StratParite     `json:"strat_avant"`

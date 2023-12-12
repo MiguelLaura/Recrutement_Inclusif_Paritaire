@@ -2,6 +2,7 @@ package agt
 
 import (
 	"errors"
+	"log"
 	"math"
 	"math/rand"
 
@@ -13,7 +14,7 @@ import (
 // ---------------------
 
 func NewRecrutement(ent *Entreprise, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64) *Recrutement {
-	return &Recrutement{entreprise: ent, objectif: obj, stratAvant: sav, stratApres: sap, typeRecrutementAvant: trav, typeRecrutementApres: trap, pourcentagePlacesAvant: ppav, pourcentagePlacesApres: ppap}
+	return &Recrutement{entreprise: ent, objectif: obj, stratAvant: sav, stratApres: sap, typeRecrutementAvant: trav, typeRecrutementApres: trap, pourcentagePlacesAvant: ppav, pourcentagePlacesApres: ppap, chnl: ent.chnlRecrutement}
 }
 
 // ---------------------
@@ -196,10 +197,7 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 
 	// Génération des candidats
 
-	// Voir si on garde le système de constantes pour le nombre de candidats générés
-	// (si le nombre de personnes recrutées augmente, il vaut mieux que le nombre de
-	// candidats augmente aussi)
-	candidats, err := r.GenererCandidats(constantes.NBCANDIDATS)
+	candidats, err := r.GenererCandidats(constantes.NB_CANDIDATS_PAR_OFFRE * nbARecruter)
 	if err != nil {
 		return nil, err
 	}
@@ -330,4 +328,28 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 //  Logique de simulation
 // ---------------------
 
-// Faire une fonction Start() quand on aura établi l'échange d'infos entre Recrutement et Entreprise
+func (r *Recrutement) Start() {
+	log.Printf("Le service de recrutement est opérationnel")
+
+	// Boucle de vie
+	for {
+		// Attend un message pour agir
+		msg := <-r.chnl
+		if msg.Act == RECRUTEMENT {
+			embauches, err := r.Recruter(msg.Payload.(int))
+			for _, emp := range embauches {
+				go func(emp Employe) {
+					emp.Start()
+				}(emp)
+			}
+			if err != nil {
+				r.chnl <- Communicateur_recrutement{ERREUR_RECRUTEMENT, err}
+			} else {
+				r.chnl <- Communicateur_recrutement{FIN_RECRUTEMENT, embauches}
+			}
+		} else {
+			err := errors.New("erreur : mauvaise action du channel")
+			r.chnl <- Communicateur_recrutement{ERREUR_RECRUTEMENT, err}
+		}
+	}
+}

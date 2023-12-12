@@ -22,15 +22,21 @@ func EstDansSliceEmploye(employes []Employe, e Employe) bool {
 	return false
 }
 
-// Permet de trouver un employé à partir d'une condition et renvoie l'employé et son indice
-func TrouverEmploye(tab []Employe, f func(Employe) bool) (index int, val Employe) {
-	var e Employe
-	for idx, value := range tab {
-		if f(value) {
-			return idx, value
+// Permet de trouver un employé à partir d'une condition et d'un certain indice et renvoie l'employé et son indice
+func TrouverEmploye(tab []Employe, f func(Employe) bool, from int) (index int, val *Employe) {
+	if from < 0 {
+		from = 0
+	} else if from >= len(tab) {
+		return -1, nil
+	}
+
+	for idx := from; idx < len(tab); idx++ {
+		if f(tab[idx]) {
+			return idx, &tab[idx]
 		}
 	}
-	return -1, e
+
+	return -1, nil
 }
 
 // Récupère index d'un employé au sein d'une slice d'employés
@@ -45,6 +51,10 @@ func obtenirIndexEmploye(emp []Employe, e Employe) int {
 
 // Renvoie la liste emp sans l'employé e
 func enleverEmploye(emp []Employe, e Employe) []Employe {
+	if len(emp) <= 0 {
+		vide := make([]Employe, 0)
+		return vide
+	}
 	i := obtenirIndexEmploye(emp, e)
 	emp[i] = emp[len(emp)-1]
 	return emp[:len(emp)-1]
@@ -135,30 +145,48 @@ func EmployeMaxCompetences(candidats []Employe) (emp []Employe) {
 
 // Renvoie le slice des employées femmes à partir d'une liste d'employé.es
 func FiltreFemme(employes []Employe) (f []Employe) {
-	emp := make([]Employe, len(employes))
-	copy(emp, employes)
 	f = make([]Employe, 0)
 
-	idx, e := TrouverEmploye(emp, EstFemme)
+	idx, _ := TrouverEmploye(employes, EstFemme, 0)
 	for idx != -1 {
-		f = append(f, emp[idx])
-		emp = enleverEmploye(emp, e)
-		idx, e = TrouverEmploye(emp, EstFemme)
+		f = append(f, employes[idx])
+		idx, _ = TrouverEmploye(employes, EstFemme, idx+1)
 	}
 	return f
 }
 
 // Renvoie le slice des employés hommes à partir d'une liste d'employé.es
 func FiltreHomme(employes []Employe) (f []Employe) {
-	emp := make([]Employe, len(employes))
-	copy(emp, employes)
 	f = make([]Employe, 0)
 
-	idx, e := TrouverEmploye(emp, EstHomme)
+	idx, _ := TrouverEmploye(employes, EstHomme, 0)
 	for idx != -1 {
-		f = append(f, emp[idx])
-		emp = enleverEmploye(emp, e)
-		idx, e = TrouverEmploye(emp, EstHomme)
+		f = append(f, employes[idx])
+		idx, _ = TrouverEmploye(employes, EstHomme, idx+1)
+	}
+	return f
+}
+
+// Renvoie le slice des employées femmes à partir d'une liste d'employé.es
+func FiltreFemmePtr(employes []Employe) (f []*Employe) {
+	f = make([]*Employe, 0)
+
+	idx, _ := TrouverEmploye(employes, EstFemme, 0)
+	for idx != -1 {
+		f = append(f, &employes[idx])
+		idx, _ = TrouverEmploye(employes, EstFemme, idx+1)
+	}
+	return f
+}
+
+// Renvoie le slice des employés hommes à partir d'une liste d'employé.es
+func FiltreHommePtr(employes []Employe) (f []*Employe) {
+	f = make([]*Employe, 0)
+
+	idx, _ := TrouverEmploye(employes, EstHomme, 0)
+	for idx != -1 {
+		f = append(f, &employes[idx])
+		idx, _ = TrouverEmploye(employes, EstHomme, idx+1)
 	}
 	return f
 }

@@ -21,7 +21,7 @@ type RestServerAgent struct {
 	sync.Mutex
 	id         string
 	addr       string
-	simulation agt.Simulation
+	simulation *agt.Simulation
 }
 
 // retourne un pointeur sur un nouveau ServeurAgent
@@ -90,26 +90,32 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 	} else if req.NbEmployes <= 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : le nombre d'employés doit être > 0"
+		fmt.Println(msg)
 		w.Write([]byte(msg))
 		return
 	} else if req.PourcentageFemmes < 0.0 || req.PourcentageFemmes > 1.0 {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : le pourcentage de femmes doit être entre 0 et 1"
+		fmt.Println(msg)
 		w.Write([]byte(msg))
 		return
-	} else if req.Objectif < 0.0 || req.Objectif > 1.0 {
+	} else if req.Objectif != -1 && !(req.Objectif >= 0.0 && req.Objectif <= 1.0) {
 		w.WriteHeader(http.StatusBadRequest)
+		fmt.Println(req.Objectif)
 		msg := "erreur : l'objectif doit être entre 0 et 1"
+		fmt.Println(msg)
 		w.Write([]byte(msg))
 		return
-	} else if req.PourcentagePlacesAvant < 0.0 || req.PourcentagePlacesAvant > 1.0 {
+	} else if req.PourcentagePlacesAvant != -1 && !(req.PourcentagePlacesAvant >= 0.0 && req.PourcentagePlacesAvant <= 1.0) {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : le pourcentage de places avant doit être entre 0 et 1"
+		fmt.Println(msg)
 		w.Write([]byte(msg))
 		return
-	} else if req.PourcentagePlacesApres < 0.0 || req.PourcentagePlacesApres > 1.0 {
+	} else if req.PourcentagePlacesApres != -1 && !(req.PourcentagePlacesApres >= 0.0 && req.PourcentagePlacesApres <= 1.0) {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : le pourcentage de places après doit être entre 0 et 1"
+		fmt.Println(msg)
 		w.Write([]byte(msg))
 		return
 	} else {
@@ -120,8 +126,8 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 		fmt.Println("\nOK création et lancement simulation")
 
 		//*********** CREATION & LANCEMENT SIMULATION ****************************
-		s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, req.Objectif, req.StratAvant, req.StratApres, req.TypeRecrutementAvant, req.TypeRecrutementApres, req.PourcentagePlacesAvant, req.PourcentagePlacesApres, 3, 10*time.Second)
-		rsa.simulation = *s //la simulation (non un pointeur)
+		s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, req.Objectif, req.StratAvant, req.StratApres, req.TypeRecrutementAvant, req.TypeRecrutementApres, req.PourcentagePlacesAvant, req.PourcentagePlacesApres, req.NbAnnees, 10*time.Second)
+		rsa.simulation = s //la simulation (un pointeur)
 		s.Run()
 	}
 }
@@ -152,6 +158,9 @@ func (rsa *RestServerAgent) Start() {
 
 	mux.HandleFunc("/", home) //index
 	mux.HandleFunc("/new_simulation", rsa.creerNouvelleSimulation)
+
+	fileHandler := http.StripPrefix("/static/", http.FileServer(http.Dir("./serveur/static/")))
+	mux.Handle("/static/", fileHandler)
 
 	// création du serveur http
 	s := &http.Server{

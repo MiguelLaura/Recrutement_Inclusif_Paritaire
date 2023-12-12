@@ -2,110 +2,224 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Formulaire Entreprise</title>
+  <title>Parité en entreprise - IA04</title>
+  <link rel="stylesheet" type="text/css" href="../static/css/formulaire.css">
+  <link href='https://fonts.googleapis.com/css?family=Josefin Sans' rel='stylesheet'>
 </head>
 <body>
+    <div class="banner">
+        <div class="left-section">
+          <h1>La parité en entreprise</h1>
+          <h3>Quelles sont les conséquences d’un recrutement tenant compte de la parité sur la santé d’une entreprise ?</h3>
+        </div>
+        <div class="right-section">
+          <h1>IA04 - A23</h1>
+          <h3>Mathilde Lange, Solenn Lenoir, Nathan Menny, Laura Miguel</h3>
+        </div>
+      </div>
 
-  <h1>Formulaire pour la création d'une entreprise !!!</h1>
+      <div class="form-container">
+        <h2>Création d'une entreprise</h2>
+        <form form onsubmit="sendData(event)">
+        
+            <!--- INFOS GENERALES -->
+          <div class="form-row">
+            <div class="input-group">
+              <label for="nb_employes">Nombre d'employé·es :</label>
+              <input type="number" id="nb_employes" name="nb_employes" min="1" required>
+            </div>
+            <div class="input-group">
+              <label for="nb_annees">Nombre d'années :</label>
+              <input type="number" id="nb_annees" name="nb_annees" min="1" required>
+            </div>
+          </div>
 
-  <form onsubmit="sendData(event)">
+            <label for="pourcentage_femmes">Pourcentage de femmes dans l'entreprise :</label>
+            <input type="range" id="pourcentage_femmes" name="pourcentage_femmes" min="0" max="100" value=20 oninput="updatePourcentage(this.value, 'pourcentageFemmesValue');" required>
+            <span id="pourcentageFemmesValue">20%</span><br><br>
+        <!--- FIN INFOS GENERALES -->
 
-    <input type="hidden" name="id_simulation" id="id_simulation" value="id_1">
+        <label><b>Recrutement</b></label><br><br>
 
-    <label for="nb_employes">Nombre d'employés :</label>
-    <input type="number" id="nb_employes" name="nb_employes" min="1" required><br><br>
+        <!--- OBJECTIF OUI / NON -->
+        <div class="form-row">
+            <label for="objectifFemmes">L’entreprise souhaite-t-elle atteindre un % de femmes minimum (objectif) ?</label>
+            <div class="input-group">
+            <input type="radio" id="ouiObjectif" name="objectifFemmes" value="Oui" required
+                onclick="afficher(idElemChecked='ouiObjectif', idAAfficher='RecrutementAvecObjectif', idACacher='RecrutementSansObjectif');">
+            <label for="ouiObjectif">Oui</label>
+            </div>
+            <div class="input-group">
+            <input type="radio" id="nonObjectif" name="objectifFemmes" value="Non" 
+                onclick="afficher(idElemChecked='nonObjectif', idAAfficher='RecrutementSansObjectif', idACacher='RecrutementAvecObjectif');">
+            <label for="nonObjectif">Non</label>
+            </div>
+        </div>
+    
+        <!--- RECRUTEMENT AVEC OBJECTIF -->
+        <div id="RecrutementAvecObjectif" style="display: none;">
+            <!--- POURCENTAGE OBJECTIF -->
+            <div id="pourcentageObjectif">
+                <label for="objectif">Pourcentage objectif :</label>
+                <input type="range" id="objectif" name="objectif" min="0" max="100" value=50 oninput="updatePourcentage(this.value, 'pourcentageObjectifValue');">
+                <span id="pourcentageObjectifValue">50%</span><br><br>
+            </div>
 
-    <label for="pourcentage_femmes">Pourcentage de femmes :</label>
-    <input type="number" id="pourcentage_femmes" name="pourcentage_femmes" min="0" max="1" step="0.01" required> [0;1]<br><br>
+            <!--- RECRUTEMENT AVANT OBJECTIF -->
+            <div class="rounded-black-border">
+                <div class="form-row">
+                    <label for="type_recrutement_avant"><b>Avant objectif.</b> Quel type de recrutement est mis en place ?</label>
+                    <div class="input-group">
+                    <input type="radio" id="competencesAvant" name="type_recrutement_avant" value=1 
+                        onclick="afficher(idElemChecked='competencesAvant', idAAfficher='competencesAvantDiv', idACacher='placesReserveesAvantDiv');">
+                    <label for="competences">Compétences</label>
+                    </div>
+                    <div class="input-group">
+                    <input type="radio" id="placesReserveesAvant" name="type_recrutement_avant" value=2
+                        onclick="afficher(idElemChecked='placesReserveesAvant', idAAfficher='placesReserveesAvantDiv', idACacher='competencesAvantDiv');">
+                    <label for="placesReservees">Places réservées</label>
+                    </div>
+                </div>
+    
+                <div>
+                    <div id="competencesAvantDiv" style="display: none;">
+                        <div class="question form-row">
+                        <label for="strat_avant">A compétences égales ?</label>
+                        <div class="input-group">
+                            <input type="radio" id="homme_avant" name="strat_avant" value=1>
+                            <label for="homme">Un homme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="femme_avant" name="strat_avant" value=2>
+                            <label for="femme">Une femme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="hasard_avant" name="strat_avant" value=3>
+                            <label for="hasard">Au hasard</label>
+                        </div>
+                        </div>
+                    </div>
+                
+                    <div id="placesReserveesAvantDiv" style="display: none;">
+                        <div class="form-row">
+                        <label for="pourcentage_places_avant">Pourcentage de places réservées :</label>
+                        <input type="range" id="pourcentage_places_avant" name="pourcentage_places_avant" min="0" max="100" value=30 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesAvantValue');">
+                        <span id="pourcentagePlacesReserveesAvantValue">30%</span><br><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <label for="objectif">Objectif - pourcentage minimum de femmes :</label>
-    <input type="number" id="objectif" name="objectif" min="0" max="1" step="0.01" required> [0;1]<br><br>
+            <!--- RECRUTEMENT APRES OBJECTIF -->
+            <div class="rounded-black-border">
+                <div class="form-row">
+                    <label for="type_recrutement_apres"><b>Apres objectif.</b> Quel type de recrutement est mis en place ?</label>
+                    <div class="input-group">
+                    <input type="radio" id="competencesApres" name="type_recrutement_apres" value=1
+                        onclick="afficher(idElemChecked='competencesApres', idAAfficher='competencesApresDiv', idACacher='placesReserveesApresDiv');">
+                    <label for="competences">Compétences</label>
+                    </div>
+                    <div class="input-group">
+                    <input type="radio" id="placesReserveesApres" name="type_recrutement_apres" value=2 
+                        onclick="afficher(idElemChecked='placesReserveesApres', idAAfficher='placesReserveesApresDiv', idACacher='competencesApresDiv');">
+                    <label for="placesReservees">Places réservées</label>
+                    </div>
+                </div>
+    
+                <div>
+                    <div id="competencesApresDiv" style="display: none;">
+                        <div class="question form-row">
+                        <label for="strat_apres">A compétences égales ?</label>
+                        <div class="input-group">
+                            <input type="radio" id="homme_apres" name="strat_apres" value=1>
+                            <label for="homme">Un homme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="femme_apres" name="strat_apres" value=2>
+                            <label for="femme">Une femme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="hasard_apres" name="strat_apres" value=3>
+                            <label for="hasard">Au hasard</label>
+                        </div>
+                        </div>
+                    </div>
+                
+                    <div id="placesReserveesApresDiv" style="display: none;">
+                        <div class="form-row">
+                        <label for="pourcentage_places_apres">Pourcentage de places réservées :</label>
+                        <input type="range" id="pourcentage_places_apres" name="pourcentage_places_apres" min="0" max="100" value=30 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesApresValue');">
+                        <span id="pourcentagePlacesReserveesApresValue">30%</span><br><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        </div>
+        <!--- FIN RECRUTEMENT AVEC OBJECTIF -->
 
-    <label for="type_recrutement_avant">Type de recrutement avant l'objectif :</label>
-    <select id="type_recrutement_avant" name="type_recrutement_avant" required>
-      <option value="CompetencesEgales">Compétences égales</option>
-      <option value="PlacesReservees">Places réservées aux femmes</option>
-    </select><br><br>
+        <!--- RECRUTEMENT SANS OBJECTIF -->
+        <div id="RecrutementSansObjectif" style="display: none;">
+            <div class="rounded-black-border">
+                <div class="form-row">
+                    <label for="type_recrutement_sans">Quel type de recrutement est mis en place ?</label>
+                    <div class="input-group">
+                    <input type="radio" id="competences" name="type_recrutement_sans" value=1
+                        onclick="afficher(idElemChecked='competences', idAAfficher='competencesDiv', idACacher='placesReserveesDiv');">
+                    <label for="competences">Compétences</label>
+                    </div>
+                    <div class="input-group">
+                    <input type="radio" id="placesReservees" name="type_recrutement_sans" value=2 
+                        onclick="afficher(idElemChecked='placesReservees', idAAfficher='placesReserveesDiv', idACacher='competencesDiv');">
+                    <label for="placesReservees">Places réservées</label>
+                    </div>
+                </div>
 
-    <label for="type_recrutement_apres">Type de recrutement après l'objectif :</label>
-    <select id="type_recrutement_apres" name="type_recrutement_apres" required>
-      <option value=0>Compétences égales</option>
-      <option value=1>Places réservées aux femmes</option>
-    </select><br><br>
+                <div>
+                    <div id="competencesDiv" style="display: none;">
+                        <div class="question form-row">
+                        <label for="strat_sans">A compétences égales ?</label>
+                        <div class="input-group">
+                            <input type="radio" id="homme" name="strat_sans" value=1>
+                            <label for="homme">Un homme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="femme" name="strat_sans" value=2>
+                            <label for="femme">Une femme</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="radio" id="hasard" name="strat_sans" value=3>
+                            <label for="hasard">Au hasard</label>
+                        </div>
+                        </div>
+                    </div>
+                
+                    <div id="placesReserveesDiv" style="display: none;">
+                        <div class="form-row">
+                        <label for="pourcentage_places_sans">Pourcentage de places réservées :</label>
+                        <input type="range" id="pourcentage_places_sans" name="pourcentage_places_sans" min="0" max="100" value=30 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesValue');">
+                        <span id="pourcentagePlacesReserveesValue">30%</span><br><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <label for="strat_avant">Stratégie de recrutement à compétences égales avant l'objectif :</label>
-    <select id="strat_avant" name="strat_avant" required>
-      <option value=0>Priorité aux hommes</option>
-      <option value=1>Priorité aux femmes</option>
-      <option value=2>Hasard</option>
-    </select><br><br>
+        <div class="list_buttons_form">
+            <input type="submit" id="submitButton" class="button_form" value="Envoyer">
+            <input type="reset"  class="button_form" value="Réinitialiser">
+        </div>
+        </form>
 
-    <label for="strat_apres">Stratégie de recrutement à compétences égales après l'objectif :</label>
-    <select id="strat_apres" name="strat_apres" required>
-        <option value=0>Priorité aux hommes</option>
-        <option value=1>Priorité aux femmes</option>
-        <option value=2>Hasard</option>
-    </select><br><br>
+    </div> 
+    <!-- fin de form-container -->
 
-    <label for="pourcentage_places_avant">Pourcentage de places réservées pour les femmes dans le recurtement (avant objectif) :</label>
-    <input type="number" id="pourcentage_places_avant" name="pourcentage_places_avant" min="0" max="1" step="0.01" required> [0;1]<br><br>
+    <div class="response_form">
+        <p id="responseFormValue"></p>
+    </div>
 
-    <label for="pourcentage_places_apres">Pourcentage de places réservées pour les femmes dans le recurtement (après objectif) :</label>
-    <input type="number" id="pourcentage_places_apres" name="pourcentage_places_apres" min="0" max="1" step="0.01" required> [0;1]<br><br>
 
-    <input type="submit" value="Envoyer">
-    <input type="reset" value="Réinitialiser">
-
-  </form>
-
+<script src="../static/js/formulaire.js"></script>
 </body>
-
-<script>
-    function sendData(event) {
-      event.preventDefault();
-
-      const id_simulation = document.getElementById('id_simulation').value;
-      const nb_employes = document.getElementById('nb_employes').value;
-      const pourcentage_femmes = document.getElementById('pourcentage_femmes').value;
-      const objectif = document.getElementById('objectif').value;
-      const strat_avant = document.getElementById('strat_avant').value;
-      const strat_apres = document.getElementById('strat_apres').value;
-      const type_recrutement_avant = document.getElementById('type_recrutement_avant').value;
-      const type_recrutement_apres = document.getElementById('type_recrutement_apres').value;
-      const pourcentage_places_avant = document.getElementById('pourcentage_places_avant').value;
-      const pourcentage_places_apres = document.getElementById('pourcentage_places_apres').value;
-
-      const formData = {
-        id_simulation : id_simulation,
-        nb_employes : Number(nb_employes),
-        pourcentage_femmes : Number(pourcentage_femmes),
-        objectif : Number(objectif),
-        strat_avant : Number(strat_avant),
-        strat_apres : Number(strat_apres),
-        type_recrutement_avant : Number(type_recrutement_avant),
-        type_recrutement_apres : Number(type_recrutement_apres),
-        pourcentage_places_avant : Number(pourcentage_places_avant),
-        pourcentage_places_apres : Number(pourcentage_places_apres)
-      };
-
-      // Envoi des données au serveur en utilisant la méthode fetch avec la méthode POST
-      fetch('http://localhost:8080/new_simulation', {
-        method: 'POST',
-        headers: {
-			"Content-Type": "application/json",
-			"Accept": "application/json",
-            "Access-Control-Allow-Origin":'*'
-		},
-        body: JSON.stringify(formData)
-      })
-      .then((response) => {
-        if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-        } else {
-            response.json().then(data => console.log(data))
-        }
-        })
-    }
-  </script>
 
 </html>

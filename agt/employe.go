@@ -141,6 +141,8 @@ func (e *Employe) travailler() {
 // L'Employé est agressé par quelqu'un
 func (agresse *Employe) etreAgresse(agresseur *Employe) {
 
+	log.Printf("Employé %s agresse %s", agresseur.id, agresse.id)
+
 	// Selon son comportement, il va porter plainte ou non
 	if rand.Float64() < float64(agresse.comportement) {
 		agresse.porterPlainte(agresseur)
@@ -155,18 +157,29 @@ func (agresse *Employe) etreAgresse(agresseur *Employe) {
 
 // L'agent agresse quelqu'un pris au hasard dans son entreprise
 func (agresseur *Employe) agresser() {
-	cible := agresseur.entreprise.EnvoyerEmploye()
-
-	// S'assure de ne pas s'agresser lui-même
-	for cible.id == agresseur.id {
-		cible = agresseur.entreprise.EnvoyerEmploye()
+	var genreAgresse Genre
+	if agresseur.genre == Femme {
+		genreAgresse = Homme
+	} else {
+		genreAgresse = Femme
 	}
 
-	log.Printf("Employé %s agresse %s", agresseur.id, cible.id)
+	timeout := 0
 
-	go func(cible *Employe) {
-		EnvoyerMessage(cible, AGRESSION, agresseur)
-	}(cible)
+	cible := agresseur.entreprise.EnvoyerEmploye(genreAgresse)
+
+	// S'assure de ne pas s'agresser lui-même
+	for (cible == nil || cible.id == agresseur.id) && timeout < constantes.TIMEOUT_AGRESSION {
+		cible = agresseur.entreprise.EnvoyerEmploye(genreAgresse)
+		timeout++
+	}
+
+	if timeout < constantes.TIMEOUT_AGRESSION {
+		go EnvoyerMessage(cible, AGRESSION, agresseur)
+	} else {
+		// Il a trouvé personne à agresser
+		go EnvoyerMessage(cible, AGRESSION, nil)
+	}
 }
 
 // ---------------------
@@ -211,7 +224,11 @@ func (e *Employe) agir() {
 
 	case AGRESSION: // Se fait agresser par quelqu'un
 
-		e.etreAgresse(msg.Payload.(*Employe))
+		if msg.Payload != nil {
+			e.etreAgresse(msg.Payload.(*Employe))
+		} else {
+			log.Printf("%s : je vais pas m'agresser moi-même", e.id)
+		}
 
 		// Si l'agent n'a plus de santé mentale, il pose sa démission
 		if e.santeMentale <= 0 {
@@ -221,5 +238,5 @@ func (e *Employe) agir() {
 	}
 
 	// Permet de notifier l'entreprise que l'agent vient de faire une action
-	e.entreprise.NotifierAction()
+	EnvoyerNotifActions(e.entreprise, LIBRE, nil)
 }
