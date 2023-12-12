@@ -11,4 +11,5 @@ const (
 	COMPETENCE_MAX          = 10
 	POURCENTAGE_RECRUTEMENT = .05
 	NB_CANDIDATS_PAR_OFFRE  = 18 // Source : https://blog.flatchr.io/barometre-des-entreprises-qui-recrutent-deuxieme-semestre-2022
+	TIMEOUT_AGRESSION       = 4
 )

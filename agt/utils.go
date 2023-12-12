@@ -51,6 +51,10 @@ func obtenirIndexEmploye(emp []Employe, e Employe) int {
 
 // Renvoie la liste emp sans l'employé e
 func enleverEmploye(emp []Employe, e Employe) []Employe {
+	if len(emp) <= 0 {
+		vide := make([]Employe, 0)
+		return vide
+	}
 	i := obtenirIndexEmploye(emp, e)
 	emp[i] = emp[len(emp)-1]
 	return emp[:len(emp)-1]
