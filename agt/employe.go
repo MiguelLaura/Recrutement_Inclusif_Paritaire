@@ -216,10 +216,25 @@ func (e *Employe) agir() {
 
 		e.travailler()
 
+		// Vieillir
 		e.gagnerAnciennete()
 
+		// Depart à la retraite
 		if e.anciennete >= constantes.ANCIENNETE_MAX {
 			e.partirRetraite()
+		}
+
+		// Taux de démission en France au 1er trimestre 2022 : 0.35
+		// Or, au sein d'un organisation inclusive, les employés ont une rétention supérieure de 20% (source: Catalyst)
+		// D'après Rosabeth Kanter, une minorité doit représenter au minimum 35% du groupe dominant pour avoir une influence
+		if e.entreprise.PourcentageFemmes() < 0.35 {
+			if rand.Float64() <= 0.027 {
+				e.poserDemission()
+			}
+		} else {
+			if rand.Float64() <= 0.027*0.2 {
+				e.poserDemission()
+			}
 		}
 
 	case AGRESSION: // Se fait agresser par quelqu'un

@@ -120,7 +120,12 @@ func (ent *Entreprise) RecevoirDemission(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
 
-	*ent.departs = append(*ent.departs, *emp)
+	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
+	if i < 0 {
+		*ent.departs = append(*ent.departs, *emp)
+		log.Printf("Demission : nb départs %d", len(*ent.departs))
+		return
+	}
 }
 
 func (ent *Entreprise) RecevoirDepression(emp *Employe) {
@@ -131,7 +136,7 @@ func (ent *Entreprise) RecevoirDepression(emp *Employe) {
 	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
-		log.Printf("nb départs dans recevoirDepression %d", len(*ent.departs))
+		log.Printf("Depression : nb départs %d", len(*ent.departs))
 		return
 	}
 }
@@ -143,7 +148,7 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
-		log.Printf("nb départs dans recevoirRetraite %d", len(*ent.departs))
+		log.Printf("Retraite : nb départs %d", len(*ent.departs))
 		return
 	}
 }
