@@ -123,7 +123,7 @@ func (ent *Entreprise) RecevoirDemission(emp *Employe) {
 	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
-		log.Printf("Demission : nb départs %d", len(*ent.departs))
+		log.Printf("Demission %s : nb départs %d", emp.Id(), len(*ent.departs))
 		return
 	}
 }
@@ -136,7 +136,7 @@ func (ent *Entreprise) RecevoirDepression(emp *Employe) {
 	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
-		log.Printf("Depression : nb départs %d", len(*ent.departs))
+		log.Printf("Depression %s : nb départs %d", emp.Id(), len(*ent.departs))
 		return
 	}
 }
@@ -148,7 +148,7 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
-		log.Printf("Retraite : nb départs %d", len(*ent.departs))
+		log.Printf("Retraite %s : nb départs %d", emp.Id(), len(*ent.departs))
 		return
 	}
 }
@@ -188,9 +188,22 @@ func (ent *Entreprise) RecevoirActions() {
 // ---------------------
 
 // // Renvoyer selon un certain pourcentage
-// func (ent Entreprise) gestionPlaintes() {
-
-// }
+func (ent *Entreprise) gestionPlaintes() {
+	if len(*ent.plaintes) <= 0 {
+		return
+	}
+	for _, e := range *ent.plaintes {
+		if rand.Float64() <= constantes.POURCENTAGE_LICENCIEMENT {
+			accuse := e[1]
+			i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == accuse.Id() }, 0)
+			if i < 0 {
+				*ent.departs = append(*ent.departs, accuse)
+				log.Printf("Licenciement %s : nb départs %d", accuse.Id(), len(*ent.departs))
+			}
+		}
+	}
+	*ent.plaintes = nil
+}
 
 // func (ent Entreprise) ajusterImpactFemmes() {
 // }
@@ -326,7 +339,7 @@ func (ent *Entreprise) agir() {
 
 func (ent *Entreprise) finirCycle() {
 	// // A faire avant GestionDeparts pour bien renvoyer les gens cette année
-	// ent.gestionPlaintes()
+	ent.gestionPlaintes()
 	// ent.ajusterImpactFemmes()
 	benef := ent.calculerBenefice()
 	log.Printf("benefices: %f", benef)
