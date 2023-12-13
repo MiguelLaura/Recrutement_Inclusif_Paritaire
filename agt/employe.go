@@ -224,15 +224,14 @@ func (e *Employe) agir() {
 			e.partirRetraite()
 		}
 
-		// Taux de démission en France au 1er trimestre 2022 : 0.35
 		// Or, au sein d'un organisation inclusive, les employés ont une rétention supérieure de 20% (source: Catalyst)
-		// D'après Rosabeth Kanter, une minorité doit représenter au minimum 35% du groupe dominant pour avoir une influence
-		if e.entreprise.PourcentageFemmes() < 0.35 {
-			if rand.Float64() <= 0.027 {
+
+		if e.entreprise.PourcentageFemmes() < constantes.SEUIL_IMPACT_FEMME {
+			if rand.Float64() <= constantes.POURCENTAGE_DEM_SPONTANEE {
 				e.poserDemission()
 			}
 		} else {
-			if rand.Float64() <= 0.027*0.2 {
+			if rand.Float64() <= constantes.POURCENTAGE_DEM_SPONTANEE*(1-constantes.RETENTION_PARITE) {
 				e.poserDemission()
 			}
 		}
