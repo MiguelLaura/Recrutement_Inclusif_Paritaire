@@ -152,6 +152,8 @@ func home(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, p)
 }
 
+// TODO : liste de simulations ?
+// TODO : check valeur id simulation quand demande 'visualisation.html'
 // TODO : problème récupération page visualisationEntreprise quand l'url finit par '/'
 
 // Lance le serveur
@@ -179,6 +181,8 @@ func (rsa *RestServerAgent) Start() {
 	})))
 
 	mux.HandleFunc("/new_simulation", rsa.creerNouvelleSimulation)
+
+	setupWebsocket(mux)
 
 	// création du serveur http
 	s := &http.Server{
