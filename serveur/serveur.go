@@ -168,14 +168,14 @@ func (rsa *RestServerAgent) Start() {
 	mux.HandleFunc("/", home) //index
 
 	mux.Handle(visualisationPath, http.StripPrefix(visualisationPath, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		p := path.Dir("./serveur/templates/visualisationEntreprise.html")
+		p := path.Dir("./serveur/templates/visualisation.html")
 
 		// Recupère l'ID de l'entreprise à visualiser
 		// v := r.URL.Path
 
 		// set header
 		w.Header().Set("Content-type", "text/html")
-		http.ServeFile(w, r, p+"/visualisationEntreprise.html")
+		http.ServeFile(w, r, p+"/visualisation.html")
 	})))
 
 	mux.HandleFunc("/new_simulation", rsa.creerNouvelleSimulation)
