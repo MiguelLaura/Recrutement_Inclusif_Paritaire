@@ -147,20 +147,38 @@ func ajouterCORS(w *http.ResponseWriter, req *http.Request) {
 func home(w http.ResponseWriter, r *http.Request) {
 	p := path.Dir("./serveur/templates/index.html")
 	// set header
+
 	w.Header().Set("Content-type", "text/html")
 	http.ServeFile(w, r, p)
 }
 
+// TODO : problème récupération page visualisationEntreprise quand l'url finit par '/'
+
 // Lance le serveur
 func (rsa *RestServerAgent) Start() {
+
+	visualisationPath := "/viz_simulation/"
+
 	// création du multiplexer
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", home) //index
-	mux.HandleFunc("/new_simulation", rsa.creerNouvelleSimulation)
-
 	fileHandler := http.StripPrefix("/static/", http.FileServer(http.Dir("./serveur/static/")))
 	mux.Handle("/static/", fileHandler)
+
+	mux.HandleFunc("/", home) //index
+
+	mux.Handle(visualisationPath, http.StripPrefix(visualisationPath, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		p := path.Dir("./serveur/templates/visualisationEntreprise.html")
+
+		// Recupère l'ID de l'entreprise à visualiser
+		// v := r.URL.Path
+
+		// set header
+		w.Header().Set("Content-type", "text/html")
+		http.ServeFile(w, r, p+"/visualisationEntreprise.html")
+	})))
+
+	mux.HandleFunc("/new_simulation", rsa.creerNouvelleSimulation)
 
 	// création du serveur http
 	s := &http.Server{
