@@ -208,8 +208,8 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 	}
 
 	// Bonus de productivité si %femmes supérieur à 35%
-	if ent.PourcentageFemmes() > 0.35 {
-		benef = benef * (1.0 + 0.2849)
+	if ent.PourcentageFemmes() > constantes.SEUIL_IMPACT_FEMME {
+		benef = benef * (1.0 + constantes.BOOST_PRODUCTIVITE_FEMME)
 	}
 
 	// Coût du recrutement
@@ -220,8 +220,8 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 	// Modèle le plus simple : si %Femmes ne respectent pas la loi (<40%), amende d'1% des bénéfices
 	// Modèle 2 plus proche de la réalité : amende si non respect pendant 3 ans consécutifs
 	// Modèle 3 le plus réaliste : amende à partir de 2029
-	if ent.PourcentageFemmes() < 0.40 {
-		benef = benef * (1 - 0.01)
+	if ent.PourcentageFemmes() < constantes.SEUIL_AMENDE {
+		benef = benef * (1 - constantes.POURCENTAGE_AMENDE)
 	}
 
 	return benef
