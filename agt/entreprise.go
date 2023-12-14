@@ -184,6 +184,19 @@ func (ent *Entreprise) RecevoirActions() {
 }
 
 // ---------------------
+//     En cours d'année (appelées par l'entreprise)
+// ---------------------
+
+func (ent *Entreprise) teamBuilding() {
+	log.Printf("Organisation team building")
+	for _, e := range *ent.employes {
+		if e.santeMentale < 100 {
+			e.santeMentale += constantes.BOOST_TEAM_BUILDING
+		}
+	}
+}
+
+// ---------------------
 //     Fin d'année
 // ---------------------
 
@@ -327,7 +340,11 @@ func (ent *Entreprise) agir() {
 		log.Printf("Commence l'année")
 		// Envoyer le message aux employés pour qu'ils agissent
 		ent.bonneAnnee()
+		// Un team building en début d'année
+		ent.teamBuilding()
 		ent.RecevoirActions()
+		// Un team building en fin d'année
+		ent.teamBuilding()
 		ent.finirCycle()
 		if len(*ent.employes) <= 0 {
 			ent.fin = true
