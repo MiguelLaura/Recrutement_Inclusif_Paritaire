@@ -1,8 +1,10 @@
 module gitlab.utc.fr/mennynat/ia04-project
 
-go 1.21.0
+go 1.21.5
 
 require gonum.org/v1/gonum v0.14.0 // direct
+
+//go get github.com/gorilla/websocket
 
 require (
 	github.com/gorilla/websocket v1.5.1 // indirect

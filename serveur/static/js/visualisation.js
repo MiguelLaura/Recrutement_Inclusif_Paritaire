@@ -4,6 +4,7 @@ let conn = undefined;
 
 btnStart.addEventListener("click", () => {
     conn.send(JSON.stringify({type: "salutation", data: "salut le serveur :)"}));
+    btnStart.disabled = true
 });
 
 
