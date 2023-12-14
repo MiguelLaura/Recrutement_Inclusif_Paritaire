@@ -248,7 +248,6 @@ func (ent *Entreprise) gestionDeparts() {
 	copy(departs, *ent.departs)
 	for _, emp := range departs {
 		*ent.employes = enleverEmploye(*ent.employes, emp)
-		//*ent.departs = enleverEmploye(*ent.departs, emp)
 		if emp.agresseur {
 			ent.nbAgresseurs -= 1
 		}
