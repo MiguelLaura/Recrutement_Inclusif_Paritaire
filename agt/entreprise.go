@@ -195,8 +195,37 @@ func (ent *Entreprise) RecevoirActions() {
 // func (ent Entreprise) ajusterImpactFemmes() {
 // }
 
-// func (ent *Entreprise) calculerBenefice() {
-// }
+func (ent *Entreprise) calculerBenefice() (benef float64) {
+	benef = 0
+
+	// Pour chaque employé, on calcule ce qu'il rapporte à l'entreprise en fonction de sa santé mentale et compétences
+	// Compétences varient entre 0 et 10 par une loi normale d'espérance 5.
+	// CA_PAR_EMPLOYE/5 * competences pour garder la valeur moyenne du CA_PAR_EMPLOYE mais prendre en compte les compétences
+	// benef plus faible si santé mentale plus basse
+
+	for _, e := range *ent.employes {
+		benef += (constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100 - constantes.COUT_EMPLOYE
+	}
+
+	// Bonus de productivité si %femmes supérieur à 35%
+	if ent.PourcentageFemmes() > constantes.SEUIL_IMPACT_FEMME {
+		benef = benef * (1.0 + constantes.BOOST_PRODUCTIVITE_FEMME)
+	}
+
+	// Coût du recrutement
+	nbARecruter := float64(ent.nbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
+	benef -= float64(nbARecruter * constantes.COUT_RECRUTEMENT)
+
+	// Amende si non parité
+	// Modèle le plus simple : si %Femmes ne respectent pas la loi (<40%), amende d'1% des bénéfices
+	// Modèle 2 plus proche de la réalité : amende si non respect pendant 3 ans consécutifs
+	// Modèle 3 le plus réaliste : amende à partir de 2029
+	if ent.PourcentageFemmes() < constantes.SEUIL_AMENDE {
+		benef = benef * (1 - constantes.POURCENTAGE_AMENDE)
+	}
+
+	return benef
+}
 
 // func (ent *Entreprise) obtenirIndicateursSante() map[string]float64 {
 // }
@@ -299,7 +328,8 @@ func (ent *Entreprise) finirCycle() {
 	// // A faire avant GestionDeparts pour bien renvoyer les gens cette année
 	// ent.gestionPlaintes()
 	// ent.ajusterImpactFemmes()
-	// ent.calculerBenefice()
+	benef := ent.calculerBenefice()
+	log.Printf("benefices: %f", benef)
 	// ent.obtenirIndicateursSante()
 
 	// Si on le fait en premier, on ne comptera pas ces employés dans les indicateurs ?
