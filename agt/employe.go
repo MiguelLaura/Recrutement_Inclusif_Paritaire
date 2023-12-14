@@ -216,10 +216,24 @@ func (e *Employe) agir() {
 
 		e.travailler()
 
+		// Vieillir
 		e.gagnerAnciennete()
 
+		// Depart à la retraite
 		if e.anciennete >= constantes.ANCIENNETE_MAX {
 			e.partirRetraite()
+		}
+
+		// Or, au sein d'un organisation inclusive, les employés ont une rétention supérieure de 20% (source: Catalyst)
+
+		if e.entreprise.PourcentageFemmes() < constantes.SEUIL_IMPACT_FEMME {
+			if rand.Float64() <= constantes.POURCENTAGE_DEM_SPONTANEE {
+				e.poserDemission()
+			}
+		} else {
+			if rand.Float64() <= constantes.POURCENTAGE_DEM_SPONTANEE*(1-constantes.RETENTION_PARITE) {
+				e.poserDemission()
+			}
 		}
 
 	case AGRESSION: // Se fait agresser par quelqu'un
