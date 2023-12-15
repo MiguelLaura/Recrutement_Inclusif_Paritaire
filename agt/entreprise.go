@@ -305,13 +305,18 @@ func (ent *Entreprise) Start() {
 
 	go ent.recrutement.Start()
 
-	for !ent.fin {
+	for {
 		msg := <-ent.chnl
 		if msg.Act == LIBRE && !ent.fin {
 			ent.agir()
-		} else if msg.Act == FIN {
+		} else if msg.Act == FIN && !ent.fin {
 			ent.stop()
 			break
+		} else {
+			msg = <-ent.chnl
+			if msg.Act == FIN {
+				break
+			}
 		}
 	}
 	log.Printf("Fin d'entreprise")
