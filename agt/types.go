@@ -61,6 +61,7 @@ type Employe struct {
 	comportement Comportement
 	competence   int //entre 0 et 10
 	entreprise   *Entreprise
+	fin          bool
 	chnl         chan Communicateur
 }
 

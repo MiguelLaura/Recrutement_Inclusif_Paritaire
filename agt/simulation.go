@@ -38,11 +38,15 @@ func (simu *Simulation) Run() {
 		EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
 		simu.step += 1
 	}
+	// Si on le récupère pas maintenant, les employés vont se terminer
+	pariteFin := simu.ent.PourcentageFemmes()
+	EnvoyerMessageEntreprise(&simu.ent, FIN, nil)
+	// Permet d'attendre la fin effective de l'entreprise
 	EnvoyerMessageEntreprise(&simu.ent, FIN, nil)
 
 	// time.Sleep(simu.maxDuration)
 
-	log.Printf("Fin de la simulation [step: %d, début parité : %f, fin parité : %f", simu.step, simu.pariteInit, simu.ent.PourcentageFemmes())
+	log.Printf("Fin de la simulation [step: %d, début parité : %f, fin parité : %f]", simu.step, simu.pariteInit, pariteFin)
 }
 
 // affiche les informations sur la parité au cours du temps
