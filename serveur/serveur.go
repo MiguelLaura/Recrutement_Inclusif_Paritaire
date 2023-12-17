@@ -19,9 +19,10 @@ import (
 
 type RestServerAgent struct {
 	sync.Mutex
-	id          string
-	addr        string
-	simulations map[string]*agt.Simulation
+	id               string
+	addr             string
+	simulations      map[string]*agt.Simulation
+	websocketManager *Manager
 }
 
 // retourne un pointeur sur un nouveau ServeurAgent
@@ -129,10 +130,9 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 			w.WriteHeader(http.StatusCreated)
 			serial, _ := json.Marshal(resp)
 			w.Write(serial)
-			fmt.Println("\nOK création et lancement simulation")
+			fmt.Printf("\nOK création simulation %s\n", resp.ID)
 			s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, req.Objectif, req.StratAvant, req.StratApres, req.TypeRecrutementAvant, req.TypeRecrutementApres, req.PourcentagePlacesAvant, req.PourcentagePlacesApres, req.NbAnnees, 10*time.Second)
 			rsa.simulations[resp.ID] = s //pointeur sur la simulation
-			//s.Run()
 		}
 	}
 }
@@ -157,7 +157,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, p)
 }
 
-// TODO : liste de simulations ?
 // TODO : check valeur id simulation quand demande 'visualisation.html'
 // TODO : problème récupération page visualisationEntreprise quand l'url finit par '/'
 
@@ -187,7 +186,7 @@ func (rsa *RestServerAgent) Start() {
 
 	mux.HandleFunc("/new_simulation", rsa.creerNouvelleSimulation)
 
-	setupWebsocket(mux)
+	rsa.setupWebsocket(mux)
 
 	// création du serveur http
 	s := &http.Server{

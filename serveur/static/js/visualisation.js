@@ -1,12 +1,37 @@
-const btnStart = document.getElementById("launch-simu");
+const btnStart = document.getElementById("start-simu");
+const btnPause = document.getElementById("pause-simu");
+const btnContinue = document.getElementById("continue-simu");
+const btnStop = document.getElementById("stop-simu");
+
 const valTest = document.getElementById("value-test");
 let conn = undefined;
 
+const currentURL = window.location.href;
+const url = new URL(currentURL);
+const pathname = url.pathname;
+const pathParts = pathname.split('/');
+const id = pathParts[pathParts.length - 1];
+console.log("ID extrait de l'URL :", id);
+
+
+//ENVOYER ICI EN PRENANT window.location.href ????
+
 btnStart.addEventListener("click", () => {
-    conn.send(JSON.stringify({type: "salutation", data: "salut le serveur :)"}));
-    btnStart.disabled = true
+    conn.send(JSON.stringify({id_simulation : id, type: "action", data: "start"}));
+    //btnStart.disabled = true
 });
 
+btnPause.addEventListener("click", () => {
+    conn.send(JSON.stringify({id_simulation : id, type: "action", data: "pause"}));
+});
+
+btnContinue.addEventListener("click", () => {
+    conn.send(JSON.stringify({id_simulation : id, type: "action", data: "continue"}));
+});
+
+btnStop.addEventListener("click", () => {
+    conn.send(JSON.stringify({id_simulation : id, type: "action", data: "stop"}));
+});
 
 if (window["WebSocket"]) {
     console.log("supports websockets");
@@ -25,5 +50,6 @@ conn.addEventListener("close", () => {
 });
 
 conn.addEventListener("message", (evt) => {
-    console.log(evt, JSON.parse(evt.data));
+    resp = JSON.parse(evt.data)
+    valTest.innerText = resp;
 })
