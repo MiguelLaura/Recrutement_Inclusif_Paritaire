@@ -24,19 +24,22 @@ btnToggle.addEventListener("click", () => {
     switch(btnToggle.dataset.state) {
         case NOT_STARTED: // Pas encore démarrée
             conn.send(JSON.stringify({id_simulation : id, type: "action", data: "start"}));
+            btnToggle.lastChild.textContent = "Pause";
             btnToggle.dataset.state = PLAYING;
         break;
         case PLAYING: // En train de simuler
             conn.send(JSON.stringify({id_simulation : id, type: "action", data: "pause"}));
+            btnToggle.lastChild.textContent = "Reprendre";
             btnToggle.dataset.state = PAUSED;
         break;
         case PAUSED: // En pause
             conn.send(JSON.stringify({id_simulation : id, type: "action", data: "continue"}));
+            btnToggle.lastChild.textContent = "Pause";
             btnToggle.dataset.state = PLAYING;
     }
 
-    btnToggle.classList.toggle("bi-play-fill");
-    btnToggle.classList.toggle("bi-pause-fill");
+    btnToggle.firstChild.classList.toggle("bi-play-fill");
+    btnToggle.firstChild.classList.toggle("bi-pause-fill");
 });
 
 btnStop.addEventListener("click", () => {
