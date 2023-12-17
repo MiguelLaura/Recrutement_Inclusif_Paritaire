@@ -1,13 +1,13 @@
+NOT_STARTED = "0";
+PLAYING = "1";
+PAUSED = "2";
 
 // -------------------------
 // WebSocket
 
-const btnStart = document.getElementById("start-simu");
-const btnPause = document.getElementById("pause-simu");
-const btnContinue = document.getElementById("continue-simu");
+const btnToggle = document.getElementById("toggle-simu");
 const btnStop = document.getElementById("stop-simu");
 
-const valTest = document.getElementById("value-test");
 let conn = undefined;
 
 const currentURL = window.location.href;
@@ -20,23 +20,28 @@ console.log("ID extrait de l'URL :", id);
 
 //ENVOYER ICI EN PRENANT window.location.href ????
 
-btnStart.addEventListener("click", () => {
-    conn.send(JSON.stringify({id_simulation : id, type: "action", data: "start"}));
-    //btnStart.disabled = true
-});
+btnToggle.addEventListener("click", () => {
+    switch(btnToggle.dataset.state) {
+        case NOT_STARTED: // Pas encore démarrée
+            conn.send(JSON.stringify({id_simulation : id, type: "action", data: "start"}));
+            btnToggle.dataset.state = PLAYING;
+        break;
+        case PLAYING: // En train de simuler
+            conn.send(JSON.stringify({id_simulation : id, type: "action", data: "pause"}));
+            btnToggle.dataset.state = PAUSED;
+        break;
+        case PAUSED: // En pause
+            conn.send(JSON.stringify({id_simulation : id, type: "action", data: "continue"}));
+            btnToggle.dataset.state = PLAYING;
+    }
 
-btnPause.addEventListener("click", () => {
-    conn.send(JSON.stringify({id_simulation : id, type: "action", data: "pause"}));
-});
-
-btnContinue.addEventListener("click", () => {
-    conn.send(JSON.stringify({id_simulation : id, type: "action", data: "continue"}));
+    btnToggle.classList.toggle("bi-play-fill");
+    btnToggle.classList.toggle("bi-pause-fill");
 });
 
 btnStop.addEventListener("click", () => {
     conn.send(JSON.stringify({id_simulation : id, type: "action", data: "stop"}));
 });
-
 
 if (window["WebSocket"]) {
     console.log("supports websockets");
@@ -56,6 +61,6 @@ conn.addEventListener("close", () => {
 
 conn.addEventListener("message", (evt) => {
     resp = JSON.parse(evt.data)
-    valTest.innerText = resp;
+    console.log(resp);
 });
 

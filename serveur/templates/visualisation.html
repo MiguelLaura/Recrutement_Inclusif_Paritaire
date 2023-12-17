@@ -73,9 +73,9 @@
                 </article>
 
                 <article class="sim-ctrl">
-                    <button class="fond-violet"><i class="bi bi-pause-fill"></i> Pause</button>
-                    <button class="fond-violet"><i class="bi bi-stop-fill"></i> Arrêter</button>
-                    <button class="fond-rouge"><i class="bi bi-arrow-repeat"></i> Relancer</button>
+                    <button class="fond-violet" id="toggle-simu" data-state="0"><i class="bi bi-play-fill"></i> Commencer</button>
+                    <button class="fond-violet" id="stop-simu"><i class="bi bi-stop-fill"></i> Arrêter</button>
+                    <button class="fond-rouge" id="restart-simu"><i class="bi bi-arrow-repeat"></i> Relancer</button>
                 </article>
 
                 <hr />
@@ -84,9 +84,9 @@
                     <header>
                         <h1>Visualisation</h1>
                         <div>
-                            <button class="btn-presse">Tout</button>
-                            <button>Bénéfices</button>
-                            <button>Parité</button>
+                            <button class="btn-presse" id="visu-tout">Tout</button>
+                            <button id="visu-benef">Bénéfices</button>
+                            <button id="visu-parite">Parité</button>
                         </div>
                     </header>
                     <canvas id="sim-graph"></canvas>
