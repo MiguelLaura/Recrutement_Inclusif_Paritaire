@@ -48,15 +48,16 @@ func GenererEmployeInit(ent **Entreprise, genre Genre) *Employe {
 
 func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compet int, ent *Entreprise) *Employe {
 	return &Employe{
-		id:           genererIDEmploye(),
-		genre:        gen,
-		anciennete:   anc,
-		santeMentale: san,
-		agresseur:    ag,
-		comportement: compor,
-		competence:   compet,
-		entreprise:   ent,
-		chnl:         make(chan Communicateur),
+		id:              genererIDEmploye(),
+		genre:           gen,
+		anciennete:      anc,
+		santeMentale:    san,
+		agresseur:       ag,
+		comportement:    compor,
+		competence:      compet,
+		cmpt_competence: 0,
+		entreprise:      ent,
+		chnl:            make(chan Communicateur),
 	}
 }
 
@@ -90,6 +91,10 @@ func (e *Employe) Comportement() Comportement {
 
 func (e *Employe) Competence() int {
 	return e.competence
+}
+
+func (e *Employe) Cmpt_competence() int {
+	return e.cmpt_competence
 }
 
 func (e *Employe) Entreprise() *Entreprise {
@@ -132,6 +137,17 @@ func (e *Employe) partirRetraite() {
 // L'Employé travaille sur cette année
 func (e *Employe) travailler() {
 	e.entreprise.MettreAJourCA(e.santeMentale, e.competence)
+}
+
+// Peut-être à nuancer si trop de gains de compétences
+func (e *Employe) seFormer() {
+	e.cmpt_competence += 1
+	if e.competence < 10 && e.cmpt_competence == 5 {
+		log.Printf("Formation %s", e.Id())
+		e.competence += 1
+		e.cmpt_competence = 0
+	}
+	//log.Printf("Apres formation : %d", e.competence)
 }
 
 // ---------------------
@@ -215,6 +231,12 @@ func (e *Employe) agir() {
 		}
 
 		e.travailler()
+
+		// Participer à une formation
+		i, _ := TrouverEmploye(*e.entreprise.formation, func(emp Employe) bool { return e.Id() == emp.Id() }, 0)
+		if i >= 0 {
+			e.seFormer()
+		}
 
 		// Vieillir
 		e.gagnerAnciennete()
