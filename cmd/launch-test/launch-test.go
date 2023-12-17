@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
-	"gitlab.utc.fr/mennynat/ia04-project/serveur"
+	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
 func main() {
@@ -19,7 +19,9 @@ func main() {
 	loggers.AjouterLogger(&leLogger)
 	loggers.AjouterLogger(leLoggerF)
 
-	server := serveur.NewRestServerAgent("localhost:8080")
-	server.Start()
-	fmt.Scanln()
+	loggers.Log("salut")
+
+	// server := serveur.NewRestServerAgent("localhost:8080")
+	// server.Start()
+	// fmt.Scanln()
 }

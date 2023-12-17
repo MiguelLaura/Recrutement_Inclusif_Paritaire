@@ -10,6 +10,12 @@ func (l *Loggers) Log(msg ...any) {
 	}
 }
 
+func (l *Loggers) Logf(format string, v ...any) {
+	for _, logger := range l.loggers {
+		logger.Logf(format, v...)
+	}
+}
+
 func (l *Loggers) Err(msg ...any) {
 	for _, logger := range l.loggers {
 		logger.Err(msg...)

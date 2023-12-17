@@ -12,6 +12,10 @@ func (l *ConsoleLogger) Log(msg ...any) {
 	log.Print(msg...)
 }
 
+func (l *ConsoleLogger) Logf(format string, v ...any) {
+	log.Printf(format, v...)
+}
+
 func (l *ConsoleLogger) Err(msg ...any) {
 	log.Print(msg...)
 }

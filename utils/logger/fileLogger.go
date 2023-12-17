@@ -41,6 +41,10 @@ func (l *FileLogger) Log(msg ...any) {
 	l.file.WriteString(fmt.Sprint(msg...))
 }
 
+func (l *FileLogger) Logf(format string, v ...any) {
+	l.file.WriteString(fmt.Sprintf(format, v...))
+}
+
 func (l *FileLogger) Err(msg ...any) {
 	l.file.WriteString("ERR:" + fmt.Sprint(msg...))
 }
