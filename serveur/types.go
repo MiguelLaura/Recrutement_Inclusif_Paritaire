@@ -23,3 +23,8 @@ type requeteNouvelleSimulation struct {
 type reponseNouvelleSimulation struct {
 	ID string `json:"id_simulation"`
 }
+
+// -----------------------------
+//       Types Actions
+// -----------------------------
+//start, pause, continue, stop

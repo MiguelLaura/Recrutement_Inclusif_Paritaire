@@ -18,23 +18,22 @@ var (
 	}
 )
 
-// Manager is used to hold references to all Clients Registered, and Broadcasting etc
 type Manager struct {
 	sync.Mutex
-	clients WSClientsList
+	clients         WSClientsList
+	restServerAgent *RestServerAgent
 }
 
-// NewManager is used to initalize all the values inside the manager
-func NewManager() *Manager {
-	return &Manager{sync.Mutex{}, make(WSClientsList, 0)}
+func NewManager(rsa *RestServerAgent) *Manager {
+	return &Manager{sync.Mutex{}, make(WSClientsList, 0), rsa}
 }
 
-func setupWebsocket(mux *http.ServeMux) {
-	manager := NewManager()
+func (rs *RestServerAgent) setupWebsocket(mux *http.ServeMux) {
+	manager := NewManager(rs)
+	rs.websocketManager = manager
 	mux.HandleFunc("/ws", manager.serveWS)
 }
 
-// serveWS is a HTTP Handler that the has the Manager that allows connections
 func (m *Manager) serveWS(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("New connection")
@@ -48,34 +47,25 @@ func (m *Manager) serveWS(w http.ResponseWriter, r *http.Request) {
 	client := NewWSClient(conn, m)
 
 	m.addClient(client)
-
 	go client.readMessages()
 }
 
-// addClient will add clients to our clientList
 func (m *Manager) addClient(client *WSClient) {
-	// Lock so we can manipulate
 	m.Lock()
 	defer m.Unlock()
 
-	// Add Client
 	m.clients[client] = true
 }
 
-// removeClient will remove the client and clean up
 func (m *Manager) removeClient(client *WSClient) {
 	m.Lock()
 	defer m.Unlock()
 
-	// Check if Client exists, then delete it
 	if _, ok := m.clients[client]; ok {
-		// close connection
 		client.connection.Close()
-		// remove
 		delete(m.clients, client)
 
-		// TODO : terminer la simulation associée
+		// on ne veut pas que la simulation se termine le client est arrêté
+		// exemple : reload de la page = la simulation peut continuer
 	}
 }
-
-func (m *Manager) initClient() {}

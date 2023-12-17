@@ -14,6 +14,7 @@ type Simulation struct {
 	maxDuration time.Duration
 	step        int // Stats
 	start       time.Time
+	status      string // created, started, pause, finished
 }
 
 type Action int

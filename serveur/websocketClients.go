@@ -2,26 +2,21 @@ package serveur
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"log"
 
 	"github.com/gorilla/websocket"
 )
 
-// WSClientsList is a map used to help manage a map of WSClients
 type WSClientsList map[*WSClient]bool
 
-// WSClient is a websocket WSClient, basically a frontend visitor
 type WSClient struct {
-	// the websocket connection
 	connection *websocket.Conn
-
-	// manager is the manager used to manage the WSClient
-	manager *Manager
-
-	idSimu string
+	manager    *Manager
+	idSimu     string
 }
 
-// NewWSClient is used to initialize a new WSClient with all required values initialized
 func NewWSClient(conn *websocket.Conn, manager *Manager) *WSClient {
 	return &WSClient{
 		connection: conn,
@@ -35,42 +30,65 @@ func (cli *WSClient) SetIdSimu(idSimu string) {
 
 func (c *WSClient) readMessages() {
 	defer func() {
-		// Graceful Close the Connection once this
-		// function is done
 		c.manager.removeClient(c)
 	}()
 	// Loop Forever
 	for {
-		// ReadMessage is used to read the next message in queue
-		// in the connection
-		messageType, payload, err := c.connection.ReadMessage()
+		_, payload, err := c.connection.ReadMessage()
 
 		if err != nil {
-			// If Connection is closed, we will Recieve an error here
-			// We only want to log Strange errors, but not simple Disconnection
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error reading message: %v", err)
 			}
-			break // Break the loop to close conn & Cleanup
+			break
 		}
-		log.Println("MessageType: ", messageType)
-		log.Println("Payload: ", payload)
 
-		req := DefaultReq{}
+		req := ActionReq{}
 		err = json.Unmarshal(payload, &req)
 		if err != nil {
 			log.Println("ERR:", err)
 		}
 
-		log.Println(req.T, req.D)
+		//actions : start, pause, continue, stop
+		resp := ""
+		if req.T == "action" {
+			resp, err = c.handleMessageFromWebSocket(req.IdSimu, req.D) //si type == action, on envoie l'action
+			if err != nil {
+				log.Printf("ERREUR ACTION")
+			}
+		}
 
-		rep := Resp{"coucou du serveur"}
-
-		json, err := json.Marshal(rep)
+		json, err := json.Marshal(resp)
 		if err != nil {
 			log.Println("ERR:", err)
 		}
-
 		c.connection.WriteMessage(websocket.TextMessage, json)
 	}
+}
+
+func (c *WSClient) handleMessageFromWebSocket(idSimulation string, message string) (resp string, err error) {
+	simulation := c.manager.restServerAgent.simulations[idSimulation]
+	if simulation == nil {
+		fmt.Println("Simulation introuvable.")
+		resp = "Simulation introuvable"
+		err = errors.New("erreur : Simulation introuvable")
+		return
+	} else {
+		switch message {
+		case "start":
+			resp = simulation.Start()
+		case "pause":
+			resp = simulation.Pause()
+		case "continue":
+			resp = simulation.Continue()
+		case "stop":
+			resp = simulation.End()
+		default:
+			fmt.Println("Err : Action non reconnue.")
+			resp = ""
+			err = errors.New("erreur : Action non reconnue")
+			return
+		}
+	}
+	return resp, nil
 }
