@@ -277,6 +277,10 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 	nbARecruter := float64(ent.nbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
 	benef -= float64(nbARecruter * constantes.COUT_RECRUTEMENT)
 
+	// Coût des formations
+	nbFormes := len(*ent.formation)
+	benef -= float64(constantes.PRIX_FORMATION * constantes.NB_JOURS_FORMATION * nbFormes)
+
 	// Amende si non parité
 	// Modèle le plus simple : si %Femmes ne respectent pas la loi (<40%), amende d'1% des bénéfices
 	// Modèle 2 plus proche de la réalité : amende si non respect pendant 3 ans consécutifs
