@@ -1,0 +1,62 @@
+body, html {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 1% 2% 0 2%;
+    flex-grow: 1;
+}
+
+.sim-info-container {
+    flex: 2.3;
+}
+
+/* 
+----------------------------------
+           Log section 
+----------------------------------
+*/
+
+.log-info-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.log-info-container header {
+    position: relative;
+    bottom: -15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2% 0 2%;
+}
+
+.logs-container {
+    background-color: rgb(253, 249, 222);
+    flex-grow: .98;
+}
+
+.pin-img {
+    position: relative;
+    height: 60px;
+    top: -25px;
+}
+
+#logger {
+    position: relative;
+    top: -20px;
+}
+
+#logger p {
+    border-top: 1px black solid;
+}
