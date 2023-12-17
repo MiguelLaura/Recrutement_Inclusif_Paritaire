@@ -1,11 +1,7 @@
-const btnStart = document.getElementById("launch-simu");
-const valTest = document.getElementById("value-test");
+// -------------------------
+// WebSocket
+
 let conn = undefined;
-
-btnStart.addEventListener("click", () => {
-    conn.send(JSON.stringify({type: "salutation", data: "salut le serveur :)"}));
-});
-
 
 if (window["WebSocket"]) {
     console.log("supports websockets");
@@ -25,4 +21,4 @@ conn.addEventListener("close", () => {
 
 conn.addEventListener("message", (evt) => {
     console.log(evt, JSON.parse(evt.data));
-})
+});

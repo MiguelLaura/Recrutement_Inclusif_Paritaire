@@ -1,3 +1,14 @@
+/* Variables */
+
+:root {
+    --couleur-verte: rgb(81, 212, 35);
+    --couleur-orange: rgb(223, 160, 85);
+    --couleur-rouge: rgb(223, 85, 85);
+    --couleur-violet: rgb(121, 73, 255);
+}
+
+/* Généralités */
+
 @font-face {
     font-family: 'Josefin Sans';
     src: url(../font/JosefinSans.ttf);
@@ -15,6 +26,31 @@ body {
     flex-direction: row;
     justify-content: center;
 }
+
+.clickable-icon {
+    cursor: pointer;
+}
+
+.vert {
+    color: var(--couleur-verte);
+}
+
+.orange {
+    color: var(--couleur-orange);
+}
+
+.rouge {
+    color: var(--couleur-rouge);
+}
+
+.fond-rouge {
+    background-color: var(--couleur-rouge);
+}
+
+.fond-violet {
+    background-color: var(--couleur-violet);
+}
+
 
 /* The header */
 
