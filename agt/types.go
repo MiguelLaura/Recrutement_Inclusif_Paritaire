@@ -3,6 +3,17 @@ package agt
 import (
 	"sync"
 	"time"
+
+	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
+)
+
+// ------------ Types de logs --------------
+
+const (
+	INFO_AGRESSION   logger.LogType = "agression::"
+	INFO_DEPART      logger.LogType = "depart::"
+	INFO_RECRUTEMENT logger.LogType = "recrutement::"
+	INFO_ENTREPRISE  logger.LogType = "entreprise::"
 )
 
 // ------------ SIMULATION ------------

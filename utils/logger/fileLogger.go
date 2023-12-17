@@ -15,14 +15,15 @@ type FileLogger struct {
 	opened bool
 }
 
-func NewFileLogger(logFile string) (logger *FileLogger, err error) {
+func NewFileLogger(path string) (logger *FileLogger, err error) {
 	logger = &FileLogger{}
 
-	fileName := strings.TrimSpace(logFile)
-
-	if fileName == "" {
-		fileName = loggerFileName + time.Now().Format(time.RFC3339)
+	pathName, err := createLogPath(path)
+	if err != nil {
+		return nil, err
 	}
+
+	fileName := fmt.Sprintf("%s%s%s", pathName, loggerFileName, time.Now().Format(time.RFC3339))
 
 	file, err := os.Create(fileName)
 	if err != nil {
@@ -37,6 +38,22 @@ func NewFileLogger(logFile string) (logger *FileLogger, err error) {
 	return
 }
 
+func createLogPath(logFolder string) (pathName string, err error) {
+	pathName = strings.TrimSpace(logFolder)
+
+	if len(pathName) == 0 {
+		return "./", nil
+	}
+
+	if len(pathName) > 0 && pathName[len(pathName)-1] != '/' {
+		pathName += "/"
+	}
+
+	err = os.MkdirAll(pathName, os.ModePerm)
+
+	return
+}
+
 func (l *FileLogger) Log(msg ...any) {
 	l.file.WriteString(fmt.Sprint(msg...))
 }
@@ -47,6 +64,18 @@ func (l *FileLogger) Logf(format string, v ...any) {
 
 func (l *FileLogger) Err(msg ...any) {
 	l.file.WriteString("ERR:" + fmt.Sprint(msg...))
+}
+
+func (l *FileLogger) LogType(logType LogType, msg ...any) {
+	l.Log(append([]any{logType}, msg...)...)
+}
+
+func (l *FileLogger) LogfType(logType LogType, format string, v ...any) {
+	l.LogType(logType, fmt.Sprintf(format, v...))
+}
+
+func (l *FileLogger) ErrType(logType LogType, msg ...any) {
+	l.Err(append([]any{logType}, msg...)...)
 }
 
 func (l *FileLogger) Close() {
