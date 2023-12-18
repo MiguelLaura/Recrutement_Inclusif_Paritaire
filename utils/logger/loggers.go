@@ -22,6 +22,24 @@ func (l *Loggers) Err(msg ...any) {
 	}
 }
 
+func (l *Loggers) LogType(logType LogType, msg ...any) {
+	for _, logger := range l.loggers {
+		logger.LogType(logType, msg...)
+	}
+}
+
+func (l *Loggers) LogfType(logType LogType, format string, v ...any) {
+	for _, logger := range l.loggers {
+		logger.LogfType(logType, format, v...)
+	}
+}
+
+func (l *Loggers) ErrType(logType LogType, msg ...any) {
+	for _, logger := range l.loggers {
+		logger.ErrType(logType, msg...)
+	}
+}
+
 func (l *Loggers) AjouterLogger(nouveauLogger Logger) {
 	l.loggers = append(l.loggers, nouveauLogger)
 }
