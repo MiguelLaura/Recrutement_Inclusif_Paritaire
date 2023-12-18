@@ -52,7 +52,6 @@ button {
 .logs-container {
     background-color: rgb(253, 249, 222);
     flex-grow: .98;
-    max-height: 900px;
 }
 
 .pin-img {

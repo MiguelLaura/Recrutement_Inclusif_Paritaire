@@ -9,3 +9,6 @@ const exLogs = [
 for(let log of exLogs) {
     addLog(log);
 }
+
+// Initialise la taille max de la partie log
+document.querySelector(".logs-container").style.maxHeight = document.querySelector(".logs-container").clientHeight + "px";
