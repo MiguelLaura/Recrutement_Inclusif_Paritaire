@@ -168,26 +168,17 @@ func (ent *Entreprise) MettreAJourCA(santeMentale int, competence int) {
 	ent.ca += float64(santeMentale) * float64(competence)
 }
 
-func (ent *Entreprise) RecevoirActions() {
+func (ent *Entreprise) RecevoirActions(nbActions int) {
 	for {
 		<-ent.chnlNotifAction
 
 		ent.nbActions += 1
 
-		if ent.fin {
-			log.Printf("Nb actions fin %d/%d", ent.nbActions, ent.nbEmployes())
+		// log.Printf("Nb actions %d/%d", ent.nbActions, nbActions)
 
-			if ent.nbActions == ent.nbEmployes() {
-				ent.nbActions = 0
-				return
-			}
-		} else {
-			log.Printf("Nb actions %d/%d", ent.nbActions, (ent.nbEmployes() + ent.nbAgresseurs))
-
-			if ent.nbActions == (ent.nbEmployes() + ent.nbAgresseurs) {
-				ent.nbActions = 0
-				return
-			}
+		if ent.nbActions == nbActions {
+			ent.nbActions = 0
+			return
 		}
 	}
 }
@@ -253,13 +244,19 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 // }
 
 func (ent *Entreprise) gestionDeparts() {
+	if len(*ent.departs) <= 0 {
+		return
+	}
 	for _, emp := range *ent.departs {
 		*ent.employes = enleverEmploye(*ent.employes, emp)
-		go EnvoyerMessage(&emp, FIN, nil)
+		go func(emp Employe) {
+			EnvoyerMessage(&emp, FIN, nil)
+		}(emp)
 		if emp.agresseur {
 			ent.nbAgresseurs -= 1
 		}
 	}
+	ent.RecevoirActions(len(*ent.departs))
 	*ent.departs = make([]Employe, 0)
 }
 
@@ -269,7 +266,7 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 		return msg.Payload.(error)
 	} else if msg.Act == FIN_RECRUTEMENT {
 		embauches := msg.Payload.([]Employe)
-		log.Printf("embauche %d, employés %d", len(embauches), ent.nbEmployes())
+		log.Printf("Embauche %d, employés %d", len(embauches), ent.nbEmployes())
 		for _, emp := range embauches {
 			*ent.employes = append(*ent.employes, emp)
 			if emp.agresseur {
@@ -293,7 +290,6 @@ func (ent *Entreprise) bonneAnnee() {
 	ent.nbDepressions = 0
 	ent.nbRenvois = 0
 
-	log.Printf("nb emp %d", ent.nbEmployes())
 	for _, emp := range *ent.employes {
 		go func(emp Employe) {
 			EnvoyerMessage(&emp, LIBRE, nil)
@@ -335,14 +331,15 @@ func (ent *Entreprise) Start() {
 }
 
 func (ent *Entreprise) agir() {
+	if len(*ent.employes) <= 0 {
+		ent.fin = true
+		return
+	}
 	log.Printf("Commence l'année")
 	// Envoyer le message aux employés pour qu'ils agissent
 	ent.bonneAnnee()
-	ent.RecevoirActions()
+	ent.RecevoirActions(ent.nbAgresseurs + ent.nbEmployes())
 	ent.finirCycle()
-	if len(*ent.employes) <= 0 {
-		ent.fin = true
-	}
 }
 
 func (ent *Entreprise) stop() {
@@ -352,7 +349,7 @@ func (ent *Entreprise) stop() {
 			EnvoyerMessage(&emp, FIN, nil)
 		}(emp)
 	}
-	ent.RecevoirActions()
+	ent.RecevoirActions(ent.nbEmployes())
 }
 
 func (ent *Entreprise) finirCycle() {
@@ -360,13 +357,14 @@ func (ent *Entreprise) finirCycle() {
 	ent.gestionPlaintes()
 	// ent.ajusterImpactFemmes()
 	benef := ent.calculerBenefice()
-	log.Printf("benefices: %f", benef)
+	log.Printf("Benefices: %f", benef)
 	// ent.obtenirIndicateursSante()
 
 	// Si on le fait en premier, on ne comptera pas ces employés dans les indicateurs ?
 	ent.gestionDeparts()
 	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
 	ent.gestionRecrutements()
+	log.Print("Fin d'année\n\n")
 }
 
 // ---------------------
