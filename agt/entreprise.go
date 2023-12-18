@@ -205,7 +205,7 @@ func (ent *Entreprise) teamBuilding() {
 func (ent *Entreprise) organisationFormation() {
 	log.Printf("Organisation formation")
 
-	*ent.formation = nil
+	*ent.formation = make([]Employe, 0)
 	// Génération des employés participant à une formation cette année
 
 	// 32% des français ont participé à une formation
