@@ -201,32 +201,3 @@ button {
     background-color: lightgray !important;
     cursor: pointer;
 }
-
-
-/* ------ 
-    Santé
-*/
-
-.sim-info-general + div {
-    flex: .8;
-}
-
-.sim-info-sante {
-    border: 1px rgb(128, 128, 128) solid;
-    border-radius: 15px;
-    padding: 5%;
-    padding-right: 2%;
-}
-
-.sim-info-sante h2 {
-    font-size: 1.2em;
-    margin: 0;
-}
-
-.indicators-container {
-    font-weight: normal;
-}
-
-.indicators-container td:nth-child(2) {
-    padding-left: 10px;
-}
