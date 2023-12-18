@@ -54,28 +54,34 @@ func createLogPath(logFolder string) (pathName string, err error) {
 	return
 }
 
-func (l *FileLogger) Log(msg ...any) {
-	l.file.WriteString(fmt.Sprint(msg...))
+func (l *FileLogger) Log(msg ...any) (err error) {
+	_, err = l.file.WriteString(fmt.Sprint(msg...))
+	return
 }
 
-func (l *FileLogger) Logf(format string, v ...any) {
-	l.file.WriteString(fmt.Sprintf(format, v...))
+func (l *FileLogger) Logf(format string, v ...any) (err error) {
+	_, err = l.file.WriteString(fmt.Sprintf(format, v...))
+	return
 }
 
-func (l *FileLogger) Err(msg ...any) {
-	l.file.WriteString("ERR:" + fmt.Sprint(msg...))
+func (l *FileLogger) Err(msg ...any) (err error) {
+	_, err = l.file.WriteString("ERR:" + fmt.Sprint(msg...))
+	return
 }
 
-func (l *FileLogger) LogType(logType LogType, msg ...any) {
-	l.Log(append([]any{logType}, msg...)...)
+func (l *FileLogger) LogType(logType LogType, msg ...any) (err error) {
+	err = l.Log(append([]any{logType}, msg...)...)
+	return
 }
 
-func (l *FileLogger) LogfType(logType LogType, format string, v ...any) {
-	l.LogType(logType, fmt.Sprintf(format, v...))
+func (l *FileLogger) LogfType(logType LogType, format string, v ...any) (err error) {
+	err = l.LogType(logType, fmt.Sprintf(format, v...))
+	return
 }
 
-func (l *FileLogger) ErrType(logType LogType, msg ...any) {
-	l.Err(append([]any{logType}, msg...)...)
+func (l *FileLogger) ErrType(logType LogType, msg ...any) (err error) {
+	err = l.Err(append([]any{logType}, msg...)...)
+	return
 }
 
 func (l *FileLogger) Close() {
