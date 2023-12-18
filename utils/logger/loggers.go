@@ -4,6 +4,10 @@ type Loggers struct {
 	loggers []Logger
 }
 
+func NewLoggers() *Loggers {
+	return &Loggers{make([]Logger, 0)}
+}
+
 func (l *Loggers) Log(msg ...any) {
 	for _, logger := range l.loggers {
 		logger.Log(msg...)

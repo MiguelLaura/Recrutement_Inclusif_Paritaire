@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"time"
+
+	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
 // retourne un pointeur sur une nouvelle simulation
@@ -12,6 +14,9 @@ func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratPar
 	simu.maxStep = maxStep
 	simu.maxDuration = maxDuration
 
+	simu.logger.AjouterLogger(logger.NewConsoleLogger())
+
+	// TODO : ajouter une référence de simu.logger dans les entreprise (puis employés) et recrutement
 	simu.ent = *NewEntreprise(nbEmployes, pariteInit)
 	recrut := NewRecrutement(&simu.ent, obj, sav, sap, trav, trap, ppav, ppap)
 	simu.ent.AjouterRecrutement(*recrut)
@@ -54,6 +59,9 @@ func (simu *Simulation) Start() string {
 		EnvoyerMessageEntreprise(&simu.ent, FIN, nil)
 		log.Printf("Fin de la simulation [step: %d, nb employé fin : %d, début parité : %f, fin parité : %f", simu.step, len(simu.ent.Employes()), simu.pariteInit, simu.ent.PourcentageFemmes())
 	}()
+
+	simu.logger.Log(msg_end)
+
 	return msg_end
 
 }
@@ -65,6 +73,9 @@ func (simu *Simulation) Pause() string {
 		return msg
 	}
 	simu.status = "pause"
+
+	simu.logger.Log("La simulation est en pause.")
+
 	return "La simulation est en pause."
 }
 
@@ -75,6 +86,9 @@ func (simu *Simulation) Continue() string {
 		return msg
 	}
 	simu.status = "started"
+
+	simu.logger.Log("La simulation est relancée.")
+
 	return "La simulation est relancée."
 }
 
@@ -85,7 +99,14 @@ func (simu *Simulation) End() string {
 		return msg
 	}
 	simu.status = "ended"
+
+	simu.logger.Log("La simulation est terminée.\nElle a duré : ", time.Now().Sub(simu.start), " s")
+
 	return "La simulation est terminée."
+}
+
+func (simu *Simulation) AjouteWebSockerLogger(wsLogger *logger.SocketLogger) {
+	simu.logger.AjouterLogger(wsLogger)
 }
 
 // // lance la simulation

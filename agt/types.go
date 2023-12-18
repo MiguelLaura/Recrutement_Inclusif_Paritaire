@@ -28,6 +28,7 @@ type Simulation struct {
 	step        int // Stats
 	start       time.Time
 	status      string // created, started, pause, finished
+	logger      logger.Loggers
 }
 
 type Action int

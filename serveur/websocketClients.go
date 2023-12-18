@@ -7,7 +7,6 @@ import (
 	"log"
 
 	"github.com/gorilla/websocket"
-	"gitlab.utc.fr/mennynat/ia04-project/agt"
 	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
@@ -52,38 +51,42 @@ func (c *WSClient) readMessages() {
 		}
 
 		//actions : start, pause, continue, stop
-		resp := ""
 		if req.T == "action" {
-			resp, err = c.handleMessageFromWebSocket(req.IdSimu, req.D) //si type == action, on envoie l'action
+			_, err = c.handleMessageFromWebSocket(req.IdSimu, req.D) //si type == action, on envoie l'action
 			if err != nil {
 				log.Printf("ERREUR ACTION")
 			}
 		}
 
-		sl := logger.NewSocketLogger(c.connection, 10)
-		sl.Log(resp)
-		sl.Err("Ho no !", " y'a un sushi ! 🍣")
+		// sl := logger.NewSocketLogger(c.connection, 10)
+		// sl.Log(resp)
+		// sl.Err("Ho no !", " y'a un sushi ! 🍣")
 
-		msg := agt.SituationActuelle{
-			Annee:  666,
-			NbEmp:  999,
-			Parite: .25,
-			Benef:  666.666,
-		}
-
-		sl.LogType(agt.LOG_GLOBALE, msg)
-
-		// json, err := json.Marshal(resp)
-		// if err != nil {
-		// 	log.Println("ERR:", err)
+		// msg := agt.SituationActuelle{
+		// 	Annee:  666,
+		// 	NbEmp:  999,
+		// 	Parite: .25,
+		// 	Benef:  666.666,
 		// }
 
-		// c.connection.WriteMessage(websocket.TextMessage, json)
+		// sl.LogType(agt.LOG_GLOBALE, msg)
+
+		// // json, err := json.Marshal(resp)
+		// // if err != nil {
+		// // 	log.Println("ERR:", err)
+		// // }
+
+		// // c.connection.WriteMessage(websocket.TextMessage, json)
 	}
 }
 
 func (c *WSClient) handleMessageFromWebSocket(idSimulation string, message string) (resp string, err error) {
 	simulation := c.manager.restServerAgent.simulations[idSimulation]
+	if c.idSimu != idSimulation {
+		c.idSimu = idSimulation
+		simulation.AjouteWebSockerLogger(logger.NewSocketLogger(c.connection, 10))
+	}
+
 	if simulation == nil {
 		fmt.Println("Simulation introuvable.")
 		resp = "Simulation introuvable"
@@ -106,5 +109,6 @@ func (c *WSClient) handleMessageFromWebSocket(idSimulation string, message strin
 			return
 		}
 	}
+
 	return resp, nil
 }
