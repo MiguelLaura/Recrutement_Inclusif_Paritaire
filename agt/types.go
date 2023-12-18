@@ -14,6 +14,8 @@ const (
 	INFO_DEPART      logger.LogType = "depart::"
 	INFO_RECRUTEMENT logger.LogType = "recrutement::"
 	INFO_ENTREPRISE  logger.LogType = "entreprise::"
+	INFO_EVENEMENT   logger.LogType = "evenement::"
+	INFO_GLOBALE     logger.LogType = "globale::"
 )
 
 // ------------ SIMULATION ------------
