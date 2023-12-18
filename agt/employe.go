@@ -174,6 +174,7 @@ func (agresseur *Employe) agresser() {
 		cible = agresseur.entreprise.EnvoyerEmploye(genreAgresse)
 		timeout++
 	}
+	// log.Printf("Employé %s agresse %s", agresseur.id, cible.id)
 
 	if timeout < constantes.TIMEOUT_AGRESSION {
 		go EnvoyerMessage(cible, AGRESSION, agresseur)
@@ -195,7 +196,9 @@ func (e *Employe) Start() {
 
 	// Boucle de vie
 	for !e.fin {
+		// log.Printf("hello %s", e.id)
 		e.agir()
+		// log.Printf("goodbye %s", e.id)
 	}
 
 	log.Printf("Fin de l'employé %s", e.id)
@@ -211,6 +214,7 @@ func (e *Employe) agir() {
 	case NOOP: // Ne fait rien
 		return
 	case LIBRE: // Vie une année complète
+		// log.Printf("action libre %s", e.id)
 
 		// Si l'agent est un agresseur, il agresse
 		if e.Agresseur() {
@@ -240,6 +244,7 @@ func (e *Employe) agir() {
 		}
 
 	case AGRESSION: // Se fait agresser par quelqu'un
+		// log.Printf("action agression %s", e.id)
 
 		if msg.Payload != nil {
 			e.etreAgresse(msg.Payload.(*Employe))
@@ -253,6 +258,7 @@ func (e *Employe) agir() {
 		}
 
 	case FIN: // Arrêter l'employé
+		// log.Printf("action fin %s", e.id)
 		e.fin = true
 	}
 
