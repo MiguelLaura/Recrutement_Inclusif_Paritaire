@@ -211,7 +211,7 @@ func (ent *Entreprise) gestionPlaintes() {
 			}
 		}
 	}
-	*ent.plaintes = nil
+	*ent.plaintes = make([][]Employe, 0)
 }
 
 // func (ent Entreprise) ajusterImpactFemmes() {
@@ -260,7 +260,7 @@ func (ent *Entreprise) gestionDeparts() {
 			ent.nbAgresseurs -= 1
 		}
 	}
-	*ent.departs = nil
+	*ent.departs = make([]Employe, 0)
 }
 
 func (ent *Entreprise) gestionRecrutements() (err error) {

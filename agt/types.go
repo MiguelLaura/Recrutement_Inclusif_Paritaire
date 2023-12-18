@@ -14,7 +14,7 @@ type Simulation struct {
 	maxDuration time.Duration
 	step        int // Stats
 	start       time.Time
-	status      string // created, started, pause, finished
+	status      Status // created, started, pause, finished
 }
 
 type Action int
@@ -25,6 +25,16 @@ const (
 	LIBRE
 	AGRESSION
 	FIN
+)
+
+type Status int
+
+// Action est une enumeration
+const (
+	CREATED Status = iota
+	STARTED
+	PAUSED
+	ENDED
 )
 
 // Permet la communication entre entreprise et employé

@@ -15,18 +15,18 @@ func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratPar
 	recrut := NewRecrutement(&simu.ent, obj, sav, sap, trav, trap, ppav, ppap)
 	simu.ent.AjouterRecrutement(*recrut)
 
-	simu.status = "created"
+	simu.status = CREATED
 
 	return simu
 }
 
 func (simu *Simulation) Start() string {
-	if simu.status != "created" {
+	if simu.status != CREATED {
 		log.Println("La simulation ne peut pas être démarrée depuis cet état.")
 		return "La simulation ne peut pas être démarrée depuis cet état."
 	}
 
-	simu.status = "started"
+	simu.status = STARTED
 	simu.start = time.Now()
 
 	// Démarrage de l'entreprise
@@ -38,13 +38,13 @@ func (simu *Simulation) Start() string {
 
 	go func() {
 		for simu.step < simu.maxStep {
-			if simu.status == "started" {
+			if simu.status == STARTED {
 				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
 				simu.step++
 				time.Sleep(1 * time.Second)
-			} else if simu.status == "pause" {
+			} else if simu.status == PAUSED {
 				time.Sleep(100 * time.Millisecond)
-			} else if simu.status == "ended" {
+			} else if simu.status == ENDED {
 				break
 			}
 		}
@@ -63,31 +63,31 @@ func (simu *Simulation) Start() string {
 }
 
 func (simu *Simulation) Pause() string {
-	if simu.status != "started" {
+	if simu.status != STARTED {
 		msg := "La simulation ne peut pas être mise en pause depuis cet état."
 		log.Println(msg)
 		return msg
 	}
-	simu.status = "pause"
+	simu.status = PAUSED
 	return "La simulation est en pause."
 }
 
 func (simu *Simulation) Continue() string {
-	if simu.status != "pause" {
+	if simu.status != PAUSED {
 		msg := "La simulation ne peut pas être reprise depuis cet état."
 		log.Println(msg)
 		return msg
 	}
-	simu.status = "started"
+	simu.status = STARTED
 	return "La simulation est relancée."
 }
 
 func (simu *Simulation) End() string {
-	if simu.status == "ended" {
+	if simu.status == ENDED {
 		msg := "La simulation est déjà terminée."
 		log.Println(msg)
 		return msg
 	}
-	simu.status = "ended"
+	simu.status = ENDED
 	return "La simulation est terminée."
 }
