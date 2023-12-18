@@ -197,7 +197,12 @@ func (ent *Entreprise) teamBuilding() {
 	log.Printf("Organisation team building")
 	for _, e := range *ent.employes {
 		if e.santeMentale < 100 {
-			e.santeMentale += constantes.BOOST_TEAM_BUILDING
+			if e.santeMentale+constantes.BOOST_TEAM_BUILDING > 100 {
+				e.santeMentale = 100
+			} else {
+				e.santeMentale += constantes.BOOST_TEAM_BUILDING
+			}
+
 		}
 	}
 }
@@ -219,17 +224,19 @@ func (ent *Entreprise) organisationFormation() {
 		if len(femmes) == 0 {
 			break
 		}
-		idx = rand.Intn(len(femmes))
-		*ent.formation = append(*ent.formation, femmes[idx])
-		femmes = enleverEmploye(femmes, femmes[idx])
+		i := rand.Intn(len(femmes))
+		*ent.formation = append(*ent.formation, femmes[i])
+		// Pour ne pas avoir de doublons
+		femmes = enleverEmploye(femmes, femmes[i])
 	}
 	for idx := 0; idx < int(nb_hommes_formes); idx++ {
 		if len(hommes) == 0 {
 			break
 		}
-		idx = rand.Intn(len(hommes))
-		*ent.formation = append(*ent.formation, hommes[idx])
-		hommes = enleverEmploye(hommes, hommes[idx])
+		i := rand.Intn(len(hommes))
+		*ent.formation = append(*ent.formation, hommes[i])
+		// Pour ne pas avoir de doublons
+		hommes = enleverEmploye(hommes, hommes[i])
 	}
 	log.Printf("nb employe: %d nb_formes: %d", ent.nbEmployes(), len(*ent.formation))
 }
