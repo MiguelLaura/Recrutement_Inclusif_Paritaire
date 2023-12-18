@@ -180,11 +180,20 @@ func (ent *Entreprise) RecevoirActions() {
 
 		ent.nbActions += 1
 
-		log.Printf("Nb actions %d/%d", ent.nbActions, (ent.nbEmployes() + ent.nbAgresseurs))
+		if ent.fin {
+			log.Printf("Nb actions fin %d/%d", ent.nbActions, ent.nbEmployes())
 
-		if ent.nbActions == (ent.nbEmployes() + ent.nbAgresseurs) {
-			ent.nbActions = 0
-			return
+			if ent.nbActions == ent.nbEmployes() {
+				ent.nbActions = 0
+				return
+			}
+		} else {
+			log.Printf("Nb actions %d/%d", ent.nbActions, (ent.nbEmployes() + ent.nbAgresseurs))
+
+			if ent.nbActions == (ent.nbEmployes() + ent.nbAgresseurs) {
+				ent.nbActions = 0
+				return
+			}
 		}
 	}
 }
@@ -269,8 +278,8 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 	}
 
 	// Bonus de productivité si %femmes supérieur à 35%
-	if ent.PourcentageFemmes() > 0.35 {
-		benef = benef * (1.0 + 0.2849)
+	if ent.PourcentageFemmes() > constantes.SEUIL_IMPACT_FEMME {
+		benef = benef * (1.0 + constantes.BOOST_PRODUCTIVITE_FEMME)
 	}
 
 	// Coût du recrutement
@@ -285,8 +294,8 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 	// Modèle le plus simple : si %Femmes ne respectent pas la loi (<40%), amende d'1% des bénéfices
 	// Modèle 2 plus proche de la réalité : amende si non respect pendant 3 ans consécutifs
 	// Modèle 3 le plus réaliste : amende à partir de 2029
-	if ent.PourcentageFemmes() < 0.40 {
-		benef = benef * (1 - 0.01)
+	if ent.PourcentageFemmes() < constantes.SEUIL_AMENDE {
+		benef = benef * (1 - constantes.POURCENTAGE_AMENDE)
 	}
 
 	return benef
@@ -296,10 +305,9 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 // }
 
 func (ent *Entreprise) gestionDeparts() {
-	departs := make([]Employe, len(*ent.departs))
-	copy(departs, *ent.departs)
-	for _, emp := range departs {
+	for _, emp := range *ent.departs {
 		*ent.employes = enleverEmploye(*ent.employes, emp)
+		go EnvoyerMessage(&emp, FIN, nil)
 		if emp.agresseur {
 			ent.nbAgresseurs -= 1
 		}
@@ -360,39 +368,47 @@ func (ent *Entreprise) Start() {
 
 	go ent.recrutement.Start()
 
-	for !ent.fin {
-		ent.agir()
-	}
-	ent.fin = false
-	for !ent.fin {
+	for {
 		msg := <-ent.chnl
-		if msg.Act == FIN {
-			ent.fin = true
+		if msg.Act == LIBRE && !ent.fin {
+			ent.agir()
+		} else if msg.Act == FIN && !ent.fin {
+			ent.stop()
+			break
+		} else {
+			msg = <-ent.chnl
+			if msg.Act == FIN {
+				break
+			}
 		}
 	}
 	log.Printf("Fin d'entreprise")
+	<-ent.chnl
 }
 
 func (ent *Entreprise) agir() {
-	msg := <-ent.chnl
-	if msg.Act == LIBRE {
-		log.Printf("Commence l'année")
-		// Déterminer participants aux formations
-		ent.organisationFormation()
-		// Envoyer le message aux employés pour qu'ils agissent
-		ent.bonneAnnee()
-		// Un team building en début d'année
-		ent.teamBuilding()
-		ent.RecevoirActions()
-		// Un team building en fin d'année
-		ent.teamBuilding()
-		ent.finirCycle()
-		if len(*ent.employes) <= 0 {
-			ent.fin = true
-		}
-	} else if msg.Act == FIN {
+	log.Printf("Commence l'année")
+	// Déterminer participants aux formations
+	ent.organisationFormation()
+	ent.teamBuilding()
+	// Envoyer le message aux employés pour qu'ils agissent
+	ent.bonneAnnee()
+	ent.RecevoirActions()
+	ent.teamBuilding()
+	ent.finirCycle()
+	if len(*ent.employes) <= 0 {
 		ent.fin = true
 	}
+}
+
+func (ent *Entreprise) stop() {
+	ent.fin = true
+	for _, emp := range *ent.employes {
+		go func(emp Employe) {
+			EnvoyerMessage(&emp, FIN, nil)
+		}(emp)
+	}
+	ent.RecevoirActions()
 }
 
 func (ent *Entreprise) finirCycle() {

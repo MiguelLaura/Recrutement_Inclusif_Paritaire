@@ -57,6 +57,7 @@ func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compe
 		competence:      compet,
 		cmpt_competence: 0,
 		entreprise:      ent,
+		fin:             false,
 		chnl:            make(chan Communicateur),
 	}
 }
@@ -147,7 +148,7 @@ func (e *Employe) seFormer() {
 		e.competence += 1
 		e.cmpt_competence = 0
 	}
-	//log.Printf("Apres formation : %d", e.competence)
+	log.Printf("Apres formation : %d", e.competence)
 }
 
 // ---------------------
@@ -209,9 +210,11 @@ func (e *Employe) Start() {
 	// Initialisation
 
 	// Boucle de vie
-	for {
+	for !e.fin {
 		e.agir()
 	}
+
+	log.Printf("Fin de l'employé %s", e.id)
 }
 
 // Ce que l'employé fait à chaque tour
@@ -271,6 +274,8 @@ func (e *Employe) agir() {
 			e.partirDepression()
 		}
 
+	case FIN: // Arrêter l'employé
+		e.fin = true
 	}
 
 	// Permet de notifier l'entreprise que l'agent vient de faire une action

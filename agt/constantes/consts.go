@@ -25,4 +25,7 @@ const (
 	CA_PAR_EMPLOYE            = 317000 // Source : https://xval.fr/chiffre-affaires-salarie/
 	COUT_EMPLOYE              = 50850  // Source : https://www.legisocial.fr/actualites-sociales/269-savez-vous-combien-coute-un-salarie-en-france.html
 	COUT_RECRUTEMENT          = 6500
+	BOOST_PRODUCTIVITE_FEMME  = 0.2849 // Source : https://www.cairn.info/revue-travail-genre-et-societes-2010-1-page-181.htm
+	SEUIL_AMENDE              = 0.4
+	POURCENTAGE_AMENDE        = 0.01
 )

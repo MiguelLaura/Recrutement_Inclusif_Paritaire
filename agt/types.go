@@ -63,6 +63,7 @@ type Employe struct {
 	competence      int //entre 0 et 10
 	cmpt_competence int // entre 0 et 5. Quand il atteint 5, competence +1
 	entreprise      *Entreprise
+	fin             bool
 	chnl            chan Communicateur
 }
 
