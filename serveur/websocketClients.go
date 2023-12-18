@@ -3,7 +3,6 @@ package serveur
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 
 	"github.com/gorilla/websocket"
@@ -38,7 +37,7 @@ func (c *WSClient) readMessages() {
 
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Printf("error reading message: %v", err)
+				log.Printf("erreur : lecture du message : %v", err)
 			}
 			break
 		}
@@ -46,7 +45,7 @@ func (c *WSClient) readMessages() {
 		req := ActionReq{}
 		err = json.Unmarshal(payload, &req)
 		if err != nil {
-			log.Println("ERR:", err)
+			log.Println("erreur :", err)
 		}
 
 		//actions : start, pause, continue, stop
@@ -54,13 +53,13 @@ func (c *WSClient) readMessages() {
 		if req.T == "action" {
 			resp, err = c.handleMessageFromWebSocket(req.IdSimu, req.D) //si type == action, on envoie l'action
 			if err != nil {
-				log.Printf("ERREUR ACTION")
+				log.Println("erreur :", err)
 			}
 		}
 
 		json, err := json.Marshal(resp)
 		if err != nil {
-			log.Println("ERR:", err)
+			log.Println("erreur :", err)
 		}
 		c.connection.WriteMessage(websocket.TextMessage, json)
 	}
@@ -69,7 +68,7 @@ func (c *WSClient) readMessages() {
 func (c *WSClient) handleMessageFromWebSocket(idSimulation string, message string) (resp string, err error) {
 	simulation := c.manager.restServerAgent.simulations[idSimulation]
 	if simulation == nil {
-		fmt.Println("Simulation introuvable.")
+		log.Println("erreur : Simulation introuvable")
 		resp = "Simulation introuvable"
 		err = errors.New("erreur : Simulation introuvable")
 		return
@@ -84,7 +83,7 @@ func (c *WSClient) handleMessageFromWebSocket(idSimulation string, message strin
 		case "stop":
 			resp = simulation.End()
 		default:
-			fmt.Println("Err : Action non reconnue.")
+			log.Println("erreur : Action non reconnue")
 			resp = ""
 			err = errors.New("erreur : Action non reconnue")
 			return
