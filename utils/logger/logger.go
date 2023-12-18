@@ -7,5 +7,4 @@ type Logger interface {
 
 	LogType(logType LogType, msg ...any) error
 	LogfType(logType LogType, format string, v ...any) error
-	ErrType(logType LogType, msg ...any) error
 }

@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"github.com/gorilla/websocket"
+	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
 type WSClientsList map[*WSClient]bool
@@ -58,11 +59,16 @@ func (c *WSClient) readMessages() {
 			}
 		}
 
-		json, err := json.Marshal(resp)
-		if err != nil {
-			log.Println("ERR:", err)
-		}
-		c.connection.WriteMessage(websocket.TextMessage, json)
+		sl := logger.NewSocketLogger(c.connection, 10)
+		sl.Log(resp)
+		sl.Err("Ho no !", " y'a un sushi ! 🍣")
+
+		// json, err := json.Marshal(resp)
+		// if err != nil {
+		// 	log.Println("ERR:", err)
+		// }
+
+		// c.connection.WriteMessage(websocket.TextMessage, json)
 	}
 }
 

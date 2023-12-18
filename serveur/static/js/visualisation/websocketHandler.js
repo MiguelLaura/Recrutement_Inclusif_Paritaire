@@ -68,6 +68,13 @@ conn.addEventListener("close", () => {
 
 conn.addEventListener("message", (evt) => {
     resp = JSON.parse(evt.data);
-    popupInfo.info(resp);
+    
+    if("data" in resp) {
+        if(resp.type === "Error") {
+            popupInfo.error(resp.data);
+        } else {
+            popupInfo.info(resp.data);
+        }
+    }
 });
 

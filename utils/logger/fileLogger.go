@@ -79,11 +79,6 @@ func (l *FileLogger) LogfType(logType LogType, format string, v ...any) (err err
 	return
 }
 
-func (l *FileLogger) ErrType(logType LogType, msg ...any) (err error) {
-	err = l.Err(append([]any{logType}, msg...)...)
-	return
-}
-
 func (l *FileLogger) Close() {
 	if l.opened {
 		l.file.Close()

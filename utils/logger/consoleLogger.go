@@ -33,7 +33,3 @@ func (l *ConsoleLogger) LogType(logType LogType, msg ...any) error {
 func (l *ConsoleLogger) LogfType(logType LogType, format string, v ...any) error {
 	return l.LogType(logType, fmt.Sprintf(format, v...))
 }
-
-func (l *ConsoleLogger) ErrType(logType LogType, msg ...any) error {
-	return l.Err(append([]any{logType}, msg...)...)
-}

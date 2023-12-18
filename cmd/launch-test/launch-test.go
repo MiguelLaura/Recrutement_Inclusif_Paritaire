@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
+	"gitlab.utc.fr/mennynat/ia04-project/serveur"
 	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
@@ -23,7 +25,7 @@ func main() {
 
 	leLogger.LogType("MonType de log", "salut", "au revoir")
 
-	// server := serveur.NewRestServerAgent("localhost:8080")
-	// server.Start()
-	// fmt.Scanln()
+	server := serveur.NewRestServerAgent("localhost:8080")
+	server.Start()
+	fmt.Scanln()
 }

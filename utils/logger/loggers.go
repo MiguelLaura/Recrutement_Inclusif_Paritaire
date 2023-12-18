@@ -34,12 +34,6 @@ func (l *Loggers) LogfType(logType LogType, format string, v ...any) {
 	}
 }
 
-func (l *Loggers) ErrType(logType LogType, msg ...any) {
-	for _, logger := range l.loggers {
-		logger.ErrType(logType, msg...)
-	}
-}
-
 func (l *Loggers) AjouterLogger(nouveauLogger Logger) {
 	l.loggers = append(l.loggers, nouveauLogger)
 }
