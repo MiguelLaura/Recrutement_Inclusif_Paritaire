@@ -14,7 +14,18 @@ import (
 // ---------------------
 
 func NewRecrutement(ent *Entreprise, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64) *Recrutement {
-	return &Recrutement{entreprise: ent, objectif: obj, stratAvant: sav, stratApres: sap, typeRecrutementAvant: trav, typeRecrutementApres: trap, pourcentagePlacesAvant: ppav, pourcentagePlacesApres: ppap, chnl: ent.chnlRecrutement}
+	return &Recrutement{
+		entreprise:             ent,
+		objectif:               obj,
+		stratAvant:             sav,
+		stratApres:             sap,
+		typeRecrutementAvant:   trav,
+		typeRecrutementApres:   trap,
+		pourcentagePlacesAvant: ppav,
+		pourcentagePlacesApres: ppap,
+		chnl:                   ent.chnlRecrutement,
+		fin:                    false,
+	}
 }
 
 // ---------------------
@@ -332,10 +343,11 @@ func (r *Recrutement) Start() {
 	log.Printf("Le service de recrutement est opérationnel")
 
 	// Boucle de vie
-	for {
+	for !r.fin {
 		// Attend un message pour agir
 		msg := <-r.chnl
-		if msg.Act == RECRUTEMENT {
+		switch msg.Act {
+		case RECRUTEMENT:
 			embauches, err := r.Recruter(msg.Payload.(int))
 			for _, emp := range embauches {
 				go func(emp Employe) {
@@ -347,9 +359,12 @@ func (r *Recrutement) Start() {
 			} else {
 				r.chnl <- Communicateur_recrutement{FIN_RECRUTEMENT, embauches}
 			}
-		} else {
+		case FIN_AGENT:
+			r.fin = true
+		default:
 			err := errors.New("erreur : mauvaise action du channel")
 			r.chnl <- Communicateur_recrutement{ERREUR_RECRUTEMENT, err}
 		}
 	}
+	log.Printf("Fin du recrutement")
 }

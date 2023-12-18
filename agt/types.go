@@ -48,6 +48,7 @@ const (
 	RECRUTEMENT Action_recrutement = iota
 	FIN_RECRUTEMENT
 	ERREUR_RECRUTEMENT
+	FIN_AGENT
 )
 
 // Permet la communication entre agents
@@ -142,4 +143,5 @@ type Recrutement struct {
 	pourcentagePlacesAvant float64 // -1 si non renseigné, entre 0 et 1 sinon
 	pourcentagePlacesApres float64
 	chnl                   chan Communicateur_recrutement
+	fin                    bool
 }

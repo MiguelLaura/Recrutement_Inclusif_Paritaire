@@ -344,6 +344,7 @@ func (ent *Entreprise) agir() {
 
 func (ent *Entreprise) stop() {
 	ent.fin = true
+	go EnvoyerMessageRecrutement(&ent.recrutement, FIN_AGENT, nil)
 	for _, emp := range *ent.employes {
 		go func(emp Employe) {
 			EnvoyerMessage(&emp, FIN, nil)
