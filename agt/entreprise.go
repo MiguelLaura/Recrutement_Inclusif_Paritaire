@@ -174,11 +174,20 @@ func (ent *Entreprise) RecevoirActions() {
 
 		ent.nbActions += 1
 
-		log.Printf("Nb actions %d/%d", ent.nbActions, (ent.nbEmployes() + ent.nbAgresseurs))
+		if ent.fin {
+			log.Printf("Nb actions fin %d/%d", ent.nbActions, ent.nbEmployes())
 
-		if ent.nbActions == (ent.nbEmployes() + ent.nbAgresseurs) {
-			ent.nbActions = 0
-			return
+			if ent.nbActions == ent.nbEmployes() {
+				ent.nbActions = 0
+				return
+			}
+		} else {
+			log.Printf("Nb actions %d/%d", ent.nbActions, (ent.nbEmployes() + ent.nbAgresseurs))
+
+			if ent.nbActions == (ent.nbEmployes() + ent.nbAgresseurs) {
+				ent.nbActions = 0
+				return
+			}
 		}
 	}
 }
@@ -246,6 +255,7 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 func (ent *Entreprise) gestionDeparts() {
 	for _, emp := range *ent.departs {
 		*ent.employes = enleverEmploye(*ent.employes, emp)
+		go EnvoyerMessage(&emp, FIN, nil)
 		if emp.agresseur {
 			ent.nbAgresseurs -= 1
 		}
@@ -306,33 +316,43 @@ func (ent *Entreprise) Start() {
 
 	go ent.recrutement.Start()
 
-	for !ent.fin {
-		ent.agir()
-	}
-	ent.fin = false
-	for !ent.fin {
+	for {
 		msg := <-ent.chnl
-		if msg.Act == FIN {
-			ent.fin = true
+		if msg.Act == LIBRE && !ent.fin {
+			ent.agir()
+		} else if msg.Act == FIN && !ent.fin {
+			ent.stop()
+			break
+		} else {
+			msg = <-ent.chnl
+			if msg.Act == FIN {
+				break
+			}
 		}
 	}
 	log.Printf("Fin d'entreprise")
+	<-ent.chnl
 }
 
 func (ent *Entreprise) agir() {
-	msg := <-ent.chnl
-	if msg.Act == LIBRE {
-		log.Printf("Commence l'année")
-		// Envoyer le message aux employés pour qu'ils agissent
-		ent.bonneAnnee()
-		ent.RecevoirActions()
-		ent.finirCycle()
-		if len(*ent.employes) <= 0 {
-			ent.fin = true
-		}
-	} else if msg.Act == FIN {
+	log.Printf("Commence l'année")
+	// Envoyer le message aux employés pour qu'ils agissent
+	ent.bonneAnnee()
+	ent.RecevoirActions()
+	ent.finirCycle()
+	if len(*ent.employes) <= 0 {
 		ent.fin = true
 	}
+}
+
+func (ent *Entreprise) stop() {
+	ent.fin = true
+	for _, emp := range *ent.employes {
+		go func(emp Employe) {
+			EnvoyerMessage(&emp, FIN, nil)
+		}(emp)
+	}
+	ent.RecevoirActions()
 }
 
 func (ent *Entreprise) finirCycle() {
