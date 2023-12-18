@@ -65,9 +65,8 @@ func (r Recrutement) GenererCandidats(nbCandidats int) (candidats []Employe, err
 		var anciennete int = 0 // anciennete = 0 car candidat
 		var santeMentale int = 100
 		var agresseur bool = genAgresseur(genre)
-		var comportement Comportement = genComportement()
 		var competence int = genCompetence()
-		e := NewEmploye(genre, anciennete, santeMentale, agresseur, comportement, competence, r.entreprise)
+		e := NewEmploye(genre, anciennete, santeMentale, agresseur, competence, r.entreprise)
 		candidats = append(candidats, *e)
 	}
 	return candidats, nil

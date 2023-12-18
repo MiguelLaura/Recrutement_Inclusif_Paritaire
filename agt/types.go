@@ -58,7 +58,6 @@ type Employe struct {
 	anciennete   int //entre 0 et 40
 	santeMentale int //entre 0 et 100
 	agresseur    bool
-	comportement Comportement
 	competence   int //entre 0 et 10
 	entreprise   *Entreprise
 	fin          bool

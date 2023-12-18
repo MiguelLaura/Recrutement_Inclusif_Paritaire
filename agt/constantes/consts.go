@@ -12,7 +12,8 @@ const (
 	POURCENTAGE_RECRUTEMENT   = .05
 	NB_CANDIDATS_PAR_OFFRE    = 18 // Source : https://blog.flatchr.io/barometre-des-entreprises-qui-recrutent-deuxieme-semestre-2022
 	TIMEOUT_AGRESSION         = 4
-	POURCENTAGE_LICENCIEMENT  = 0.20
+	PROBA_PLAINTE             = 0.3
+	PROBA_LICENCIEMENT        = 0.175
 	POURCENTAGE_DEM_SPONTANEE = 0.027  // Taux de démission spontanée en France au 1er trimestre 2022
 	RETENTION_PARITE          = 0.2    // Au sein d'un organisation inclusive, les employés ont une rétention supérieure de 20% (source: Catalyst)
 	SEUIL_IMPACT_FEMME        = 0.35   // D'après Rosabeth Kanter, une minorité doit représenter au minimum 35% du groupe dominant pour avoir une influence
