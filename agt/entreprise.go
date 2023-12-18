@@ -414,7 +414,8 @@ func (ent *Entreprise) finirCycle() {
 	benef := ent.calculerBenefice()
 	log.Printf("Benefices: %f", benef)
 	// ent.obtenirIndicateursSante()
-	log.Printf("moyenne competences %f", ent.MoyenneCompetences())
+	moy := ent.MoyenneCompetences()
+	log.Printf("moyenne competences %f", moy)
 	// Si on le fait en premier, on ne comptera pas ces employés dans les indicateurs ?
 	ent.gestionDeparts()
 	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
