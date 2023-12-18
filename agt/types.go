@@ -27,6 +27,7 @@ type Simulation struct {
 	maxDuration time.Duration
 	step        int // Stats
 	start       time.Time
+	status      string // created, started, pause, finished
 }
 
 type Action int
@@ -74,6 +75,7 @@ type Employe struct {
 	comportement Comportement
 	competence   int //entre 0 et 10
 	entreprise   *Entreprise
+	fin          bool
 	chnl         chan Communicateur
 }
 

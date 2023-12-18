@@ -1,0 +1,51 @@
+.infopopup-container {
+    position: fixed;
+    top: 1%;
+    right: 1%;
+    width: 20%;
+    height: 100px;
+}
+
+.infopopup-message {
+    padding: 1%;
+    width: 100%;
+    border: 1px black solid;
+    border-radius: 5px;
+}
+
+.infopopup-message-load {
+    width: 100%;
+    height: 4px;
+    background-color: aqua;
+    margin: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.infopopup-message header {
+    text-align: right;
+    font-size: 2em;
+}
+
+.infopopup-message p {
+    overflow-wrap: break-word;
+    width: 100%;
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.info-msg {
+    color: black;
+    background-color: lightgray;
+}
+
+.err-msg {
+    color: white;
+    background-color: rgb(223, 85, 85);
+}

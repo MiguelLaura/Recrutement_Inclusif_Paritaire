@@ -19,9 +19,10 @@ import (
 
 type RestServerAgent struct {
 	sync.Mutex
-	id         string
-	addr       string
-	simulation *agt.Simulation
+	id               string
+	addr             string
+	simulations      map[string]*agt.Simulation
+	websocketManager *Manager
 }
 
 // retourne un pointeur sur un nouveau ServeurAgent
@@ -80,8 +81,6 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 	// traitement de la requête
 	var resp reponseNouvelleSimulation
 
-	//TO DO : test sur l'id - simulation déjà créée ??
-
 	if req.ID == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : il manque un identifiant"
@@ -119,16 +118,22 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 		w.Write([]byte(msg))
 		return
 	} else {
-		resp.ID = req.ID
-		w.WriteHeader(http.StatusCreated)
-		serial, _ := json.Marshal(resp)
-		w.Write(serial)
-		fmt.Println("\nOK création et lancement simulation")
-
-		//*********** CREATION & LANCEMENT SIMULATION ****************************
-		s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, req.Objectif, req.StratAvant, req.StratApres, req.TypeRecrutementAvant, req.TypeRecrutementApres, req.PourcentagePlacesAvant, req.PourcentagePlacesApres, req.NbAnnees, 10*time.Second)
-		rsa.simulation = s //la simulation (un pointeur)
-		s.Run()
+		_, ok := rsa.simulations[req.ID]
+		if ok {
+			w.WriteHeader(http.StatusBadRequest)
+			msg := "erreur : cette simulation existe déjà"
+			fmt.Println(msg)
+			w.Write([]byte(msg))
+			return
+		} else {
+			resp.ID = req.ID
+			w.WriteHeader(http.StatusCreated)
+			serial, _ := json.Marshal(resp)
+			w.Write(serial)
+			fmt.Printf("\nOK création simulation %s\n", resp.ID)
+			s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, req.Objectif, req.StratAvant, req.StratApres, req.TypeRecrutementAvant, req.TypeRecrutementApres, req.PourcentagePlacesAvant, req.PourcentagePlacesApres, req.NbAnnees, 10*time.Second)
+			rsa.simulations[resp.ID] = s //pointeur sur la simulation
+		}
 	}
 }
 
@@ -147,20 +152,41 @@ func ajouterCORS(w *http.ResponseWriter, req *http.Request) {
 func home(w http.ResponseWriter, r *http.Request) {
 	p := path.Dir("./serveur/templates/index.html")
 	// set header
+
 	w.Header().Set("Content-type", "text/html")
 	http.ServeFile(w, r, p)
 }
 
+// TODO : check valeur id simulation quand demande 'visualisation.html'
+// TODO : problème récupération page visualisationEntreprise quand l'url finit par '/'
+
 // Lance le serveur
 func (rsa *RestServerAgent) Start() {
+
+	visualisationPath := "/viz_simulation/"
+
 	// création du multiplexer
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", home) //index
-	mux.HandleFunc("/new_simulation", rsa.creerNouvelleSimulation)
-
 	fileHandler := http.StripPrefix("/static/", http.FileServer(http.Dir("./serveur/static/")))
 	mux.Handle("/static/", fileHandler)
+
+	mux.HandleFunc("/", home) //index
+
+	mux.Handle(visualisationPath, http.StripPrefix(visualisationPath, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		p := path.Dir("./serveur/templates/visualisation.html")
+
+		// Recupère l'ID de l'entreprise à visualiser
+		// v := r.URL.Path
+
+		// set header
+		w.Header().Set("Content-type", "text/html")
+		http.ServeFile(w, r, p+"/visualisation.html")
+	})))
+
+	mux.HandleFunc("/new_simulation", rsa.creerNouvelleSimulation)
+
+	rsa.setupWebsocket(mux)
 
 	// création du serveur http
 	s := &http.Server{
@@ -170,6 +196,8 @@ func (rsa *RestServerAgent) Start() {
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
+
+	rsa.simulations = make(map[string]*agt.Simulation)
 
 	// lancement du serveur
 	log.Println("Listening on", rsa.addr)
