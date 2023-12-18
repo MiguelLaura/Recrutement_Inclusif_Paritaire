@@ -193,7 +193,7 @@ func (ent *Entreprise) gestionPlaintes() {
 		return
 	}
 	for _, e := range *ent.plaintes {
-		if rand.Float64() <= constantes.POURCENTAGE_LICENCIEMENT {
+		if rand.Float64() <= constantes.PROBA_LICENCIEMENT {
 			accuse := e[1]
 			i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == accuse.Id() }, 0)
 			if i < 0 {
