@@ -255,7 +255,9 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 func (ent *Entreprise) gestionDeparts() {
 	for _, emp := range *ent.departs {
 		*ent.employes = enleverEmploye(*ent.employes, emp)
-		go EnvoyerMessage(&emp, FIN, nil)
+		go func(emp Employe) {
+			EnvoyerMessage(&emp, FIN, nil)
+		}(emp)
 		if emp.agresseur {
 			ent.nbAgresseurs -= 1
 		}
@@ -347,6 +349,7 @@ func (ent *Entreprise) agir() {
 
 func (ent *Entreprise) stop() {
 	ent.fin = true
+	go EnvoyerMessageRecrutement(&ent.recrutement, FIN_AGENT, nil)
 	for _, emp := range *ent.employes {
 		go func(emp Employe) {
 			EnvoyerMessage(&emp, FIN, nil)
