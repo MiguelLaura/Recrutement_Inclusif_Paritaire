@@ -135,6 +135,24 @@ func (e *Employe) travailler() {
 	e.entreprise.MettreAJourCA(e.santeMentale, e.competence)
 }
 
+func (e *Employe) avoirEnfant() {
+	log.Printf("%s a un enfant", e.Id())
+	log.Printf("%v", e)
+	if e.Genre() == Femme {
+		if rand.Float64() < constantes.PROBA_CONGE_F {
+			e.prendreCongeParental()
+		}
+	} else {
+		if rand.Float64() < constantes.PROBA_CONGE_H {
+			e.prendreCongeParental()
+		}
+	}
+}
+
+func (e *Employe) prendreCongeParental() {
+	e.entreprise.CongeParental(e)
+}
+
 // ---------------------
 //      Evenements
 // ---------------------
@@ -225,6 +243,21 @@ func (e *Employe) agir() {
 
 		// Vieillir
 		e.gagnerAnciennete()
+
+		// Avoir un enfant
+		enfant := false
+		if rand.Float64() < constantes.PROBA_ENFANT {
+			e.avoirEnfant()
+			enfant = true
+		}
+
+		// Demissionner apres conge parental
+		if e.Genre() == Femme && enfant {
+			if rand.Float64() <= constantes.PROBA_DEPART_F {
+				log.Printf("Demission apres grossesse")
+				e.poserDemission()
+			}
+		}
 
 		// Depart à la retraite
 		if e.anciennete >= constantes.ANCIENNETE_MAX {

@@ -99,6 +99,7 @@ type Entreprise struct {
 	sync.Mutex
 	employes        *[]Employe
 	departs         *[]Employe
+	conge_parental  *[]Employe
 	plaintes        *[][]Employe
 	nbDepressions   int
 	nbRenvois       int

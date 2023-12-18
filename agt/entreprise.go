@@ -153,6 +153,18 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	}
 }
 
+func (ent *Entreprise) CongeParental(emp *Employe) {
+	ent.Lock()
+	defer ent.Unlock()
+	log.Printf("conge parental fonction")
+	i, _ := TrouverEmploye(*ent.conge_parental, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
+	if i < 0 {
+		*ent.conge_parental = append(*ent.conge_parental, *emp)
+		log.Printf("Conge parental %s", emp.Id())
+		return
+	}
+}
+
 func (ent *Entreprise) RecevoirPlainte(plaignant *Employe, accuse *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
@@ -218,6 +230,15 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 
 	for _, e := range *ent.employes {
 		benef += (constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100 - constantes.COUT_EMPLOYE
+	}
+
+	// Impact conges parental : pas de salaire et pas de productivité pendant une certaine période
+	for _, e := range *ent.conge_parental {
+		if e.Genre() == Femme {
+			benef += constantes.PROPORTION_ARRET_F * (constantes.COUT_EMPLOYE - (constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100)
+		} else {
+			benef += constantes.PROPORTION_ARRET_H * (constantes.COUT_EMPLOYE - (constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100)
+		}
 	}
 
 	// Bonus de productivité si %femmes supérieur à 35%
