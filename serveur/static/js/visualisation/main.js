@@ -9,4 +9,3 @@ const exLogs = [
 for(let log of exLogs) {
     addLog(log);
 }
-

@@ -2,6 +2,10 @@ NOT_STARTED = "0";
 PLAYING = "1";
 PAUSED = "2";
 
+// Crée un objet qui permet d'afficher des messages
+
+const popupInfo = new InfoPopup();
+
 // -------------------------
 // WebSocket
 
@@ -51,19 +55,19 @@ if (window["WebSocket"]) {
     // Connect to websocket
     conn = new WebSocket("ws://" + document.location.host + "/ws");
 } else {
-    alert("Not supporting websockets");
+    popupInfo.error("Not supporting websockets");
 }
 
 conn.addEventListener("open", () => {
-    console.log("connected !!!");
+    popupInfo.info("connected", 1);
 });
 
 conn.addEventListener("close", () => {
-    console.log("disconnected !!!");
+    console.log("disconnected");
 });
 
 conn.addEventListener("message", (evt) => {
-    resp = JSON.parse(evt.data)
-    console.log(resp);
+    resp = JSON.parse(evt.data);
+    popupInfo.info(resp);
 });
 
