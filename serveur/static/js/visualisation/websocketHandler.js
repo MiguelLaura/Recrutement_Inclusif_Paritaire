@@ -70,11 +70,27 @@ conn.addEventListener("message", (evt) => {
     resp = JSON.parse(evt.data);
     
     if("data" in resp) {
-        if(resp.type === "Error") {
-            popupInfo.error(resp.data);
-        } else {
-            popupInfo.info(resp.data);
+        switch(resp.type) {
+            case "Error":
+                popupInfo.error(resp.data, 10);
+                break;
+            case "Info":
+                popupInfo.info(resp.data, 10);
+                break;
+            case "globale":
+                const data = resp.data[0];
+                mettreLesChosesAuBonEndroit(data);
+                break;
+            default:
+
         }
     }
 });
 
+function mettreLesChosesAuBonEndroit(data) {
+    anneeElt.textContent = data.annee;
+    nbEmpElt.textContent = data.nbEmp;
+    pariteElt.textContent = data.parite * 100;
+
+    ajoutDonneeGraph(data.benefices, data.parite * data.nbEmp);
+}
