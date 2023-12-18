@@ -8,12 +8,12 @@ import (
 // ------------ SIMULATION ------------
 
 type Simulation struct {
-	ent         Entreprise
-	pariteInit  float64
-	maxStep     int
-	maxDuration time.Duration
-	step        int // Stats
-	start       time.Time
+	ent        Entreprise
+	pariteInit float64
+	maxStep    int
+	step       int // Stats
+	start      time.Time
+	status     Status // created, started, pause, finished
 }
 
 type Action int
@@ -25,6 +25,16 @@ const (
 	AGRESSION
 	FORMATION
 	FIN
+)
+
+type Status int
+
+// Action est une enumeration
+const (
+	CREATED Status = iota
+	STARTED
+	PAUSED
+	ENDED
 )
 
 // Permet la communication entre entreprise et employé

@@ -1,58 +1,92 @@
 package agt
 
 import (
-	"fmt"
 	"log"
 	"time"
 )
 
 // retourne un pointeur sur une nouvelle simulation
-func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64, maxStep int, maxDuration time.Duration) (simu *Simulation) {
+func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64, maxStep int) (simu *Simulation) {
 	simu = &Simulation{}
 	simu.maxStep = maxStep
-	simu.maxDuration = maxDuration
 
 	simu.ent = *NewEntreprise(nbEmployes, pariteInit)
-	simu.pariteInit = simu.ent.PourcentageFemmes()
 	recrut := NewRecrutement(&simu.ent, obj, sav, sap, trav, trap, ppav, ppap)
 	simu.ent.AjouterRecrutement(*recrut)
+
+	simu.status = CREATED
 
 	return simu
 }
 
-// lance la simulation
-func (simu *Simulation) Run() {
-	log.Printf("Démarrage de la simulation [step: %d]", simu.step)
-	log.Printf("Nombre de steps à faire : %d", simu.maxStep)
+func (simu *Simulation) Start() string {
+	if simu.status != CREATED {
+		log.Println("La simulation ne peut pas être démarrée depuis cet état.")
+		return "La simulation ne peut pas être démarrée depuis cet état."
+	}
 
-	// Démarrage du micro-service d'affichage
-	// go simu.Print()
-
-	// On sauvegarde la date du début de la simulation
+	simu.status = STARTED
 	simu.start = time.Now()
 
 	// Démarrage de l'entreprise
 	go simu.ent.Start()
 
-	for simu.step < simu.maxStep {
-		EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
-		simu.step += 1
-	}
-	// Si on le récupère pas maintenant, les employés vont se terminer
-	pariteFin := simu.ent.PourcentageFemmes()
-	EnvoyerMessageEntreprise(&simu.ent, FIN, nil)
-	// Permet d'attendre la fin effective de l'entreprise
-	EnvoyerMessageEntreprise(&simu.ent, FIN, nil)
+	simu.pariteInit = simu.ent.PourcentageFemmes()
 
-	// time.Sleep(simu.maxDuration)
+	msg_end := "La simulation démarre."
 
-	log.Printf("Fin de la simulation [step: %d, début parité : %f, fin parité : %f]", simu.step, simu.pariteInit, pariteFin)
+	go func() {
+		for simu.step < simu.maxStep {
+			if simu.status == STARTED {
+				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
+				simu.step++
+				time.Sleep(1 * time.Second)
+			} else if simu.status == PAUSED {
+				time.Sleep(100 * time.Millisecond)
+			} else if simu.status == ENDED {
+				break
+			}
+		}
+
+		log.Println("La simulation est terminée.")
+		// Si on le récupère pas maintenant, les employés vont se terminer
+		pariteFin := simu.ent.PourcentageFemmes()
+		EnvoyerMessageEntreprise(&simu.ent, FIN, nil)
+		// Permet d'attendre la fin effective de l'entreprise
+		EnvoyerMessageEntreprise(&simu.ent, FIN, nil)
+
+		log.Printf("Fin de la simulation [step: %d, nb employé fin : %d, début parité : %f, fin parité : %f]", simu.step, len(simu.ent.Employes()), simu.pariteInit, pariteFin)
+	}()
+	return msg_end
+
 }
 
-// affiche les informations sur la parité au cours du temps
-func (simu *Simulation) Print() {
-	for {
-		fmt.Printf("\rPourcentage de femmes = %f", simu.ent.PourcentageFemmes())
-		time.Sleep(time.Second / 60) // 60 fps !
+func (simu *Simulation) Pause() string {
+	if simu.status != STARTED {
+		msg := "La simulation ne peut pas être mise en pause depuis cet état."
+		log.Println(msg)
+		return msg
 	}
+	simu.status = PAUSED
+	return "La simulation est en pause."
+}
+
+func (simu *Simulation) Continue() string {
+	if simu.status != PAUSED {
+		msg := "La simulation ne peut pas être reprise depuis cet état."
+		log.Println(msg)
+		return msg
+	}
+	simu.status = STARTED
+	return "La simulation est relancée."
+}
+
+func (simu *Simulation) End() string {
+	if simu.status == ENDED {
+		msg := "La simulation est déjà terminée."
+		log.Println(msg)
+		return msg
+	}
+	simu.status = ENDED
+	return "La simulation est terminée."
 }

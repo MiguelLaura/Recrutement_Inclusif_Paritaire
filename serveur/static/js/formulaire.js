@@ -142,6 +142,7 @@ function sendData(event) {
         if(typeof data === 'object') { 
             respValue.style.color = "black";
             respValue.innerText = `Simulation créée ! [ID : ${data.id_simulation}]`;
+            document.location = `./viz_simulation/${data.id_simulation}`;
         } else { //Erreur
             respValue.style.color = "red";
             respValue.innerText = data;

@@ -1,0 +1,87 @@
+/* Variables */
+
+:root {
+    --couleur-verte: rgb(81, 212, 35);
+    --couleur-orange: rgb(223, 160, 85);
+    --couleur-rouge: rgb(223, 85, 85);
+    --couleur-violet: rgb(121, 73, 255);
+}
+
+/* Généralités */
+
+@font-face {
+    font-family: 'Josefin Sans';
+    src: url(../font/JosefinSans.ttf);
+}
+
+body {
+    margin: 0;
+    font-family: 'Josefin Sans';
+}
+
+/* General */
+
+.flex-center-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.clickable-icon {
+    cursor: pointer;
+}
+
+.vert {
+    color: var(--couleur-verte);
+}
+
+.orange {
+    color: var(--couleur-orange);
+}
+
+.rouge {
+    color: var(--couleur-rouge);
+}
+
+.fond-rouge {
+    background-color: var(--couleur-rouge);
+}
+
+.fond-violet {
+    background-color: var(--couleur-violet);
+}
+
+
+/* The header */
+
+.banner {
+    display: flex;
+    justify-content: space-around;
+    background-color: #C7D3FF;
+    color: black;
+    padding: 1em 0;
+}
+
+.left-section {
+    flex: 2;
+    text-align: left;
+    padding-left: 1%;
+}
+
+.right-section {
+    flex: 1;
+    text-align: right;
+    padding-right: 1%;
+}
+
+.banner h1 {
+    margin: 5px 0;
+}
+
+.banner h2 {
+    margin: 5px 0;
+}
+
+.banner h3 {
+    margin: 5px 0;
+}
