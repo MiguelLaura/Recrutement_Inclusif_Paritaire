@@ -6,10 +6,9 @@ import (
 )
 
 // retourne un pointeur sur une nouvelle simulation
-func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64, maxStep int, maxDuration time.Duration) (simu *Simulation) {
+func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64, maxStep int) (simu *Simulation) {
 	simu = &Simulation{}
 	simu.maxStep = maxStep
-	simu.maxDuration = maxDuration
 
 	simu.ent = *NewEntreprise(nbEmployes, pariteInit)
 	recrut := NewRecrutement(&simu.ent, obj, sav, sap, trav, trap, ppav, ppap)

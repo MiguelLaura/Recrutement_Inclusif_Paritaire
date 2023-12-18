@@ -131,7 +131,7 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 			serial, _ := json.Marshal(resp)
 			w.Write(serial)
 			log.Printf("\nOK création simulation %s\n", resp.ID)
-			s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, req.Objectif, req.StratAvant, req.StratApres, req.TypeRecrutementAvant, req.TypeRecrutementApres, req.PourcentagePlacesAvant, req.PourcentagePlacesApres, req.NbAnnees, 10*time.Second)
+			s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, req.Objectif, req.StratAvant, req.StratApres, req.TypeRecrutementAvant, req.TypeRecrutementApres, req.PourcentagePlacesAvant, req.PourcentagePlacesApres, req.NbAnnees)
 			rsa.simulations[resp.ID] = s //pointeur sur la simulation
 		}
 	}
