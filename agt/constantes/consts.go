@@ -34,9 +34,9 @@ const (
 
 	// CONGE PARENTAL
 	PROBA_ENFANT       = .04575 // Indice de natalité français / Années de fertilité femme
-	PROBA_CONGE_F      = 1
-	PROBA_CONGE_H      = .71
-	PROPORTION_ARRET_F = 4 / 12 // Congé maternité total = 4 mois / 12 mois
-	PROPORTION_ARRET_H = 1 / 12 // Congé paternité total = 1 mois / 12 mois
+	PROBA_CONGE_F      = 1      // Probabilité de partir en congé parental pour les femmes
+	PROBA_CONGE_H      = .71    // Probabilité de partir en congé parental pour les femmes
+	PROPORTION_ARRET_F = 4 / 12 // Pour le calcul du benefice, proportion du congé maternité sur l'année = 4 mois / 12 mois
+	PROPORTION_ARRET_H = 1 / 12 // Pour le calcul du benefice, proportion du congé paternité sur l'année = 1 mois / 12 mois
 	PROBA_DEPART_F     = .3     // % de femmes à quitter leur emploi après grossesse
 )

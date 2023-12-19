@@ -58,6 +58,8 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64) *Entreprise {
 	ent.employes = &employesInit
 	departs := make([]Employe, 0)
 	ent.departs = &departs
+	conge_parental := make([]Employe, 0)
+	ent.conge_parental = &conge_parental
 	plaintes := make([][]Employe, 0)
 	ent.plaintes = &plaintes
 	ent.nbDepressions = 0
@@ -156,7 +158,6 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 func (ent *Entreprise) CongeParental(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
-	log.Printf("conge parental fonction")
 	i, _ := TrouverEmploye(*ent.conge_parental, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		*ent.conge_parental = append(*ent.conge_parental, *emp)
@@ -261,9 +262,6 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 	return benef
 }
 
-// func (ent *Entreprise) obtenirIndicateursSante() map[string]float64 {
-// }
-
 func (ent *Entreprise) gestionDeparts() {
 	if len(*ent.departs) <= 0 {
 		return
@@ -310,6 +308,7 @@ func (ent *Entreprise) lancerRecrutements() {
 func (ent *Entreprise) bonneAnnee() {
 	ent.nbDepressions = 0
 	ent.nbRenvois = 0
+	*ent.conge_parental = make([]Employe, 0)
 
 	for _, emp := range *ent.employes {
 		go func(emp Employe) {
@@ -357,6 +356,7 @@ func (ent *Entreprise) agir() {
 		return
 	}
 	log.Printf("Commence l'année")
+	log.Printf("Nb employe %d", ent.nbEmployes())
 	// Envoyer le message aux employés pour qu'ils agissent
 	ent.bonneAnnee()
 	ent.RecevoirActions(ent.nbAgresseurs + ent.nbEmployes())

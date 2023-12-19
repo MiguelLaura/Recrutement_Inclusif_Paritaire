@@ -137,20 +137,15 @@ func (e *Employe) travailler() {
 
 func (e *Employe) avoirEnfant() {
 	log.Printf("%s a un enfant", e.Id())
-	log.Printf("%v", e)
 	if e.Genre() == Femme {
 		if rand.Float64() < constantes.PROBA_CONGE_F {
-			e.prendreCongeParental()
+			e.entreprise.CongeParental(e)
 		}
 	} else {
 		if rand.Float64() < constantes.PROBA_CONGE_H {
-			e.prendreCongeParental()
+			e.entreprise.CongeParental(e)
 		}
 	}
-}
-
-func (e *Employe) prendreCongeParental() {
-	e.entreprise.CongeParental(e)
 }
 
 // ---------------------
