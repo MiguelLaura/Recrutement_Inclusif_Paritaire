@@ -14,13 +14,14 @@ const (
 	// AGRESSION
 	DEGATS_TRAUMATISME = 10 // ...
 	TIMEOUT_AGRESSION  = 4
+	PROBA_PLAINTE      = .3
+	PROBA_LICENCIEMENT = .175
 
 	// RECRUTEMENT
 	POURCENTAGE_RECRUTEMENT = .05
 	NB_CANDIDATS_PAR_OFFRE  = 18 // Source : https://blog.flatchr.io/barometre-des-entreprises-qui-recrutent-deuxieme-semestre-2022
 
 	// DEPARTS
-	POURCENTAGE_LICENCIEMENT  = 0.20
 	POURCENTAGE_DEM_SPONTANEE = 0.027 // Taux de démission spontanée en France au 1er trimestre 2022
 	RETENTION_PARITE          = 0.2   // Au sein d'un organisation inclusive, les employés ont une rétention supérieure de 20% (source: Catalyst)
 

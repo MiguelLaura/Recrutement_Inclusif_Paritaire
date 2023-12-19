@@ -206,7 +206,7 @@ func (ent *Entreprise) gestionPlaintes() {
 		return
 	}
 	for _, e := range *ent.plaintes {
-		if rand.Float64() <= constantes.POURCENTAGE_LICENCIEMENT {
+		if rand.Float64() <= constantes.PROBA_LICENCIEMENT {
 			accuse := e[1]
 			i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == accuse.Id() }, 0)
 			if i < 0 {
@@ -365,6 +365,7 @@ func (ent *Entreprise) agir() {
 
 func (ent *Entreprise) stop() {
 	ent.fin = true
+	go EnvoyerMessageRecrutement(&ent.recrutement, FIN_AGENT, nil)
 	for _, emp := range *ent.employes {
 		go func(emp Employe) {
 			EnvoyerMessage(&emp, FIN, nil)
