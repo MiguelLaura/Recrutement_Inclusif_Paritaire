@@ -14,7 +14,7 @@ for(let log of exLogs) {
 
 const leGraph = new Graph(document.getElementById('sim-graph'));
 
-leGraph.setIncrement(5);
+leGraph.setIncrement(1);
 leGraph.addNewGraph("Bénéfices", [130, 174, 210]);
 leGraph.addNewGraph("Parité", [231, 54, 56]);
 

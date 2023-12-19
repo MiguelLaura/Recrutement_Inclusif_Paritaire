@@ -91,6 +91,6 @@ function mettreLesChosesAuBonEndroit(data) {
     anneeElt.textContent = data.annee;
     nbEmpElt.textContent = data.nbEmp;
     pariteElt.textContent = data.parite * 100;
-
-    ajoutDonneeGraph(data.benefices, data.parite * data.nbEmp);
+    
+    leGraph.addData(data.benefices, data.parite * data.nbEmp);
 }
