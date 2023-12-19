@@ -100,7 +100,7 @@ func (simu *Simulation) End() string {
 	}
 	simu.status = "ended"
 
-	simu.logger.Log("La simulation est terminée.\nElle a duré : ", time.Now().Sub(simu.start), " s")
+	simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
 
 	return "La simulation est terminée."
 }
