@@ -22,8 +22,7 @@ func (l *ConsoleLogger) Logf(format string, v ...any) error {
 }
 
 func (l *ConsoleLogger) Err(msg ...any) error {
-	log.Print(msg...)
-	return nil
+	return l.LogType(ERR, msg...)
 }
 
 func (l *ConsoleLogger) LogType(logType LogType, msg ...any) error {

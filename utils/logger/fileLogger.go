@@ -64,9 +64,8 @@ func (l *FileLogger) Logf(format string, v ...any) (err error) {
 	return
 }
 
-func (l *FileLogger) Err(msg ...any) (err error) {
-	_, err = l.file.WriteString("[ERR] " + fmt.Sprint(msg...) + "\n")
-	return
+func (l *FileLogger) Err(msg ...any) error {
+	return l.LogType(ERR, msg...)
 }
 
 func (l *FileLogger) LogType(logType LogType, msg ...any) (err error) {
