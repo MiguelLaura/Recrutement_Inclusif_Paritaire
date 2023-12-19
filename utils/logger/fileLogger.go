@@ -70,7 +70,8 @@ func (l *FileLogger) Err(msg ...any) (err error) {
 }
 
 func (l *FileLogger) LogType(logType LogType, msg ...any) (err error) {
-	err = l.Log(append([]any{logType}, msg...)...)
+
+	err = l.Log(append([]any{formatLogType(logType)}, msg...)...)
 	return
 }
 

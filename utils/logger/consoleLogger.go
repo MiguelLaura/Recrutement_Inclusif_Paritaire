@@ -27,7 +27,7 @@ func (l *ConsoleLogger) Err(msg ...any) error {
 }
 
 func (l *ConsoleLogger) LogType(logType LogType, msg ...any) error {
-	return l.Log(append([]any{logType}, msg...)...)
+	return l.Log(append([]any{formatLogType(logType)}, msg...)...)
 }
 
 func (l *ConsoleLogger) LogfType(logType LogType, format string, v ...any) error {
