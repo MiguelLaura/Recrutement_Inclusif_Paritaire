@@ -49,6 +49,7 @@ const (
 	RECRUTEMENT Action_recrutement = iota
 	FIN_RECRUTEMENT
 	ERREUR_RECRUTEMENT
+	FIN_AGENT
 )
 
 // Permet la communication entre agents
@@ -69,7 +70,6 @@ type Employe struct {
 	anciennete      int //entre 0 et 40
 	santeMentale    int //entre 0 et 100
 	agresseur       bool
-	comportement    Comportement
 	competence      int //entre 0 et 10
 	cmpt_competence int // entre 0 et 5. Quand il atteint 5, competence +1
 	entreprise      *Entreprise
@@ -82,17 +82,6 @@ type Genre int
 const (
 	Homme Genre = iota
 	Femme
-)
-
-type Comportement float64
-
-// Probabilité de porter plainte pour les Employés
-const (
-	Plainte100 Comportement = 1.0
-	Plainte75  Comportement = 0.75
-	Plainte50  Comportement = 0.5
-	Plainte25  Comportement = 0.25
-	Plainte0   Comportement = 0.0
 )
 
 // ------------ ENTREPRISE ------------
@@ -145,4 +134,5 @@ type Recrutement struct {
 	pourcentagePlacesAvant float64 // -1 si non renseigné, entre 0 et 1 sinon
 	pourcentagePlacesApres float64
 	chnl                   chan Communicateur_recrutement
+	fin                    bool
 }

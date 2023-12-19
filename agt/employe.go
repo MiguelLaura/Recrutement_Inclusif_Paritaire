@@ -36,24 +36,19 @@ func GenererEmployeInit(ent **Entreprise, genre Genre) *Employe {
 	// Génération aléatoire de l'ancienneté de l'employé entre 0 et ANCIENNETE_MAX
 	anc := rand.Intn(constantes.ANCIENNETE_MAX)
 
-	// Génération aléatoire du comportement de l'employé
-	// On considère une proba égale d'avoir les différents comportements
-	compor := genComportement()
-
 	// Génération aléatoire de la compétence de l'employé
 	competence := genCompetence()
 
-	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, compor, competence, *ent)
+	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, competence, *ent)
 }
 
-func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compet int, ent *Entreprise) *Employe {
+func NewEmploye(gen Genre, anc int, san int, ag bool, compet int, ent *Entreprise) *Employe {
 	return &Employe{
 		id:              genererIDEmploye(),
 		genre:           gen,
 		anciennete:      anc,
 		santeMentale:    san,
 		agresseur:       ag,
-		comportement:    compor,
 		competence:      compet,
 		cmpt_competence: 0,
 		entreprise:      ent,
@@ -84,10 +79,6 @@ func (e *Employe) SanteMentale() int {
 
 func (e *Employe) Agresseur() bool {
 	return e.agresseur
-}
-
-func (e *Employe) Comportement() Comportement {
-	return e.comportement
 }
 
 func (e *Employe) Competence() int {
@@ -161,7 +152,7 @@ func (agresse *Employe) etreAgresse(agresseur *Employe) {
 	log.Printf("Employé %s agresse %s", agresseur.id, agresse.id)
 
 	// Selon son comportement, il va porter plainte ou non
-	if rand.Float64() < float64(agresse.comportement) {
+	if rand.Float64() < constantes.PROBA_PLAINTE {
 		agresse.porterPlainte(agresseur)
 	}
 
