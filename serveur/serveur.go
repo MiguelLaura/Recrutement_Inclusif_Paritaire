@@ -73,8 +73,8 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprint(w, err.Error())
-		fmt.Println(err.Error())
-		fmt.Println("erreur : décodage requête /new_simulation")
+		log.Println(err.Error())
+		log.Println("erreur : décodage requête /new_simulation")
 		return
 	}
 
@@ -89,32 +89,32 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 	} else if req.NbEmployes <= 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : le nombre d'employés doit être > 0"
-		fmt.Println(msg)
+		log.Println(msg)
 		w.Write([]byte(msg))
 		return
 	} else if req.PourcentageFemmes < 0.0 || req.PourcentageFemmes > 1.0 {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : le pourcentage de femmes doit être entre 0 et 1"
-		fmt.Println(msg)
+		log.Println(msg)
 		w.Write([]byte(msg))
 		return
 	} else if req.Objectif != -1 && !(req.Objectif >= 0.0 && req.Objectif <= 1.0) {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Println(req.Objectif)
+		log.Println(req.Objectif)
 		msg := "erreur : l'objectif doit être entre 0 et 1"
-		fmt.Println(msg)
+		log.Println(msg)
 		w.Write([]byte(msg))
 		return
 	} else if req.PourcentagePlacesAvant != -1 && !(req.PourcentagePlacesAvant >= 0.0 && req.PourcentagePlacesAvant <= 1.0) {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : le pourcentage de places avant doit être entre 0 et 1"
-		fmt.Println(msg)
+		log.Println(msg)
 		w.Write([]byte(msg))
 		return
 	} else if req.PourcentagePlacesApres != -1 && !(req.PourcentagePlacesApres >= 0.0 && req.PourcentagePlacesApres <= 1.0) {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : le pourcentage de places après doit être entre 0 et 1"
-		fmt.Println(msg)
+		log.Println(msg)
 		w.Write([]byte(msg))
 		return
 	} else {
@@ -122,7 +122,7 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 		if ok {
 			w.WriteHeader(http.StatusBadRequest)
 			msg := "erreur : cette simulation existe déjà"
-			fmt.Println(msg)
+			log.Println(msg)
 			w.Write([]byte(msg))
 			return
 		} else {
@@ -130,8 +130,8 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 			w.WriteHeader(http.StatusCreated)
 			serial, _ := json.Marshal(resp)
 			w.Write(serial)
-			fmt.Printf("\nOK création simulation %s\n", resp.ID)
-			s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, req.Objectif, req.StratAvant, req.StratApres, req.TypeRecrutementAvant, req.TypeRecrutementApres, req.PourcentagePlacesAvant, req.PourcentagePlacesApres, req.NbAnnees, 10*time.Second)
+			log.Printf("\nOK création simulation %s\n", resp.ID)
+			s := agt.NewSimulation(req.NbEmployes, req.PourcentageFemmes, req.Objectif, req.StratAvant, req.StratApres, req.TypeRecrutementAvant, req.TypeRecrutementApres, req.PourcentagePlacesAvant, req.PourcentagePlacesApres, req.NbAnnees)
 			rsa.simulations[resp.ID] = s //pointeur sur la simulation
 		}
 	}

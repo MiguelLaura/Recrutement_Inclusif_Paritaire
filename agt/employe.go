@@ -36,24 +36,19 @@ func GenererEmployeInit(ent **Entreprise, genre Genre) *Employe {
 	// Génération aléatoire de l'ancienneté de l'employé entre 0 et ANCIENNETE_MAX
 	anc := rand.Intn(constantes.ANCIENNETE_MAX)
 
-	// Génération aléatoire du comportement de l'employé
-	// On considère une proba égale d'avoir les différents comportements
-	compor := genComportement()
-
 	// Génération aléatoire de la compétence de l'employé
 	competence := genCompetence()
 
-	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, compor, competence, *ent)
+	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, competence, *ent)
 }
 
-func NewEmploye(gen Genre, anc int, san int, ag bool, compor Comportement, compet int, ent *Entreprise) *Employe {
+func NewEmploye(gen Genre, anc int, san int, ag bool, compet int, ent *Entreprise) *Employe {
 	return &Employe{
 		id:           genererIDEmploye(),
 		genre:        gen,
 		anciennete:   anc,
 		santeMentale: san,
 		agresseur:    ag,
-		comportement: compor,
 		competence:   compet,
 		entreprise:   ent,
 		fin:          false,
@@ -83,10 +78,6 @@ func (e *Employe) SanteMentale() int {
 
 func (e *Employe) Agresseur() bool {
 	return e.agresseur
-}
-
-func (e *Employe) Comportement() Comportement {
-	return e.comportement
 }
 
 func (e *Employe) Competence() int {
@@ -145,7 +136,7 @@ func (agresse *Employe) etreAgresse(agresseur *Employe) {
 	log.Printf("Employé %s agresse %s", agresseur.id, agresse.id)
 
 	// Selon son comportement, il va porter plainte ou non
-	if rand.Float64() < float64(agresse.comportement) {
+	if rand.Float64() < constantes.PROBA_PLAINTE {
 		agresse.porterPlainte(agresseur)
 	}
 
@@ -174,6 +165,7 @@ func (agresseur *Employe) agresser() {
 		cible = agresseur.entreprise.EnvoyerEmploye(genreAgresse)
 		timeout++
 	}
+	// log.Printf("Employé %s agresse %s", agresseur.id, cible.id)
 
 	if timeout < constantes.TIMEOUT_AGRESSION {
 		go EnvoyerMessage(cible, AGRESSION, agresseur)
@@ -195,7 +187,9 @@ func (e *Employe) Start() {
 
 	// Boucle de vie
 	for !e.fin {
+		// log.Printf("hello %s", e.id)
 		e.agir()
+		// log.Printf("goodbye %s", e.id)
 	}
 
 	log.Printf("Fin de l'employé %s", e.id)
@@ -211,6 +205,7 @@ func (e *Employe) agir() {
 	case NOOP: // Ne fait rien
 		return
 	case LIBRE: // Vie une année complète
+		// log.Printf("action libre %s", e.id)
 
 		// Si l'agent est un agresseur, il agresse
 		if e.Agresseur() {
@@ -240,6 +235,7 @@ func (e *Employe) agir() {
 		}
 
 	case AGRESSION: // Se fait agresser par quelqu'un
+		// log.Printf("action agression %s", e.id)
 
 		if msg.Payload != nil {
 			e.etreAgresse(msg.Payload.(*Employe))
@@ -253,6 +249,7 @@ func (e *Employe) agir() {
 		}
 
 	case FIN: // Arrêter l'employé
+		// log.Printf("action fin %s", e.id)
 		e.fin = true
 	}
 
