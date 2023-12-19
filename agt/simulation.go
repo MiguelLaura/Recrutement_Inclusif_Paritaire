@@ -14,9 +14,8 @@ func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratPar
 
 	simu.logger.AjouterLogger(logger.NewConsoleLogger())
 
-	// TODO : ajouter une référence de simu.logger dans les entreprise (puis employés) et recrutement
-	simu.ent = *NewEntreprise(nbEmployes, pariteInit)
-	recrut := NewRecrutement(&simu.ent, obj, sav, sap, trav, trap, ppav, ppap)
+	simu.ent = *NewEntreprise(nbEmployes, pariteInit, &simu.logger)
+	recrut := NewRecrutement(&simu.ent, obj, sav, sap, trav, trap, ppav, ppap, &simu.logger)
 	simu.ent.AjouterRecrutement(*recrut)
 
 	simu.status = CREATED

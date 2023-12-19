@@ -2,11 +2,11 @@ package agt
 
 import (
 	"errors"
-	"log"
 	"math"
 	"math/rand"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
+	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
 // ---------------------
@@ -34,7 +34,7 @@ func EnvoyerMessageRecrutement(dest *Recrutement, act Action_recrutement, payloa
 // ---------------------
 
 // La fonction NewEntreprise doit créer l'entreprise et générer les employés de façon à respecter le quota de parité initial
-func NewEntreprise(nbEmployesInit int, pariteInit float64) *Entreprise {
+func NewEntreprise(nbEmployesInit int, pariteInit float64, logger *logger.Loggers) *Entreprise {
 	ent := new(Entreprise)
 
 	var nbFemmes int = int(math.Round(float64(nbEmployesInit) * float64(pariteInit)))
@@ -42,14 +42,14 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64) *Entreprise {
 	var employesInit []Employe
 
 	for i := 0; i < nbFemmes; i++ {
-		emp := GenererEmployeInit(&ent, Femme)
+		emp := GenererEmployeInit(&ent, Femme, logger)
 		employesInit = append(employesInit, *emp)
 		if emp.agresseur {
 			ent.nbAgresseurs += 1
 		}
 	}
 	for i := 0; i < nbHommes; i++ {
-		emp := GenererEmployeInit(&ent, Homme)
+		emp := GenererEmployeInit(&ent, Homme, logger)
 		employesInit = append(employesInit, *emp)
 		if emp.agresseur {
 			ent.nbAgresseurs += 1
@@ -69,6 +69,7 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64) *Entreprise {
 	ent.chnlActions = make(chan Communicateur)
 	ent.chnlRecrutement = make(chan Communicateur_recrutement)
 	ent.chnlNotifAction = make(chan Communicateur)
+	ent.logger = logger
 	return ent
 }
 
@@ -123,7 +124,7 @@ func (ent *Entreprise) RecevoirDemission(emp *Employe) {
 	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
-		log.Printf("Demission %s : nb départs %d", emp.Id(), len(*ent.departs))
+		ent.logger.LogfType(LOG_DEPART, "Demission %s : nb départs %d", emp.Id(), len(*ent.departs))
 		return
 	}
 }
@@ -136,7 +137,7 @@ func (ent *Entreprise) RecevoirDepression(emp *Employe) {
 	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
-		log.Printf("Depression %s : nb départs %d", emp.Id(), len(*ent.departs))
+		ent.logger.LogfType(LOG_DEPART, "Depression %s : nb départs %d", emp.Id(), len(*ent.departs))
 		return
 	}
 }
@@ -148,7 +149,7 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
-		log.Printf("Retraite %s : nb départs %d", emp.Id(), len(*ent.departs))
+		ent.logger.LogfType(LOG_DEPART, "Retraite %s : nb départs %d", emp.Id(), len(*ent.departs))
 		return
 	}
 }
@@ -174,7 +175,7 @@ func (ent *Entreprise) RecevoirActions(nbActions int) {
 
 		ent.nbActions += 1
 
-		// log.Printf("Nb actions %d/%d", ent.nbActions, nbActions)
+		// ent.logger.LogfType(LOG_ENTREPRISE, "Nb actions %d/%d", ent.nbActions, nbActions)
 
 		if ent.nbActions == nbActions {
 			ent.nbActions = 0
@@ -198,7 +199,7 @@ func (ent *Entreprise) gestionPlaintes() {
 			i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == accuse.Id() }, 0)
 			if i < 0 {
 				*ent.departs = append(*ent.departs, accuse)
-				log.Printf("Licenciement %s : nb départs %d", accuse.Id(), len(*ent.departs))
+				ent.logger.LogfType(LOG_DEPART, "Licenciement %s : nb départs %d", accuse.Id(), len(*ent.departs))
 			}
 		}
 	}
@@ -266,7 +267,7 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 		return msg.Payload.(error)
 	} else if msg.Act == FIN_RECRUTEMENT {
 		embauches := msg.Payload.([]Employe)
-		log.Printf("Embauche %d, employés %d", len(embauches), ent.nbEmployes())
+		ent.logger.LogfType(LOG_ENTREPRISE, "Embauche %d, employés %d", len(embauches), ent.nbEmployes())
 		for _, emp := range embauches {
 			*ent.employes = append(*ent.employes, emp)
 			if emp.agresseur {
@@ -326,7 +327,7 @@ func (ent *Entreprise) Start() {
 			}
 		}
 	}
-	log.Printf("Fin d'entreprise")
+	ent.logger.LogType(LOG_ENTREPRISE, "Fin d'entreprise")
 	<-ent.chnl
 }
 
@@ -335,7 +336,7 @@ func (ent *Entreprise) agir() {
 		ent.fin = true
 		return
 	}
-	log.Printf("Commence l'année")
+	ent.logger.LogType(LOG_ENTREPRISE, "Commence l'année")
 	// Envoyer le message aux employés pour qu'ils agissent
 	ent.bonneAnnee()
 	ent.RecevoirActions(ent.nbAgresseurs + ent.nbEmployes())
@@ -358,14 +359,16 @@ func (ent *Entreprise) finirCycle() {
 	ent.gestionPlaintes()
 	// ent.ajusterImpactFemmes()
 	benef := ent.calculerBenefice()
-	log.Printf("Benefices: %f", benef)
+	ent.logger.LogfType(LOG_ENTREPRISE, "Benefices: %f", benef)
 	// ent.obtenirIndicateursSante()
 
 	// Si on le fait en premier, on ne comptera pas ces employés dans les indicateurs ?
 	ent.gestionDeparts()
 	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
 	ent.gestionRecrutements()
-	log.Print("Fin d'année\n\n")
+	ent.logger.LogType(LOG_GLOBALE, SituationActuelle{ent.nbEmployes(), ent.PourcentageFemmes(), benef})
+	ent.logger.LogType(LOG_ENTREPRISE, "Fin d'année\n\n")
+
 }
 
 // ---------------------

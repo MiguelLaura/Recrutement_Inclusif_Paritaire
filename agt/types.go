@@ -13,6 +13,7 @@ const (
 	LOG_AGRESSION   logger.LogType = "agression"
 	LOG_DEPART      logger.LogType = "depart"
 	LOG_RECRUTEMENT logger.LogType = "recrutement"
+	LOG_EMPLOYE     logger.LogType = "employe"
 	LOG_ENTREPRISE  logger.LogType = "entreprise"
 	LOG_EVENEMENT   logger.LogType = "evenement"
 	LOG_GLOBALE     logger.LogType = "globale"
@@ -87,6 +88,7 @@ type Employe struct {
 	entreprise   *Entreprise
 	fin          bool
 	chnl         chan Communicateur
+	logger       *logger.Loggers
 }
 
 type Genre int
@@ -125,6 +127,7 @@ type Entreprise struct {
 	chnlActions     chan Communicateur
 	chnlRecrutement chan Communicateur_recrutement
 	chnlNotifAction chan Communicateur
+	logger          *logger.Loggers
 }
 
 // ------------ RECRUTEMENT ------------
@@ -157,4 +160,5 @@ type Recrutement struct {
 	pourcentagePlacesApres float64
 	chnl                   chan Communicateur_recrutement
 	fin                    bool
+	logger                 *logger.Loggers
 }
