@@ -2,28 +2,25 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"gitlab.utc.fr/mennynat/ia04-project/serveur"
-	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
 func main() {
 
-	leLogger := logger.ConsoleLogger{}
-	leLoggerF, err := logger.NewFileLogger("log/myLog/logFile/")
+	// leLogger := logger.ConsoleLogger{}
+	// leLoggerF, err := logger.NewFileLogger("log/myLog/logFile/")
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	loggers := logger.Loggers{}
-	loggers.AjouterLogger(&leLogger)
-	loggers.AjouterLogger(leLoggerF)
+	// loggers := logger.Loggers{}
+	// loggers.AjouterLogger(&leLogger)
+	// loggers.AjouterLogger(leLoggerF)
 
-	loggers.Log("salut", "comment", "ça", "va")
-
-	leLogger.LogType("MonType de log", "salut", "au revoir")
+	// loggers.Log("salut", "comment", "ça", "va")
+	// loggers.LogType("MonType de log", "salut", "au revoir")
 
 	server := serveur.NewRestServerAgent("localhost:8080")
 	server.Start()
