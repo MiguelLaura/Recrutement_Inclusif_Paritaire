@@ -1,62 +1,95 @@
-  
-  .form-container {
-    width: 50%;
-    margin: 50px auto;
-    padding: 20px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-  }
+.container-index {
+  display: flex;}
 
+  /*formulaire*/
+
+.form-container {
+  flex: 1;
+  width: 50%;
+  margin: 20px;
   
+}
+
+  /*texte à propos*/
+.text-container {
+  flex: 0.5;
+  width: 50%;
+  margin: 20px;
+}
+
+.border-form {
+  border-radius: 10px;
+  border: 1px solid grey;
+  padding: 20px;
+}
+
 .form-row {
-    display: flex;
-    justify-content: space-between; /*alignement des éléments dans le centre*/
-    align-items: center;
-    margin-bottom: 15px;
-    padding-left: 5px;
+  display: flex;
+  justify-content: space-between;
+  /*alignement des éléments dans le centre*/
+  align-items: center;
+  margin-bottom: 15px;
+  padding-left: 5px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+}
+
+.input-group input[type="radio"],
+.input-group label {
+  margin-right: 10px;
+}
+
+.rounded-black-border {
+  border-radius: 10px;
+  border: 1px solid black;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.rounded-black-border label,
+.rounded-black-border input[type="radio"] {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.list_buttons_form {
+  text-align: center;
+}
+
+.button_form {
+  background-color: #7949FF;
+  border-radius: 5px;
+  border: none;
+  color: white;
+  padding: 8px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+.response_form {
+  text-align: center;
+}
+
+/* responsive : columns */ 
+@media only screen and (max-width: 1000px) {
+  .container-index {
+    flex-direction: column; /* Changement de la direction de flexbox en colonne */
   }
-  
+
+  .form-container,
+  .text-container {
+    width: 100%;
+    margin: 10px 0;
+  }
+
   .input-group {
-    display: flex;
-    align-items: center;
+    display:block;
   }
   
-  .input-group input[type="radio"],
-  .input-group label {
-    margin-right: 10px;
-  }
-
-  .rounded-black-border {
-    border-radius: 10px;
-    border: 1px solid black;
-    padding: 10px;
-    margin-bottom: 10px;
-  }
-  
-  .rounded-black-border label,
-  .rounded-black-border input[type="radio"] {
-    display: block;
-    margin-bottom: 5px;
-  }
-
-  .list_buttons_form {
-    text-align: center;
-  }
-
-  .button_form {
-    background-color: #7949FF;
-    border-radius: 5px;
-    border: none;
-    color: white;
-    padding: 8px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    margin: 4px 2px;
-    cursor: pointer;
-  }
-
-  .response_form {
-    text-align: center;
-  }
-  
+}
