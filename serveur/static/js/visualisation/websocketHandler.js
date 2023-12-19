@@ -82,7 +82,7 @@ conn.addEventListener("message", (evt) => {
                 mettreLesChosesAuBonEndroit(data);
                 break;
             default:
-
+                addLog(`[${resp.type}] ${resp.data}`)
         }
     }
 });
