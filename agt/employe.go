@@ -237,10 +237,10 @@ func (e *Employe) agir() {
 			enfant = true
 		}
 
-		// Demissionner apres conge parental
+		// Demissionner apres congé maternité
 		if e.Genre() == Femme && enfant {
 			if rand.Float64() <= constantes.PROBA_DEPART_F {
-				log.Printf("Demission apres grossesse")
+				log.Printf("Demission apres conge maternité")
 				e.poserDemission()
 			}
 		}

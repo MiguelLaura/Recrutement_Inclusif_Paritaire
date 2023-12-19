@@ -236,9 +236,9 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 	// Impact conges parental : pas de salaire et pas de productivité pendant une certaine période
 	for _, e := range *ent.conge_parental {
 		if e.Genre() == Femme {
-			benef += constantes.PROPORTION_ARRET_F * (constantes.COUT_EMPLOYE - (constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100)
+			benef -= constantes.PROPORTION_ARRET_F * ((constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100 - constantes.COUT_EMPLOYE)
 		} else {
-			benef += constantes.PROPORTION_ARRET_H * (constantes.COUT_EMPLOYE - (constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100)
+			benef -= constantes.PROPORTION_ARRET_H * ((constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100 - constantes.COUT_EMPLOYE)
 		}
 	}
 
