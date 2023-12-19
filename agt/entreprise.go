@@ -196,13 +196,16 @@ func (ent *Entreprise) RecevoirActions(nbActions int) {
 func (ent *Entreprise) teamBuilding() {
 	log.Printf("Organisation team building")
 	for _, e := range *ent.employes {
-		if e.santeMentale < 100 {
-			if e.santeMentale+constantes.BOOST_TEAM_BUILDING > 100 {
-				e.santeMentale = 100
-			} else {
-				e.santeMentale += constantes.BOOST_TEAM_BUILDING
+		test_presence, _ := TrouverEmploye(*ent.departs, func(emp Employe) bool { return e.Id() == emp.Id() }, 0)
+		// On vérifie que l'employé ne va pas partir
+		if test_presence < 0 {
+			if e.santeMentale < 100 {
+				if e.santeMentale+constantes.BOOST_TEAM_BUILDING > 100 {
+					e.santeMentale = 100
+				} else {
+					e.santeMentale += constantes.BOOST_TEAM_BUILDING
+				}
 			}
-
 		}
 	}
 }
