@@ -71,10 +71,10 @@ conn.addEventListener("message", (evt) => {
     
     if("data" in resp) {
         switch(resp.type) {
-            case "Error":
+            case "erreur":
                 popupInfo.error(resp.data, 10);
                 break;
-            case "Info":
+            case "info":
                 popupInfo.info(resp.data, 10);
                 break;
             case "globale":

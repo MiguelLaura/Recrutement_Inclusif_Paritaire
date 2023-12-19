@@ -11,56 +11,57 @@ import (
 const loggerFileName = "log"
 
 type FileLogger struct {
-	file   *os.File
-	opened bool
+	fichier *os.File
+	ouvert  bool
 }
 
-func NewFileLogger(path string) (logger *FileLogger, err error) {
+func NewFileLogger(chemin string) (logger *FileLogger, err error) {
 	logger = &FileLogger{}
 
-	pathName, err := createLogPath(path)
+	nomChemin, err := creerChemin(chemin)
 	if err != nil {
 		return nil, err
 	}
 
-	fileName := fmt.Sprintf("%s%s%s", pathName, loggerFileName, time.Now().Format(time.RFC3339))
+	nomFichier := fmt.Sprintf("%s%s%s", nomChemin, loggerFileName, time.Now().Format(time.RFC3339))
 
-	file, err := os.Create(fileName)
+	fichier, err := os.Create(nomFichier)
 	if err != nil {
 		return nil, err
 	}
 
-	runtime.SetFinalizer(logger, Close)
+	// A la destruction du logger, Go va exécuter la function Fermer
+	runtime.SetFinalizer(logger, Fermer)
 
-	logger.file = file
-	logger.opened = true
+	logger.fichier = fichier
+	logger.ouvert = true
 
 	return
 }
 
-func createLogPath(logFolder string) (pathName string, err error) {
-	pathName = strings.TrimSpace(logFolder)
+func creerChemin(logFolder string) (chemin string, err error) {
+	chemin = strings.TrimSpace(logFolder)
 
-	if len(pathName) == 0 {
+	if len(chemin) == 0 {
 		return "./", nil
 	}
 
-	if len(pathName) > 0 && pathName[len(pathName)-1] != '/' {
-		pathName += "/"
+	if len(chemin) > 0 && chemin[len(chemin)-1] != '/' {
+		chemin += "/"
 	}
 
-	err = os.MkdirAll(pathName, os.ModePerm)
+	err = os.MkdirAll(chemin, os.ModePerm)
 
 	return
 }
 
 func (l *FileLogger) Log(msg ...any) (err error) {
-	_, err = l.file.WriteString(fmt.Sprint(msg...) + "\n")
+	_, err = l.fichier.WriteString(fmt.Sprint(msg...) + "\n")
 	return
 }
 
 func (l *FileLogger) Logf(format string, v ...any) (err error) {
-	_, err = l.file.WriteString(fmt.Sprintf(format, v...) + "\n")
+	_, err = l.fichier.WriteString(fmt.Sprintf(format, v...) + "\n")
 	return
 }
 
@@ -79,13 +80,13 @@ func (l *FileLogger) LogfType(logType LogType, format string, v ...any) (err err
 	return
 }
 
-func (l *FileLogger) Close() {
-	if l.opened {
-		l.file.Close()
-		l.opened = false
+func (l *FileLogger) Fermer() {
+	if l.ouvert {
+		l.fichier.Close()
+		l.ouvert = false
 	}
 }
 
-func Close(l *FileLogger) {
-	l.Close()
+func Fermer(l *FileLogger) {
+	l.Fermer()
 }

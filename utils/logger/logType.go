@@ -3,11 +3,11 @@ package logger
 type LogType string
 
 const (
-	ERR  LogType = "Error"
-	INFO LogType = "Info"
+	ERR  LogType = "erreur"
+	INFO LogType = "info"
 )
 
 type LogMessage struct {
 	MsgType LogType `json:"type"`
-	Data    any     `json:"data"`
+	Donnee  any     `json:"data"`
 }
