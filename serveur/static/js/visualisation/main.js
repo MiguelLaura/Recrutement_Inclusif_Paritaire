@@ -12,7 +12,7 @@ for(let log of exLogs) {
 
 // Initialise le graphe
 
-const leGraph = new Graph()
+const leGraph = new Graph(document.getElementById('sim-graph'));
 
 leGraph.setIncrement(5);
 leGraph.addNewGraph("Bénéfices", [130, 174, 210]);

@@ -2,12 +2,10 @@
 // Chart
 
 class Graph {
-    constructor() {
-        const ctx = document.getElementById('sim-graph');
-
+    constructor(parent) {
         this.xs = [];
         this.theGraphs = [];
-        this.graph = new Chart(ctx, {
+        this.graph = new Chart(parent, {
             type: 'line',
             data: {
                 labels: this.xs,
