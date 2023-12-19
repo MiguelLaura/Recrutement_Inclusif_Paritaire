@@ -55,17 +55,17 @@ func createLogPath(logFolder string) (pathName string, err error) {
 }
 
 func (l *FileLogger) Log(msg ...any) (err error) {
-	_, err = l.file.WriteString(fmt.Sprint(msg...))
+	_, err = l.file.WriteString(fmt.Sprint(msg...) + "\n")
 	return
 }
 
 func (l *FileLogger) Logf(format string, v ...any) (err error) {
-	_, err = l.file.WriteString(fmt.Sprintf(format, v...))
+	_, err = l.file.WriteString(fmt.Sprintf(format, v...) + "\n")
 	return
 }
 
 func (l *FileLogger) Err(msg ...any) (err error) {
-	_, err = l.file.WriteString("ERR:" + fmt.Sprint(msg...))
+	_, err = l.file.WriteString("[ERR] " + fmt.Sprint(msg...) + "\n")
 	return
 }
 
