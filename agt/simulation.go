@@ -23,10 +23,10 @@ func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratPar
 	return simu
 }
 
-func (simu *Simulation) Start() string {
+func (simu *Simulation) Start() {
 	if simu.status != CREATED {
-		log.Println("La simulation ne peut pas être démarrée depuis cet état.")
-		return "La simulation ne peut pas être démarrée depuis cet état."
+		simu.logger.Err("La simulation ne peut pas être démarrée depuis cet état.")
+		return
 	}
 
 	simu.status = STARTED
@@ -36,8 +36,6 @@ func (simu *Simulation) Start() string {
 	go simu.ent.Start()
 
 	simu.pariteInit = simu.ent.PourcentageFemmes()
-
-	msg_end := "La simulation démarre."
 
 	go func() {
 		for simu.step < simu.maxStep {
@@ -62,49 +60,40 @@ func (simu *Simulation) Start() string {
 		log.Printf("Fin de la simulation [step: %d, nb employé fin : %d, début parité : %.2f, fin parité : %.2f]", simu.step, len(simu.ent.Employes()), simu.pariteInit, pariteFin)
 	}()
 
-	simu.logger.Log(msg_end)
-
-	return msg_end
-
+	simu.logger.Log("La simulation démarre.")
 }
 
-func (simu *Simulation) Pause() string {
+func (simu *Simulation) Pause() {
 	if simu.status != STARTED {
-		msg := "La simulation ne peut pas être mise en pause depuis cet état."
-		log.Println(msg)
-		return msg
+		simu.logger.Err("La simulation ne peut pas être mise en pause depuis cet état.")
+		return
 	}
+
 	simu.status = PAUSED
 
 	simu.logger.Log("La simulation est en pause.")
-
-	return "La simulation est en pause."
 }
 
-func (simu *Simulation) Continue() string {
+func (simu *Simulation) Continue() {
 	if simu.status != PAUSED {
-		msg := "La simulation ne peut pas être reprise depuis cet état."
-		log.Println(msg)
-		return msg
+		simu.logger.Err("La simulation ne peut pas être reprise depuis cet état.")
+		return
 	}
+
 	simu.status = STARTED
 
 	simu.logger.Log("La simulation est relancée.")
-
-	return "La simulation est relancée."
 }
 
-func (simu *Simulation) End() string {
+func (simu *Simulation) End() {
 	if simu.status == ENDED {
-		msg := "La simulation est déjà terminée."
-		log.Println(msg)
-		return msg
+		simu.logger.Err("La simulation est déjà terminée.")
+		return
 	}
+
 	simu.status = ENDED
 
 	simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
-
-	return "La simulation est terminée."
 }
 
 func (simu *Simulation) AjouteWebSockerLogger(wsLogger *logger.SocketLogger) {

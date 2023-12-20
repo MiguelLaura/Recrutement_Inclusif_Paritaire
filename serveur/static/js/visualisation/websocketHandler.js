@@ -22,8 +22,6 @@ const id = pathParts[pathParts.length - 1];
 console.log("ID extrait de l'URL :", id);
 
 
-//ENVOYER ICI EN PRENANT window.location.href ????
-
 btnToggle.addEventListener("click", () => {
     switch(btnToggle.dataset.state) {
         case NOT_STARTED: // Pas encore démarrée
