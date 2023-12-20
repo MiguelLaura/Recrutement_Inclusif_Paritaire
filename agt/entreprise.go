@@ -359,7 +359,7 @@ func (ent *Entreprise) finirCycle() {
 	ent.gestionPlaintes()
 	// ent.ajusterImpactFemmes()
 	benef := ent.calculerBenefice()
-	ent.logger.LogfType(LOG_ENTREPRISE, "Benefices: %f", benef)
+	ent.logger.LogfType(LOG_ENTREPRISE, "Benefices: %.2f", benef)
 	// ent.obtenirIndicateursSante()
 
 	// Si on le fait en premier, on ne comptera pas ces employés dans les indicateurs ?
