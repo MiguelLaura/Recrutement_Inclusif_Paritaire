@@ -56,26 +56,6 @@ func (c *WSClient) readMessages() {
 				log.Println("erreur :", err)
 			}
 		}
-
-		// sl := logger.NewSocketLogger(c.connection, 10)
-		// sl.Log(resp)
-		// sl.Err("Ho no !", " y'a un sushi ! 🍣")
-
-		// msg := agt.SituationActuelle{
-		// 	Annee:  666,
-		// 	NbEmp:  999,
-		// 	Parite: .25,
-		// 	Benef:  666.666,
-		// }
-
-		// sl.LogType(agt.LOG_GLOBALE, msg)
-
-		// // json, err := json.Marshal(resp)
-		// // if err != nil {
-		// // 	log.Println("ERR:", err)
-		// // }
-
-		// // c.connection.WriteMessage(websocket.TextMessage, json)
 	}
 }
 
