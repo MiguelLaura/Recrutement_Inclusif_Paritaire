@@ -20,12 +20,12 @@ leGraph.addNewGraph("Parité", [231, 54, 56]);
 
 leGraph.selectGraphs("Bénéfices", "Parité");
 
-const dataBenef = [2500, 1900, 10000, 4950, 4950, 3970, 5300];
-const dataParite = [0, 600, 600, 1000, 500, 500, 1300];
+// const dataBenef = [-2500, -1900, -10000, -4950, -4950, -3970, -5300];
+// const dataParite = [0, 600, 600, 1000, 500, 500, 1300];
 
-for(let idxData = 0; idxData < dataBenef.length; idxData++) {
-    leGraph.addData(dataBenef[idxData], dataParite[idxData]);
-}
+// for(let idxData = 0; idxData < dataBenef.length; idxData++) {
+//     leGraph.addData(dataBenef[idxData], dataParite[idxData]);
+// }
 
 btnGraphVisuTout.addEventListener("click", (evt) => {
     leGraph.selectGraphs("Bénéfices", "Parité");

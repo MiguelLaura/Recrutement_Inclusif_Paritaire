@@ -90,7 +90,9 @@ conn.addEventListener("message", (evt) => {
 function mettreLesChosesAuBonEndroit(data) {
     anneeElt.textContent = data.annee;
     nbEmpElt.textContent = data.nbEmp;
-    pariteElt.textContent = data.parite * 100;
+    pariteElt.textContent = (data.parite * 100).toFixed(2);
+
+    console.log(data.parite * data.nbEmp);
     
     leGraph.addData(data.benefices, data.parite * data.nbEmp);
 }
