@@ -79,6 +79,13 @@ class Graph {
     render() {
         this.graph.update();
     }
+
+    reset() {
+        this.xs.length = 0;
+        for(const graphIdx in this.theGraphs) {
+            this.theGraphs[graphIdx].data.length = 0;
+        }
+    }
 }
 
 function randomRGBColor() {

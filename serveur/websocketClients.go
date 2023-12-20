@@ -82,6 +82,8 @@ func (c *WSClient) handleMessageFromWebSocket(idSimulation string, message strin
 			simulation.Continue()
 		case "stop":
 			simulation.End()
+		case "relancer":
+			simulation.Relancer()
 		default:
 			log.Println("erreur : Action non reconnue")
 			err = errors.New("erreur : Action non reconnue")

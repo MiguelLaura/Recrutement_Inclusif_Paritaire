@@ -17,9 +17,20 @@ const (
 	LOG_ENTREPRISE  logger.LogType = "entreprise"
 	LOG_EVENEMENT   logger.LogType = "evenement"
 	LOG_GLOBALE     logger.LogType = "globale"
+	LOG_REPONSE     logger.LogType = "reponse"
 )
 
 // ------------ SIMULATION ------------
+
+type EtatSimulation struct {
+	nbEmp  int
+	parite float64
+}
+
+type SimulationLocker struct {
+	sync.WaitGroup
+	sync.Mutex
+}
 
 type Simulation struct {
 	ent        Entreprise
@@ -29,6 +40,8 @@ type Simulation struct {
 	start      time.Time
 	status     Status // created, started, pause, finished
 	logger     logger.Loggers
+	etatInit   EtatSimulation
+	locker     SimulationLocker
 }
 
 type Action int
