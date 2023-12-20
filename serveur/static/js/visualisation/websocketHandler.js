@@ -91,7 +91,7 @@ function mettreLesChosesAuBonEndroit(data) {
 
     console.log(data.parite * data.nbEmp);
     
-    leGraph.addData(data.benefices, data.parite * data.nbEmp);
+    leGraph.addData(data.benefices.toFixed(2), (data.parite * 100).toFixed(2));
 }
 
 function traiterReponseAction(action, succes) {
