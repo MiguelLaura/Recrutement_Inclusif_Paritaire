@@ -60,6 +60,8 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64) *Entreprise {
 	ent.departs = &departs
 	formation := make([]Employe, 0)
 	ent.formation = &formation
+	conge_parental := make([]Employe, 0)
+	ent.conge_parental = &conge_parental
 	plaintes := make([][]Employe, 0)
 	ent.plaintes = &plaintes
 	ent.nbDepressions = 0
@@ -155,6 +157,17 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
 		log.Printf("Retraite %s : nb départs %d", emp.Id(), len(*ent.departs))
+		return
+	}
+}
+
+func (ent *Entreprise) CongeParental(emp *Employe) {
+	ent.Lock()
+	defer ent.Unlock()
+	i, _ := TrouverEmploye(*ent.conge_parental, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
+	if i < 0 {
+		*ent.conge_parental = append(*ent.conge_parental, *emp)
+		log.Printf("Conge parental %s", emp.Id())
 		return
 	}
 }
@@ -278,6 +291,15 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 		benef += (constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100 - constantes.COUT_EMPLOYE
 	}
 
+	// Impact conges parental : pas de salaire et pas de productivité pendant une certaine période
+	for _, e := range *ent.conge_parental {
+		if e.Genre() == Femme {
+			benef -= constantes.PROPORTION_ARRET_F * ((constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100 - constantes.COUT_EMPLOYE)
+		} else {
+			benef -= constantes.PROPORTION_ARRET_H * ((constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100 - constantes.COUT_EMPLOYE)
+		}
+	}
+
 	// Bonus de productivité si %femmes supérieur à 35%
 	if ent.PourcentageFemmes() > constantes.SEUIL_IMPACT_FEMME {
 		benef = benef * (1.0 + constantes.BOOST_PRODUCTIVITE_FEMME)
@@ -301,9 +323,6 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 
 	return benef
 }
-
-// func (ent *Entreprise) obtenirIndicateursSante() map[string]float64 {
-// }
 
 func (ent *Entreprise) gestionDeparts() {
 	if len(*ent.departs) <= 0 {
@@ -351,6 +370,7 @@ func (ent *Entreprise) lancerRecrutements() {
 func (ent *Entreprise) bonneAnnee() {
 	ent.nbDepressions = 0
 	ent.nbRenvois = 0
+	*ent.conge_parental = make([]Employe, 0)
 
 	for _, emp := range *ent.employes {
 		go func(emp Employe) {
@@ -398,6 +418,7 @@ func (ent *Entreprise) agir() {
 		return
 	}
 	log.Printf("Commence l'année")
+	log.Printf("Nb employe %d", ent.nbEmployes())
 	// Déterminer participants aux formations
 	ent.organisationFormation()
 	ent.teamBuilding()

@@ -91,6 +91,7 @@ type Entreprise struct {
 	employes        *[]Employe
 	departs         *[]Employe
 	formation       *[]Employe
+	conge_parental  *[]Employe
 	plaintes        *[][]Employe
 	nbDepressions   int
 	nbRenvois       int

@@ -142,6 +142,19 @@ func (e *Employe) seFormer() {
 	//log.Printf("Apres formation : %d", e.competence)
 }
 
+func (e *Employe) avoirEnfant() {
+	log.Printf("%s a un enfant", e.Id())
+	if e.Genre() == Femme {
+		if rand.Float64() < constantes.PROBA_CONGE_F {
+			e.entreprise.CongeParental(e)
+		}
+	} else {
+		if rand.Float64() < constantes.PROBA_CONGE_H {
+			e.entreprise.CongeParental(e)
+		}
+	}
+}
+
 // ---------------------
 //      Evenements
 // ---------------------
@@ -238,6 +251,21 @@ func (e *Employe) agir() {
 
 		// Vieillir
 		e.gagnerAnciennete()
+
+		// Avoir un enfant
+		enfant := false
+		if rand.Float64() < constantes.PROBA_ENFANT {
+			e.avoirEnfant()
+			enfant = true
+		}
+
+		// Demissionner apres congé maternité
+		if e.Genre() == Femme && enfant {
+			if rand.Float64() <= constantes.PROBA_DEPART_F {
+				log.Printf("Demission apres conge maternité")
+				e.poserDemission()
+			}
+		}
 
 		// Depart à la retraite
 		if e.anciennete >= constantes.ANCIENNETE_MAX {
