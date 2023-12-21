@@ -307,6 +307,49 @@ func (ent *Entreprise) gestionPlaintes() {
 	*ent.plaintes = make([][]Employe, 0)
 }
 
+func (ent *Entreprise) gestionDeparts() {
+	if len(*ent.departs) <= 0 {
+		return
+	}
+	for _, emp := range *ent.departs {
+		*ent.employes = enleverEmploye(*ent.employes, emp)
+		go func(emp Employe) {
+			EnvoyerMessage(&emp, FIN, nil)
+		}(emp)
+		if emp.agresseur {
+			ent.nbAgresseurs -= 1
+		}
+	}
+	ent.RecevoirActions(len(*ent.departs))
+	*ent.departs = make([]Employe, 0)
+}
+
+func (ent *Entreprise) gestionRecrutements() (err error) {
+	msg := <-ent.chnlRecrutement
+	if msg.Act == ERREUR_RECRUTEMENT {
+		return msg.Payload.(error)
+	} else if msg.Act == FIN_RECRUTEMENT {
+		embauches := msg.Payload.([]Employe)
+		for _, emp := range embauches {
+			*ent.employes = append(*ent.employes, emp)
+			ent.logger.LogfType(LOG_RECRUTEMENT, "%s est embauché.e", emp.String())
+			if emp.agresseur {
+				ent.nbAgresseurs += 1
+			}
+		}
+		return nil
+	}
+
+	err = errors.New("erreur : erreur recrutement")
+	return err
+}
+
+func (ent *Entreprise) lancerRecrutements() {
+	nbARecruter := float64(ent.nbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
+
+	go EnvoyerMessageRecrutement(&ent.recrutement, RECRUTEMENT, int(nbARecruter))
+}
+
 func (ent *Entreprise) calculerBenefice() (benef float64) {
 	benef = 0
 
@@ -352,47 +395,14 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 	return benef
 }
 
-func (ent *Entreprise) gestionDeparts() {
-	if len(*ent.departs) <= 0 {
-		return
-	}
-	for _, emp := range *ent.departs {
-		*ent.employes = enleverEmploye(*ent.employes, emp)
-		go func(emp Employe) {
-			EnvoyerMessage(&emp, FIN, nil)
-		}(emp)
-		if emp.agresseur {
-			ent.nbAgresseurs -= 1
-		}
-	}
-	ent.RecevoirActions(len(*ent.departs))
-	*ent.departs = make([]Employe, 0)
-}
+func (ent *Entreprise) obtenirSituationActuelle() SituationActuelle {
 
-func (ent *Entreprise) gestionRecrutements() (err error) {
-	msg := <-ent.chnlRecrutement
-	if msg.Act == ERREUR_RECRUTEMENT {
-		return msg.Payload.(error)
-	} else if msg.Act == FIN_RECRUTEMENT {
-		embauches := msg.Payload.([]Employe)
-		for _, emp := range embauches {
-			*ent.employes = append(*ent.employes, emp)
-			ent.logger.LogfType(LOG_RECRUTEMENT, "%s est embauché.e", emp.String())
-			if emp.agresseur {
-				ent.nbAgresseurs += 1
-			}
-		}
-		return nil
-	}
+	nbemp := ent.nbEmployes()
+	parite := ent.PourcentageFemmes()
+	benef := ent.calculerBenefice()
+	situ := NewSituationActuelle(nbemp, parite, benef)
+	return *situ
 
-	err = errors.New("erreur : erreur recrutement")
-	return err
-}
-
-func (ent *Entreprise) lancerRecrutements() {
-	nbARecruter := float64(ent.nbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
-
-	go EnvoyerMessageRecrutement(&ent.recrutement, RECRUTEMENT, int(nbARecruter))
 }
 
 func (ent *Entreprise) bonneAnnee() {
@@ -471,13 +481,11 @@ func (ent *Entreprise) stop() {
 func (ent *Entreprise) finirCycle() {
 	// // A faire avant GestionDeparts pour bien renvoyer les gens cette année
 	ent.gestionPlaintes()
-	benef := ent.calculerBenefice()
-	// ent.obtenirIndicateursSante()
 	// Si on le fait en premier, on ne comptera pas ces employés dans les indicateurs ?
 	ent.gestionDeparts()
 	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
 	ent.gestionRecrutements()
-	ent.logger.LogType(LOG_GLOBALE, SituationActuelle{ent.nbEmployes(), ent.PourcentageFemmes(), benef})
+	ent.logger.LogType(LOG_GLOBALE, ent.obtenirSituationActuelle())
 	ent.logger.LogType(LOG_ENTREPRISE, "Fin d'année")
 
 }

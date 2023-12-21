@@ -84,7 +84,7 @@ func (simu *Simulation) Start() {
 			if simu.status == STARTED {
 				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
 				simu.step++
-				time.Sleep(1 * time.Second)
+				time.Sleep(5 * time.Second)
 			} else if simu.status == PAUSED {
 				time.Sleep(100 * time.Millisecond)
 			} else if simu.status == ENDED {
