@@ -208,7 +208,7 @@ func (ent *Entreprise) RecevoirActions(nbActions int) {
 // ---------------------
 
 func (ent *Entreprise) teamBuilding() {
-	ent.logger.LogfType(LOG_ENTREPRISE, "Organisation team building")
+	ent.logger.LogType(LOG_ENTREPRISE, "Organisation team building")
 	for _, e := range *ent.employes {
 		test_presence, _ := TrouverEmploye(*ent.departs, func(emp Employe) bool { return e.Id() == emp.Id() }, 0)
 		// On vérifie que l'employé ne va pas partir
@@ -225,7 +225,7 @@ func (ent *Entreprise) teamBuilding() {
 }
 
 func (ent *Entreprise) organisationFormation() {
-	ent.logger.LogfType(LOG_ENTREPRISE, "Organisation formation")
+	ent.logger.LogType(LOG_ENTREPRISE, "Organisation formation")
 
 	*ent.formation = make([]Employe, 0)
 	// Génération des employés participant à une formation cette année
@@ -448,7 +448,7 @@ func (ent *Entreprise) finirCycle() {
 	ent.logger.LogfType(LOG_ENTREPRISE, "Benefices: %.2f", benef)
 	// ent.obtenirIndicateursSante()
 	moy := ent.MoyenneCompetences()
-	ent.logger.LogfType(LOG_ENTREPRISE, "moyenne competences %f", moy)
+	ent.logger.LogfType(LOG_ENTREPRISE, "moyenne competences %.2f", moy)
 	// Si on le fait en premier, on ne comptera pas ces employés dans les indicateurs ?
 	ent.gestionDeparts()
 	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
