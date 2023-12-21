@@ -95,6 +95,18 @@ func (e *Employe) Entreprise() *Entreprise {
 	return e.entreprise
 }
 
+func (e *Employe) Fin() bool {
+	return e.fin
+}
+
+func (e *Employe) Chnl() chan Communicateur {
+	return e.chnl
+}
+
+func (e *Employe) Logger() *logger.Loggers {
+	return e.logger
+}
+
 func (e *Employe) String() string {
 	return fmt.Sprintf("%s (%s)", e.id, StringGenre(e.genre))
 }
@@ -148,11 +160,11 @@ func (e *Employe) avoirEnfant() {
 	e.logger.LogfType(LOG_EMPLOYE, "%s a un enfant", e.String())
 	if e.Genre() == Femme {
 		if rand.Float64() < constantes.PROBA_CONGE_F {
-			e.entreprise.CongeParental(e)
+			e.entreprise.RecevoirCongeParental(e)
 		}
 	} else {
 		if rand.Float64() < constantes.PROBA_CONGE_H {
-			e.entreprise.CongeParental(e)
+			e.entreprise.RecevoirCongeParental(e)
 		}
 	}
 }

@@ -62,7 +62,7 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64, logger *logger.Logger
 	formation := make([]Employe, 0)
 	ent.formation = &formation
 	conge_parental := make([]Employe, 0)
-	ent.conge_parental = &conge_parental
+	ent.congeParental = &conge_parental
 	plaintes := make([][]Employe, 0)
 	ent.plaintes = &plaintes
 	ent.nbDepressions = 0
@@ -93,6 +93,10 @@ func (ent *Entreprise) Formation() []Employe {
 	return *ent.formation
 }
 
+func (ent *Entreprise) CongeParental() []Employe {
+	return *ent.congeParental
+}
+
 func (ent *Entreprise) Plaintes() [][]Employe {
 	return *ent.plaintes
 }
@@ -115,6 +119,30 @@ func (ent *Entreprise) NbActions() int {
 
 func (ent *Entreprise) NbAgresseurs() int {
 	return ent.nbAgresseurs
+}
+
+func (ent *Entreprise) Fin() bool {
+	return ent.fin
+}
+
+func (ent *Entreprise) Chnl() chan Communicateur {
+	return ent.chnl
+}
+
+func (ent *Entreprise) ChnlActions() chan Communicateur {
+	return ent.chnlActions
+}
+
+func (ent *Entreprise) ChnlRecrutement() chan Communicateur_recrutement {
+	return ent.chnlRecrutement
+}
+
+func (ent *Entreprise) ChnlNotifAction() chan Communicateur {
+	return ent.chnlNotifAction
+}
+
+func (ent *Entreprise) Logger() *logger.Loggers {
+	return ent.logger
 }
 
 // ---------------------
@@ -170,12 +198,12 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	}
 }
 
-func (ent *Entreprise) CongeParental(emp *Employe) {
+func (ent *Entreprise) RecevoirCongeParental(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
-	i, _ := TrouverEmploye(*ent.conge_parental, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
+	i, _ := TrouverEmploye(*ent.congeParental, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
-		*ent.conge_parental = append(*ent.conge_parental, *emp)
+		*ent.congeParental = append(*ent.congeParental, *emp)
 		ent.logger.LogfType(LOG_ENTREPRISE, "%s part en congé parental", emp.String())
 		return
 	}
@@ -292,7 +320,7 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 	}
 
 	// Impact conges parental : pas de salaire et pas de productivité pendant une certaine période
-	for _, e := range *ent.conge_parental {
+	for _, e := range *ent.congeParental {
 		if e.Genre() == Femme {
 			benef -= constantes.PROPORTION_ARRET_F * ((constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100 - constantes.COUT_EMPLOYE)
 		} else {
@@ -370,7 +398,7 @@ func (ent *Entreprise) lancerRecrutements() {
 func (ent *Entreprise) bonneAnnee() {
 	ent.nbDepressions = 0
 	ent.nbRenvois = 0
-	*ent.conge_parental = make([]Employe, 0)
+	*ent.congeParental = make([]Employe, 0)
 
 	for _, emp := range *ent.employes {
 		go func(emp Employe) {

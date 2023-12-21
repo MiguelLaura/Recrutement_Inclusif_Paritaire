@@ -120,7 +120,7 @@ type Entreprise struct {
 	employes        *[]Employe
 	departs         *[]Employe
 	formation       *[]Employe
-	conge_parental  *[]Employe
+	congeParental   *[]Employe
 	plaintes        *[][]Employe
 	nbDepressions   int
 	nbRenvois       int

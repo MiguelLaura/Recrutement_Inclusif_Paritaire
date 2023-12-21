@@ -34,6 +34,10 @@ func NewRecrutement(ent *Entreprise, obj float64, sav StratParite, sap StratPari
 //        Getters
 // ---------------------
 
+func (r Recrutement) Entreprise() *Entreprise {
+	return r.entreprise
+}
+
 func (r Recrutement) Objectif() float64 {
 	return r.objectif
 }
@@ -60,6 +64,18 @@ func (r Recrutement) PourcentagePlacesAvant() float64 {
 
 func (r Recrutement) PourcentagePlacesApres() float64 {
 	return r.pourcentagePlacesApres
+}
+
+func (r Recrutement) Chnl() chan Communicateur_recrutement {
+	return r.chnl
+}
+
+func (r Recrutement) Fin() bool {
+	return r.fin
+}
+
+func (r Recrutement) Logger() *logger.Loggers {
+	return r.logger
 }
 
 // ---------------------
