@@ -2,6 +2,7 @@ package agt
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
@@ -23,7 +24,7 @@ func EnvoyerMessage(dest *Employe, act Action, payload any) {
 // ---------------------
 
 func genererIDEmploye() EmployeID {
-	res := fmt.Sprintf("employe%d", agtCnt)
+	res := fmt.Sprintf("Employe%d", agtCnt)
 	agtCnt++
 
 	return EmployeID(res)
@@ -95,7 +96,7 @@ func (e *Employe) Entreprise() *Entreprise {
 }
 
 func (e *Employe) String() string {
-	return fmt.Sprintf("%s (%d)", e.id, e.genre)
+	return fmt.Sprintf("%s (%s)", e.id, StringGenre(e.genre))
 }
 
 // ---------------------
@@ -117,6 +118,11 @@ func (e *Employe) poserDemission() {
 	e.entreprise.RecevoirDemission(e)
 }
 
+// L'Employé pose sa démission auprès de son entreprise après son congé maternité
+func (e *Employe) poserDemissionMaternite() {
+	e.entreprise.RecevoirDemissionMaternite(e)
+}
+
 // L'Employé pose sa démission auprès de son entreprise pour cause de dépression
 func (e *Employe) partirDepression() {
 	e.entreprise.RecevoirDepression(e)
@@ -127,24 +133,19 @@ func (e *Employe) partirRetraite() {
 	e.entreprise.RecevoirRetraite(e)
 }
 
-// L'Employé travaille sur cette année
-func (e *Employe) travailler() {
-	e.entreprise.MettreAJourCA(e.santeMentale, e.competence)
-}
-
 // Peut-être à nuancer si trop de gains de compétences
 func (e *Employe) seFormer() {
+	e.logger.LogfType(LOG_EVENEMENT, "%s a participé à une formation", e.String())
 	e.cmpt_competence += 1
 	if e.competence < 10 && e.cmpt_competence == 5 {
-		e.logger.LogfType(LOG_EMPLOYE, "Formation %s", e.Id())
+		e.logger.LogfType(LOG_EMPLOYE, "%s a amélioré ses compétences", e.String())
 		e.competence += 1
 		e.cmpt_competence = 0
 	}
-	//logger.LogfType(LOG_EMPLOYE, "Apres formation : %d", e.competence)
 }
 
 func (e *Employe) avoirEnfant() {
-	e.logger.LogfType(LOG_EMPLOYE, "%s a un enfant", e.Id())
+	e.logger.LogfType(LOG_EMPLOYE, "%s a un enfant", e.String())
 	if e.Genre() == Femme {
 		if rand.Float64() < constantes.PROBA_CONGE_F {
 			e.entreprise.CongeParental(e)
@@ -163,7 +164,7 @@ func (e *Employe) avoirEnfant() {
 // L'Employé est agressé par quelqu'un
 func (agresse *Employe) etreAgresse(agresseur *Employe) {
 
-	agresse.logger.LogfType(LOG_AGRESSION, "Employé %s agresse %s", agresseur.id, agresse.id)
+	agresse.logger.LogfType(LOG_AGRESSION, "%s agresse %s", agresseur.String(), agresse.String())
 
 	// Selon son comportement, il va porter plainte ou non
 	if rand.Float64() < constantes.PROBA_PLAINTE {
@@ -211,18 +212,15 @@ func (agresseur *Employe) agresser() {
 
 // Lance la vie de l'agent
 func (e *Employe) Start() {
-	e.logger.LogfType(LOG_EMPLOYE, "Démarrage de l'employé %s", e.id)
+	log.Printf("Démarrage de l'employé %s", e.id)
 
 	// Initialisation
 
 	// Boucle de vie
 	for !e.fin {
-		// e.logger.LogfType(LOG_EMPLOYE, "hello %s", e.id)
 		e.agir()
-		// e.logger.LogfType(LOG_EMPLOYE, "goodbye %s", e.id)
 	}
-
-	e.logger.LogfType(LOG_EMPLOYE, "Fin de l'employé %s", e.id)
+	log.Printf("Fin de l'employé %s", e.Id())
 }
 
 // Ce que l'employé fait à chaque tour
@@ -241,8 +239,6 @@ func (e *Employe) agir() {
 		if e.Agresseur() {
 			e.agresser()
 		}
-
-		e.travailler()
 
 		// Participer à une formation
 		i, _ := TrouverEmploye(*e.entreprise.formation, func(emp Employe) bool { return e.Id() == emp.Id() }, 0)
@@ -263,8 +259,7 @@ func (e *Employe) agir() {
 		// Demissionner apres congé maternité
 		if e.Genre() == Femme && enfant {
 			if rand.Float64() <= constantes.PROBA_DEPART_F {
-				e.logger.LogfType(LOG_EMPLOYE, "Demission apres conge maternité")
-				e.poserDemission()
+				e.poserDemissionMaternite()
 			}
 		}
 
@@ -291,7 +286,7 @@ func (e *Employe) agir() {
 		if msg.Payload != nil {
 			e.etreAgresse(msg.Payload.(*Employe))
 		} else {
-			e.logger.LogfType(LOG_AGRESSION, "%s : je vais pas m'agresser moi-même", e.id)
+			log.Printf("%s : je vais pas m'agresser moi-même", e.id)
 		}
 
 		// Si l'agent n'a plus de santé mentale, il pose sa démission

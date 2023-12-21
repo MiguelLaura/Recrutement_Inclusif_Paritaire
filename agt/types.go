@@ -125,7 +125,6 @@ type Entreprise struct {
 	nbDepressions   int
 	nbRenvois       int
 	recrutement     Recrutement
-	ca              float64
 	nbActions       int
 	nbAgresseurs    int
 	fin             bool

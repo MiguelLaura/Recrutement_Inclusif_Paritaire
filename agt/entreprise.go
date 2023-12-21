@@ -2,6 +2,7 @@ package agt
 
 import (
 	"errors"
+	"log"
 	"math"
 	"math/rand"
 
@@ -66,7 +67,6 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64, logger *logger.Logger
 	ent.plaintes = &plaintes
 	ent.nbDepressions = 0
 	ent.nbRenvois = 0
-	ent.ca = 0.0
 	ent.nbActions = 0
 	ent.fin = false
 	ent.chnl = make(chan Communicateur)
@@ -109,10 +109,6 @@ func (ent *Entreprise) Recrutement() Recrutement {
 	return ent.recrutement
 }
 
-func (ent *Entreprise) Ca() float64 {
-	return ent.ca
-}
-
 func (ent *Entreprise) NbActions() int {
 	return ent.nbActions
 }
@@ -132,7 +128,19 @@ func (ent *Entreprise) RecevoirDemission(emp *Employe) {
 	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
-		ent.logger.LogfType(LOG_DEPART, "Demission %s : nb départs %d", emp.Id(), len(*ent.departs))
+		ent.logger.LogfType(LOG_DEPART, "%s pose sa démission", emp.String())
+		return
+	}
+}
+
+func (ent *Entreprise) RecevoirDemissionMaternite(emp *Employe) {
+	ent.Lock()
+	defer ent.Unlock()
+
+	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
+	if i < 0 {
+		*ent.departs = append(*ent.departs, *emp)
+		ent.logger.LogfType(LOG_DEPART, "%s pose sa démission après son congé maternité", emp.String())
 		return
 	}
 }
@@ -145,7 +153,7 @@ func (ent *Entreprise) RecevoirDepression(emp *Employe) {
 	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
-		ent.logger.LogfType(LOG_DEPART, "Depression %s : nb départs %d", emp.Id(), len(*ent.departs))
+		ent.logger.LogfType(LOG_DEPART, "%s pose sa démission pour dépression", emp.String())
 		return
 	}
 }
@@ -157,7 +165,7 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
-		ent.logger.LogfType(LOG_DEPART, "Retraite %s : nb départs %d", emp.Id(), len(*ent.departs))
+		ent.logger.LogfType(LOG_DEPART, "%s part à la retraite", emp.String())
 		return
 	}
 }
@@ -168,7 +176,7 @@ func (ent *Entreprise) CongeParental(emp *Employe) {
 	i, _ := TrouverEmploye(*ent.conge_parental, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		*ent.conge_parental = append(*ent.conge_parental, *emp)
-		ent.logger.LogfType(LOG_ENTREPRISE, "Conge parental %s", emp.Id())
+		ent.logger.LogfType(LOG_ENTREPRISE, "%s part en congé parental", emp.String())
 		return
 	}
 }
@@ -178,14 +186,7 @@ func (ent *Entreprise) RecevoirPlainte(plaignant *Employe, accuse *Employe) {
 	defer ent.Unlock()
 
 	*ent.plaintes = append(*ent.plaintes, []Employe{*plaignant, *accuse})
-}
-
-// Mettre à jour la formule
-func (ent *Entreprise) MettreAJourCA(santeMentale int, competence int) {
-	ent.Lock()
-	defer ent.Unlock()
-
-	ent.ca += float64(santeMentale) * float64(competence)
+	ent.logger.LogfType(LOG_AGRESSION, "%s porte plainte contre %s ", plaignant.String(), accuse.String())
 }
 
 func (ent *Entreprise) RecevoirActions(nbActions int) {
@@ -208,7 +209,7 @@ func (ent *Entreprise) RecevoirActions(nbActions int) {
 // ---------------------
 
 func (ent *Entreprise) teamBuilding() {
-	ent.logger.LogType(LOG_ENTREPRISE, "Organisation team building")
+	ent.logger.LogType(LOG_EVENEMENT, "Un team building est organisé. Les employés sont contents.")
 	for _, e := range *ent.employes {
 		test_presence, _ := TrouverEmploye(*ent.departs, func(emp Employe) bool { return e.Id() == emp.Id() }, 0)
 		// On vérifie que l'employé ne va pas partir
@@ -225,7 +226,6 @@ func (ent *Entreprise) teamBuilding() {
 }
 
 func (ent *Entreprise) organisationFormation() {
-	ent.logger.LogType(LOG_ENTREPRISE, "Organisation formation")
 
 	*ent.formation = make([]Employe, 0)
 	// Génération des employés participant à une formation cette année
@@ -255,7 +255,6 @@ func (ent *Entreprise) organisationFormation() {
 		// Pour ne pas avoir de doublons
 		hommes = enleverEmploye(hommes, hommes[i])
 	}
-	ent.logger.LogfType(LOG_ENTREPRISE, "nb employe: %d nb_formes: %d", ent.nbEmployes(), len(*ent.formation))
 }
 
 // ---------------------
@@ -273,7 +272,7 @@ func (ent *Entreprise) gestionPlaintes() {
 			i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == accuse.Id() }, 0)
 			if i < 0 {
 				*ent.departs = append(*ent.departs, accuse)
-				ent.logger.LogfType(LOG_DEPART, "Licenciement %s : nb départs %d", accuse.Id(), len(*ent.departs))
+				ent.logger.LogfType(LOG_DEPART, "%s est licencié pour faute grave", accuse.String())
 			}
 		}
 	}
@@ -348,9 +347,9 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 		return msg.Payload.(error)
 	} else if msg.Act == FIN_RECRUTEMENT {
 		embauches := msg.Payload.([]Employe)
-		ent.logger.LogfType(LOG_ENTREPRISE, "Embauche %d, employés %d", len(embauches), ent.nbEmployes())
 		for _, emp := range embauches {
 			*ent.employes = append(*ent.employes, emp)
+			ent.logger.LogfType(LOG_RECRUTEMENT, "%s est embauché.e", emp.String())
 			if emp.agresseur {
 				ent.nbAgresseurs += 1
 			}
@@ -409,7 +408,7 @@ func (ent *Entreprise) Start() {
 			}
 		}
 	}
-	ent.logger.LogType(LOG_ENTREPRISE, "Fin d'entreprise")
+	log.Printf("Fin d'entreprise")
 	<-ent.chnl
 }
 
@@ -418,8 +417,8 @@ func (ent *Entreprise) agir() {
 		ent.fin = true
 		return
 	}
-	ent.logger.LogType(LOG_ENTREPRISE, "Commence l'année")
-	ent.logger.LogfType(LOG_ENTREPRISE, "Nb employe %d", ent.nbEmployes())
+	ent.logger.LogType(LOG_ENTREPRISE, "Début d'année")
+	log.Printf("Nb employe %d", ent.nbEmployes())
 	// Déterminer participants aux formations
 	ent.organisationFormation()
 	ent.teamBuilding()
@@ -445,16 +444,13 @@ func (ent *Entreprise) finirCycle() {
 	// // A faire avant GestionDeparts pour bien renvoyer les gens cette année
 	ent.gestionPlaintes()
 	benef := ent.calculerBenefice()
-	ent.logger.LogfType(LOG_ENTREPRISE, "Benefices: %.2f", benef)
 	// ent.obtenirIndicateursSante()
-	moy := ent.MoyenneCompetences()
-	ent.logger.LogfType(LOG_ENTREPRISE, "moyenne competences %.2f", moy)
 	// Si on le fait en premier, on ne comptera pas ces employés dans les indicateurs ?
 	ent.gestionDeparts()
 	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
 	ent.gestionRecrutements()
 	ent.logger.LogType(LOG_GLOBALE, SituationActuelle{ent.nbEmployes(), ent.PourcentageFemmes(), benef})
-	ent.logger.LogType(LOG_ENTREPRISE, "Fin d'année\n\n")
+	ent.logger.LogType(LOG_ENTREPRISE, "Fin d'année")
 
 }
 
@@ -499,12 +495,4 @@ func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
 	idx := rand.Intn(len(empList))
 	emp := empList[idx]
 	return emp
-}
-
-func (ent *Entreprise) MoyenneCompetences() float64 {
-	somme := 0
-	for _, e := range *ent.employes {
-		somme += e.competence
-	}
-	return float64(somme / ent.nbEmployes())
 }
