@@ -378,6 +378,9 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 	nbARecruter := float64(ent.nbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
 	benef -= float64(nbARecruter * constantes.COUT_RECRUTEMENT)
 
+	// Coût du teambuilding
+	benef -= 2 * float64(ent.nbEmployes()) * constantes.COUT_TB_PAR_EMPLOYE
+
 	// Coût des formations
 	nbFormes := len(*ent.formation)
 	benef -= float64(constantes.PRIX_FORMATION * constantes.NB_JOURS_FORMATION * nbFormes)

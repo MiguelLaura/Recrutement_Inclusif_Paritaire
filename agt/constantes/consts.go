@@ -50,4 +50,5 @@ const (
 
 	// TEAM BUILDING
 	BOOST_TEAM_BUILDING = 5 // Valeur peut-être à ajuster
+	COUT_TB_PAR_EMPLOYE = 100
 )
