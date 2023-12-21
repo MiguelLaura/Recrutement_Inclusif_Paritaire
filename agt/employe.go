@@ -44,16 +44,17 @@ func GenererEmployeInit(ent **Entreprise, genre Genre, logger *logger.Loggers) *
 
 func NewEmploye(gen Genre, anc int, san int, ag bool, compet int, ent *Entreprise, logger *logger.Loggers) *Employe {
 	return &Employe{
-		id:           genererIDEmploye(),
-		genre:        gen,
-		anciennete:   anc,
-		santeMentale: san,
-		agresseur:    ag,
-		competence:   compet,
-		entreprise:   ent,
-		fin:          false,
-		chnl:         make(chan Communicateur),
-		logger:       logger,
+		id:              genererIDEmploye(),
+		genre:           gen,
+		anciennete:      anc,
+		santeMentale:    san,
+		agresseur:       ag,
+		competence:      compet,
+		cmpt_competence: 0,
+		entreprise:      ent,
+		fin:             false,
+		chnl:            make(chan Communicateur),
+		logger:          logger,
 	}
 }
 
@@ -83,6 +84,10 @@ func (e *Employe) Agresseur() bool {
 
 func (e *Employe) Competence() int {
 	return e.competence
+}
+
+func (e *Employe) Cmpt_competence() int {
+	return e.cmpt_competence
 }
 
 func (e *Employe) Entreprise() *Entreprise {
@@ -125,6 +130,30 @@ func (e *Employe) partirRetraite() {
 // L'Employé travaille sur cette année
 func (e *Employe) travailler() {
 	e.entreprise.MettreAJourCA(e.santeMentale, e.competence)
+}
+
+// Peut-être à nuancer si trop de gains de compétences
+func (e *Employe) seFormer() {
+	e.cmpt_competence += 1
+	if e.competence < 10 && e.cmpt_competence == 5 {
+		e.logger.LogfType(LOG_EMPLOYE, "Formation %s", e.Id())
+		e.competence += 1
+		e.cmpt_competence = 0
+	}
+	//logger.LogfType(LOG_EMPLOYE, "Apres formation : %d", e.competence)
+}
+
+func (e *Employe) avoirEnfant() {
+	e.logger.LogfType(LOG_EMPLOYE, "%s a un enfant", e.Id())
+	if e.Genre() == Femme {
+		if rand.Float64() < constantes.PROBA_CONGE_F {
+			e.entreprise.CongeParental(e)
+		}
+	} else {
+		if rand.Float64() < constantes.PROBA_CONGE_H {
+			e.entreprise.CongeParental(e)
+		}
+	}
 }
 
 // ---------------------
@@ -215,8 +244,29 @@ func (e *Employe) agir() {
 
 		e.travailler()
 
+		// Participer à une formation
+		i, _ := TrouverEmploye(*e.entreprise.formation, func(emp Employe) bool { return e.Id() == emp.Id() }, 0)
+		if i >= 0 {
+			e.seFormer()
+		}
+
 		// Vieillir
 		e.gagnerAnciennete()
+
+		// Avoir un enfant
+		enfant := false
+		if rand.Float64() < constantes.PROBA_ENFANT {
+			e.avoirEnfant()
+			enfant = true
+		}
+
+		// Demissionner apres congé maternité
+		if e.Genre() == Femme && enfant {
+			if rand.Float64() <= constantes.PROBA_DEPART_F {
+				e.logger.LogfType(LOG_EMPLOYE, "Demission apres conge maternité")
+				e.poserDemission()
+			}
+		}
 
 		// Depart à la retraite
 		if e.anciennete >= constantes.ANCIENNETE_MAX {
