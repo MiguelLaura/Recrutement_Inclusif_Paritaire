@@ -87,23 +87,6 @@ func genGenre() (genre Genre) {
 	return genre
 }
 
-func genComportement() Comportement {
-	r := rand.Float64()
-	var compor Comportement
-	if r >= 0 && r < 0.2 {
-		compor = Plainte0
-	} else if r >= 0.2 && r < 0.4 {
-		compor = Plainte25
-	} else if r >= 0.4 && r < 0.6 {
-		compor = Plainte50
-	} else if r >= 0.6 && r < 0.8 {
-		compor = Plainte75
-	} else {
-		compor = Plainte100
-	}
-	return compor
-}
-
 func genCompetence() int {
 	// Loi normale définie pour modéliser les compétences
 	// On veut que les compétences tournent autour de 5 sans trop s’éparpiller autour

@@ -58,6 +58,8 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64) *Entreprise {
 	ent.employes = &employesInit
 	departs := make([]Employe, 0)
 	ent.departs = &departs
+	formation := make([]Employe, 0)
+	ent.formation = &formation
 	conge_parental := make([]Employe, 0)
 	ent.conge_parental = &conge_parental
 	plaintes := make([][]Employe, 0)
@@ -84,6 +86,10 @@ func (ent *Entreprise) Employes() []Employe {
 
 func (ent *Entreprise) Departs() []Employe {
 	return *ent.departs
+}
+
+func (ent *Entreprise) Formation() []Employe {
+	return *ent.formation
 }
 
 func (ent *Entreprise) Plaintes() [][]Employe {
@@ -197,6 +203,61 @@ func (ent *Entreprise) RecevoirActions(nbActions int) {
 }
 
 // ---------------------
+//     En cours d'année (appelées par l'entreprise)
+// ---------------------
+
+func (ent *Entreprise) teamBuilding() {
+	log.Printf("Organisation team building")
+	for _, e := range *ent.employes {
+		test_presence, _ := TrouverEmploye(*ent.departs, func(emp Employe) bool { return e.Id() == emp.Id() }, 0)
+		// On vérifie que l'employé ne va pas partir
+		if test_presence < 0 {
+			if e.santeMentale < 100 {
+				if e.santeMentale+constantes.BOOST_TEAM_BUILDING > 100 {
+					e.santeMentale = 100
+				} else {
+					e.santeMentale += constantes.BOOST_TEAM_BUILDING
+				}
+			}
+		}
+	}
+}
+
+func (ent *Entreprise) organisationFormation() {
+	log.Printf("Organisation formation")
+
+	*ent.formation = make([]Employe, 0)
+	// Génération des employés participant à une formation cette année
+
+	// 32% des français ont participé à une formation
+	nb_employes_formes := math.Round(constantes.POURCENTAGE_FORMATION * float64(ent.nbEmployes()))
+	// 50% des employés qui se forment sont des femmes
+	nb_femmes_formes := math.Round(nb_employes_formes / 2)
+	nb_hommes_formes := nb_femmes_formes
+	femmes := FiltreFemme(*ent.employes)
+	hommes := FiltreHomme(*ent.employes)
+	for idx := 0; idx < int(nb_femmes_formes); idx++ {
+		if len(femmes) == 0 {
+			break
+		}
+		i := rand.Intn(len(femmes))
+		*ent.formation = append(*ent.formation, femmes[i])
+		// Pour ne pas avoir de doublons
+		femmes = enleverEmploye(femmes, femmes[i])
+	}
+	for idx := 0; idx < int(nb_hommes_formes); idx++ {
+		if len(hommes) == 0 {
+			break
+		}
+		i := rand.Intn(len(hommes))
+		*ent.formation = append(*ent.formation, hommes[i])
+		// Pour ne pas avoir de doublons
+		hommes = enleverEmploye(hommes, hommes[i])
+	}
+	log.Printf("nb employe: %d nb_formes: %d", ent.nbEmployes(), len(*ent.formation))
+}
+
+// ---------------------
 //     Fin d'année
 // ---------------------
 
@@ -217,9 +278,6 @@ func (ent *Entreprise) gestionPlaintes() {
 	}
 	*ent.plaintes = make([][]Employe, 0)
 }
-
-// func (ent Entreprise) ajusterImpactFemmes() {
-// }
 
 func (ent *Entreprise) calculerBenefice() (benef float64) {
 	benef = 0
@@ -250,6 +308,10 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 	// Coût du recrutement
 	nbARecruter := float64(ent.nbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
 	benef -= float64(nbARecruter * constantes.COUT_RECRUTEMENT)
+
+	// Coût des formations
+	nbFormes := len(*ent.formation)
+	benef -= float64(constantes.PRIX_FORMATION * constantes.NB_JOURS_FORMATION * nbFormes)
 
 	// Amende si non parité
 	// Modèle le plus simple : si %Femmes ne respectent pas la loi (<40%), amende d'1% des bénéfices
@@ -357,9 +419,13 @@ func (ent *Entreprise) agir() {
 	}
 	log.Printf("Commence l'année")
 	log.Printf("Nb employe %d", ent.nbEmployes())
+	// Déterminer participants aux formations
+	ent.organisationFormation()
+	ent.teamBuilding()
 	// Envoyer le message aux employés pour qu'ils agissent
 	ent.bonneAnnee()
 	ent.RecevoirActions(ent.nbAgresseurs + ent.nbEmployes())
+	ent.teamBuilding()
 	ent.finirCycle()
 }
 
@@ -377,11 +443,11 @@ func (ent *Entreprise) stop() {
 func (ent *Entreprise) finirCycle() {
 	// // A faire avant GestionDeparts pour bien renvoyer les gens cette année
 	ent.gestionPlaintes()
-	// ent.ajusterImpactFemmes()
 	benef := ent.calculerBenefice()
 	log.Printf("Benefices: %f", benef)
 	// ent.obtenirIndicateursSante()
-
+	moy := ent.MoyenneCompetences()
+	log.Printf("moyenne competences %f", moy)
 	// Si on le fait en premier, on ne comptera pas ces employés dans les indicateurs ?
 	ent.gestionDeparts()
 	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
@@ -430,4 +496,12 @@ func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
 	idx := rand.Intn(len(empList))
 	emp := empList[idx]
 	return emp
+}
+
+func (ent *Entreprise) MoyenneCompetences() float64 {
+	somme := 0
+	for _, e := range *ent.employes {
+		somme += e.competence
+	}
+	return float64(somme / ent.nbEmployes())
 }

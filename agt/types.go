@@ -23,6 +23,7 @@ const (
 	NOOP Action = iota
 	LIBRE
 	AGRESSION
+	FORMATION
 	FIN
 )
 
@@ -64,15 +65,16 @@ type EmployeID string
 var agtCnt int = 0
 
 type Employe struct {
-	id           EmployeID
-	genre        Genre
-	anciennete   int //entre 0 et 40
-	santeMentale int //entre 0 et 100
-	agresseur    bool
-	competence   int //entre 0 et 10
-	entreprise   *Entreprise
-	fin          bool
-	chnl         chan Communicateur
+	id              EmployeID
+	genre           Genre
+	anciennete      int //entre 0 et 40
+	santeMentale    int //entre 0 et 100
+	agresseur       bool
+	competence      int //entre 0 et 10
+	cmpt_competence int // entre 0 et 5. Quand il atteint 5, competence +1
+	entreprise      *Entreprise
+	fin             bool
+	chnl            chan Communicateur
 }
 
 type Genre int
@@ -82,23 +84,13 @@ const (
 	Femme
 )
 
-type Comportement float64
-
-// Probabilité de porter plainte pour les Employés
-const (
-	Plainte100 Comportement = 1.0
-	Plainte75  Comportement = 0.75
-	Plainte50  Comportement = 0.5
-	Plainte25  Comportement = 0.25
-	Plainte0   Comportement = 0.0
-)
-
 // ------------ ENTREPRISE ------------
 
 type Entreprise struct {
 	sync.Mutex
 	employes        *[]Employe
 	departs         *[]Employe
+	formation       *[]Employe
 	conge_parental  *[]Employe
 	plaintes        *[][]Employe
 	nbDepressions   int
