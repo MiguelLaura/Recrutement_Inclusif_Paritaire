@@ -63,6 +63,7 @@ const (
 	STARTED
 	PAUSED
 	ENDED
+	STEP
 )
 
 // Permet la communication entre entreprise et employé

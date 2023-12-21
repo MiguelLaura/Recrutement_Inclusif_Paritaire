@@ -31,36 +31,8 @@ func (simu *Simulation) Start() {
 		return
 	}
 
-	simu.step = 0
+	simu.startAgents()
 	simu.mettreAJourStatus(STARTED)
-	simu.start = time.Now()
-
-	// Démarrage de l'entreprise
-	go simu.ent.Start()
-
-	simu.pariteInit = simu.ent.PourcentageFemmes()
-
-	simu.locker.Add(1)
-	go func() {
-		for simu.step < simu.maxStep {
-			if simu.status == STARTED {
-				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
-				simu.step++
-				time.Sleep(1 * time.Second)
-			} else if simu.status == PAUSED {
-				time.Sleep(100 * time.Millisecond)
-			} else if simu.status == ENDED {
-				break
-			}
-		}
-
-		// On s'assure que le statut de la simulation est bien à jour
-		simu.mettreAJourStatus(ENDED)
-
-		simu.terminerSimulation()
-		simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
-		simu.locker.Done()
-	}()
 
 	simu.logger.Log("La simulation démarre.")
 	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"start", true})
@@ -90,6 +62,23 @@ func (simu *Simulation) Continue() {
 
 	simu.logger.Log("La simulation est relancée.")
 	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"continue", true})
+}
+
+func (simu *Simulation) Step() {
+	if simu.status == STARTED || simu.status == ENDED {
+		simu.logger.Err("La simulation ne peut pas continuer ainsi.")
+		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"step", false})
+		return
+	}
+
+	if simu.status == CREATED {
+		simu.startAgents()
+	}
+
+	simu.mettreAJourStatus(STEP)
+
+	simu.logger.Log("La simulation a avancé d'un pas")
+	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"step", true})
 }
 
 func (simu *Simulation) End() {
@@ -170,4 +159,41 @@ func (simu *Simulation) mettreAJourStatus(nouveauStatus Status) {
 	defer simu.locker.Unlock()
 
 	simu.status = nouveauStatus
+}
+
+func (simu *Simulation) startAgents() {
+	simu.step = 0
+	simu.start = time.Now()
+
+	// Démarrage de l'entreprise
+	go simu.ent.Start()
+
+	simu.pariteInit = simu.ent.PourcentageFemmes()
+
+	simu.locker.Add(1)
+	go func() {
+		for simu.step < simu.maxStep {
+			if simu.status == STARTED || simu.status == STEP {
+				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
+				simu.step++
+
+				if simu.status == STEP {
+					simu.mettreAJourStatus(PAUSED)
+				}
+
+				time.Sleep(1 * time.Second)
+			} else if simu.status == PAUSED {
+				time.Sleep(100 * time.Millisecond)
+			} else if simu.status == ENDED {
+				break
+			}
+		}
+
+		// On s'assure que le statut de la simulation est bien à jour
+		simu.mettreAJourStatus(ENDED)
+
+		simu.terminerSimulation()
+		simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
+		simu.locker.Done()
+	}()
 }

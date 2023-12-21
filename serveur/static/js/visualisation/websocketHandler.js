@@ -10,6 +10,7 @@ const popupInfo = new InfoPopup();
 // WebSocket
 
 const btnToggle = document.getElementById("toggle-simu");
+const btnStep = document.getElementById("step-simu");
 const btnStop = document.getElementById("stop-simu");
 const btnRelancer = document.getElementById("restart-simu");
 
@@ -34,6 +35,11 @@ btnToggle.addEventListener("click", () => {
         case PAUSED: // En pause
             conn.send(JSON.stringify({id_simulation : id, type: "action", data: "continue"}));
     }
+});
+
+btnStep.addEventListener("click", () => {
+    btnStep.disabled = true;
+    conn.send(JSON.stringify({id_simulation : id, type: "action", data: "step"}));
 });
 
 btnStop.addEventListener("click", () => {
@@ -102,6 +108,13 @@ function traiterReponseAction(action, succes) {
                 btnToggle.firstChild.classList.toggle("bi-pause-fill");
                 btnToggle.lastChild.textContent = "Pause";
                 btnToggle.dataset.state = PLAYING;
+                btnStep.disabled = true;
+            }
+            break;
+        case "step":
+            if(succes) {
+                btnToggle.dataset.state = PAUSED;
+                btnStep.disabled = false;
             }
             break;
         case "pause":
@@ -110,6 +123,7 @@ function traiterReponseAction(action, succes) {
                 btnToggle.firstChild.classList.toggle("bi-pause-fill");
                 btnToggle.lastChild.textContent = "Reprendre";
                 btnToggle.dataset.state = PAUSED;
+                btnStep.disabled = false;
             }
             break;
         case "continue":
@@ -118,18 +132,25 @@ function traiterReponseAction(action, succes) {
                 btnToggle.firstChild.classList.toggle("bi-pause-fill");
                 btnToggle.lastChild.textContent = "Pause";
                 btnToggle.dataset.state = PLAYING;
+                btnStep.disabled = true;
             }
             break;
         case "stop":
             if(succes) {
-                btnToggle.firstChild.classList.add("bi-play-fill");
+                btnToggle.disabled = true;
+                btnStep.disabled = true;
+                btnStop.disabled = true;
             }
             break;
         case "relancer":
             if(succes) {
+                btnToggle.firstChild.classList.remove("bi-pause-fill");
                 btnToggle.firstChild.classList.add("bi-play-fill");
                 btnToggle.lastChild.textContent = "Commencer";
                 btnToggle.dataset.state = NOT_STARTED;
+                btnStep.disabled = false;
+                btnToggle.disabled = false;
+                btnStop.disabled = false;
                 resetLogs();
 
                 // TODO : A voir si on reset le graph une fois la simulation relancée
