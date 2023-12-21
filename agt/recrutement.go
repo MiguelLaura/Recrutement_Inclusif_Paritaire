@@ -130,7 +130,7 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 			switch strat {
 			case Hasard:
 				// Un.e candidat.e au hasard parmi les plus compétent.es est recruté
-				r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es également prometteurs ont postulé. On les départage par le hasard.")
+				r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es avec des compétences équivalentes ont postulé. On les départage par le hasard.")
 				idx = rand.Intn(len(maxCandidats))
 				embauches = append(embauches, maxCandidats[idx])
 				candidats = enleverEmploye(candidats, maxCandidats[idx])
@@ -138,12 +138,12 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 				// Une femme au hasard parmi les candidat.es est recrutée
 				lFemmes := FiltreFemme(maxCandidats) // permet d'isoler les femmes parmi les candidat.es
 				if len(lFemmes) > 0 {
-					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es également prometteurs ont postulé. On privilégie les femmes.")
+					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es avec des compétences équivalentes ont postulé. On privilégie les femmes.")
 					idx = rand.Intn(len(lFemmes))
 					embauches = append(embauches, lFemmes[idx])
 					candidats = enleverEmploye(candidats, lFemmes[idx])
 				} else {
-					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es également prometteurs ont postulé. On veut privilégier les femmes, mais il n'y en a pas dans le groupe. Un homme est recruté")
+					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es avec des compétences équivalentes ont postulé. On veut privilégier les femmes, mais il n'y en a pas dans le groupe. Un homme est recruté")
 					// S'il n'y a pas de femmes parmi les candidats les plus compétents, on choisit au hasard
 					idx = rand.Intn(len(maxCandidats))
 					embauches = append(embauches, maxCandidats[idx])
@@ -154,12 +154,12 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 				// Un homme au hasard parmi les candidat.es est recruté
 				lHommes := FiltreHomme(maxCandidats) // permet d'isoler les hommes parmi les candidat.es
 				if len(lHommes) > 0 {
-					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es également prometteurs ont postulé. On privilégie les hommes.")
+					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es avec des compétences équivalentes ont postulé. On privilégie les hommes.")
 					idx = rand.Intn(len(lHommes))
 					embauches = append(embauches, lHommes[idx])
 					candidats = enleverEmploye(candidats, lHommes[idx])
 				} else {
-					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es également prometteurs ont postulé. On veut privilégier les hommes, mais il n'y en a pas dans le groupe. Une femme est recrutée")
+					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es avec des compétences équivalentes ont postulé. On veut privilégier les hommes, mais il n'y en a pas dans le groupe. Une femme est recrutée")
 					// S'il n'y a pas d'hommes parmi les candidats les plus compétents, on choisit au hasard
 					idx = rand.Intn(len(maxCandidats))
 					embauches = append(embauches, maxCandidats[idx])
