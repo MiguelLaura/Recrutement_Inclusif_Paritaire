@@ -2,18 +2,18 @@ package agt
 
 import (
 	"errors"
-	"log"
 	"math"
 	"math/rand"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
+	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
 // ---------------------
 //     Constructeurs
 // ---------------------
 
-func NewRecrutement(ent *Entreprise, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64) *Recrutement {
+func NewRecrutement(ent *Entreprise, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64, logger *logger.Loggers) *Recrutement {
 	return &Recrutement{
 		entreprise:             ent,
 		objectif:               obj,
@@ -25,6 +25,7 @@ func NewRecrutement(ent *Entreprise, obj float64, sav StratParite, sap StratPari
 		pourcentagePlacesApres: ppap,
 		chnl:                   ent.chnlRecrutement,
 		fin:                    false,
+		logger:                 logger,
 	}
 }
 
@@ -77,7 +78,7 @@ func (r Recrutement) GenererCandidats(nbCandidats int) (candidats []Employe, err
 		var santeMentale int = 100
 		var agresseur bool = genAgresseur(genre)
 		var competence int = genCompetence()
-		e := NewEmploye(genre, anciennete, santeMentale, agresseur, competence, r.entreprise)
+		e := NewEmploye(genre, anciennete, santeMentale, agresseur, competence, r.entreprise, r.logger)
 		candidats = append(candidats, *e)
 	}
 	return candidats, nil
@@ -339,7 +340,7 @@ func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) 
 // ---------------------
 
 func (r *Recrutement) Start() {
-	log.Printf("Le service de recrutement est opérationnel")
+	r.logger.LogType(LOG_RECRUTEMENT, "Le service de recrutement est opérationnel")
 
 	// Boucle de vie
 	for !r.fin {
@@ -365,5 +366,5 @@ func (r *Recrutement) Start() {
 			r.chnl <- Communicateur_recrutement{ERREUR_RECRUTEMENT, err}
 		}
 	}
-	log.Printf("Fin du recrutement")
+	r.logger.LogType(LOG_RECRUTEMENT, "Fin du recrutement")
 }

@@ -2,10 +2,10 @@ package agt
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt/constantes"
+	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
 // ---------------------
@@ -29,7 +29,7 @@ func genererIDEmploye() EmployeID {
 	return EmployeID(res)
 }
 
-func GenererEmployeInit(ent **Entreprise, genre Genre) *Employe {
+func GenererEmployeInit(ent **Entreprise, genre Genre, logger *logger.Loggers) *Employe {
 	// Génération aléatoire de l'attribut agresseur
 	agg := genAgresseur(genre)
 
@@ -39,10 +39,10 @@ func GenererEmployeInit(ent **Entreprise, genre Genre) *Employe {
 	// Génération aléatoire de la compétence de l'employé
 	competence := genCompetence()
 
-	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, competence, *ent)
+	return NewEmploye(genre, anc, constantes.SANTE_MENTALE_MAX, agg, competence, *ent, logger)
 }
 
-func NewEmploye(gen Genre, anc int, san int, ag bool, compet int, ent *Entreprise) *Employe {
+func NewEmploye(gen Genre, anc int, san int, ag bool, compet int, ent *Entreprise, logger *logger.Loggers) *Employe {
 	return &Employe{
 		id:              genererIDEmploye(),
 		genre:           gen,
@@ -54,6 +54,7 @@ func NewEmploye(gen Genre, anc int, san int, ag bool, compet int, ent *Entrepris
 		entreprise:      ent,
 		fin:             false,
 		chnl:            make(chan Communicateur),
+		logger:          logger,
 	}
 }
 
@@ -135,15 +136,15 @@ func (e *Employe) travailler() {
 func (e *Employe) seFormer() {
 	e.cmpt_competence += 1
 	if e.competence < 10 && e.cmpt_competence == 5 {
-		log.Printf("Formation %s", e.Id())
+		e.logger.LogfType(LOG_EMPLOYE, "Formation %s", e.Id())
 		e.competence += 1
 		e.cmpt_competence = 0
 	}
-	//log.Printf("Apres formation : %d", e.competence)
+	//logger.LogfType(LOG_EMPLOYE, "Apres formation : %d", e.competence)
 }
 
 func (e *Employe) avoirEnfant() {
-	log.Printf("%s a un enfant", e.Id())
+	e.logger.LogfType(LOG_EMPLOYE, "%s a un enfant", e.Id())
 	if e.Genre() == Femme {
 		if rand.Float64() < constantes.PROBA_CONGE_F {
 			e.entreprise.CongeParental(e)
@@ -162,7 +163,7 @@ func (e *Employe) avoirEnfant() {
 // L'Employé est agressé par quelqu'un
 func (agresse *Employe) etreAgresse(agresseur *Employe) {
 
-	log.Printf("Employé %s agresse %s", agresseur.id, agresse.id)
+	agresse.logger.LogfType(LOG_AGRESSION, "Employé %s agresse %s", agresseur.id, agresse.id)
 
 	// Selon son comportement, il va porter plainte ou non
 	if rand.Float64() < constantes.PROBA_PLAINTE {
@@ -194,7 +195,7 @@ func (agresseur *Employe) agresser() {
 		cible = agresseur.entreprise.EnvoyerEmploye(genreAgresse)
 		timeout++
 	}
-	// log.Printf("Employé %s agresse %s", agresseur.id, cible.id)
+	// agresseur.logger.LogfType(LOG_AGRESSION, "Employé %s agresse %s", agresseur.id, cible.id)
 
 	if timeout < constantes.TIMEOUT_AGRESSION {
 		go EnvoyerMessage(cible, AGRESSION, agresseur)
@@ -210,18 +211,18 @@ func (agresseur *Employe) agresser() {
 
 // Lance la vie de l'agent
 func (e *Employe) Start() {
-	log.Printf("Démarrage de l'employé %s", e.id)
+	e.logger.LogfType(LOG_EMPLOYE, "Démarrage de l'employé %s", e.id)
 
 	// Initialisation
 
 	// Boucle de vie
 	for !e.fin {
-		// log.Printf("hello %s", e.id)
+		// e.logger.LogfType(LOG_EMPLOYE, "hello %s", e.id)
 		e.agir()
-		// log.Printf("goodbye %s", e.id)
+		// e.logger.LogfType(LOG_EMPLOYE, "goodbye %s", e.id)
 	}
 
-	log.Printf("Fin de l'employé %s", e.id)
+	e.logger.LogfType(LOG_EMPLOYE, "Fin de l'employé %s", e.id)
 }
 
 // Ce que l'employé fait à chaque tour
@@ -234,7 +235,7 @@ func (e *Employe) agir() {
 	case NOOP: // Ne fait rien
 		return
 	case LIBRE: // Vie une année complète
-		// log.Printf("action libre %s", e.id)
+		// e.logger.LogfType(LOG_EMPLOYE, "action libre %s", e.id)
 
 		// Si l'agent est un agresseur, il agresse
 		if e.Agresseur() {
@@ -262,7 +263,7 @@ func (e *Employe) agir() {
 		// Demissionner apres congé maternité
 		if e.Genre() == Femme && enfant {
 			if rand.Float64() <= constantes.PROBA_DEPART_F {
-				log.Printf("Demission apres conge maternité")
+				e.logger.LogfType(LOG_EMPLOYE, "Demission apres conge maternité")
 				e.poserDemission()
 			}
 		}
@@ -285,12 +286,12 @@ func (e *Employe) agir() {
 		}
 
 	case AGRESSION: // Se fait agresser par quelqu'un
-		// log.Printf("action agression %s", e.id)
+		// e.logger.LogfType(LOG_EMPLOYE, "action agression %s", e.id)
 
 		if msg.Payload != nil {
 			e.etreAgresse(msg.Payload.(*Employe))
 		} else {
-			log.Printf("%s : je vais pas m'agresser moi-même", e.id)
+			e.logger.LogfType(LOG_AGRESSION, "%s : je vais pas m'agresser moi-même", e.id)
 		}
 
 		// Si l'agent n'a plus de santé mentale, il pose sa démission
@@ -299,7 +300,7 @@ func (e *Employe) agir() {
 		}
 
 	case FIN: // Arrêter l'employé
-		// log.Printf("action fin %s", e.id)
+		// e.logger.LogfType(LOG_EMPLOYE, "action fin %s", e.id)
 		e.fin = true
 	}
 

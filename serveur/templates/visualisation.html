@@ -39,7 +39,7 @@
                                     <i class="bi bi-people-fill"></i> Nombre d'employé·es : <span class="data" id="nb-emp">156980</span>
                                 </li>
                                 <li>
-                                    <i class="bi bi-star-fill"></i> Parité actuelle : <span class="data" id="nb-emp">25</span>% de femmes
+                                    <i class="bi bi-star-fill"></i> Parité actuelle : <span class="data" id="parite">25</span>% de femmes
                                     <p>Objectif : <span id="objectif">50</span>%</p>
                                 </li>
                                 <li>
@@ -50,25 +50,6 @@
                                     </ul>
                                 </li>
                             </ul>
-                        </div>
-                        <div>
-                            <aside class="sim-info-sante">
-                                <h2>Santé entreprise <i class="bi bi-info-circle clickable-icon"></i></h2>
-                                <table class="indicators-container">
-                                    <tr>
-                                        <td>Bénéfices</td> <td><i class="bi bi-circle-fill vert"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Santé mentale</td> <td><i class="bi bi-circle-fill orange"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Démissions</td> <td><i class="bi bi-circle-fill rouge"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Licenciements</td> <td><i class="bi bi-circle-fill rouge"></i></td>
-                                    </tr>
-                                </table>
-                            </aside>
                         </div>
                     </div>
                 </article>
@@ -85,9 +66,9 @@
                     <header>
                         <h1>Visualisation</h1>
                         <div>
-                            <button class="btn-presse" id="visu-tout">Tout</button>
-                            <button id="visu-benef">Bénéfices</button>
-                            <button id="visu-parite">Parité</button>
+                            <button class="btn-visu btn-presse" id="visu-tout">Tout</button>
+                            <button class="btn-visu" id="visu-benef">Bénéfices</button>
+                            <button class="btn-visu" id="visu-parite">Parité</button>
                         </div>
                     </header>
                     <canvas id="sim-graph"></canvas>
@@ -98,6 +79,7 @@
                 <header>
                     <h1>Log</h1>
                     <p>Options <i class="bi bi-chevron-down clickable-icon"></i></p>
+
                 </header>
                 <div class="logs-container">
                     <div class="flex-center-container">
@@ -112,9 +94,10 @@
         </main>
 
         <script type="text/javascript" src="../static/js/infoPopup.js"></script>
+        <script type="text/javascript" src="../static/js/visualisation/domElements.js"></script>
         <script type="text/javascript" src="../static/js/visualisation/graphHandler.js"></script>
         <script type="text/javascript" src="../static/js/visualisation/logHandler.js"></script>
-        <script type="text/javascript" src="../static/js/visualisation/websocketHandler.js"></script>
         <script type="text/javascript" src="../static/js/visualisation/main.js"></script>
+        <script type="text/javascript" src="../static/js/visualisation/websocketHandler.js"></script>
     </body>
 </html>

@@ -1,13 +1,34 @@
 package logger
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 type ConsoleLogger struct{}
 
-func (l *ConsoleLogger) Log(msg ...any) {
-	log.Print(msg...)
+func NewConsoleLogger() *ConsoleLogger {
+	return &ConsoleLogger{}
 }
 
-func (l *ConsoleLogger) Err(msg ...any) {
+func (l *ConsoleLogger) Log(msg ...any) error {
 	log.Print(msg...)
+	return nil
+}
+
+func (l *ConsoleLogger) Logf(format string, v ...any) error {
+	log.Printf(format, v...)
+	return nil
+}
+
+func (l *ConsoleLogger) Err(msg ...any) error {
+	return l.LogType(ERR, msg...)
+}
+
+func (l *ConsoleLogger) LogType(logType LogType, msg ...any) error {
+	return l.Log(append([]any{formatLogType(logType)}, msg...)...)
+}
+
+func (l *ConsoleLogger) LogfType(logType LogType, format string, v ...any) error {
+	return l.LogType(logType, fmt.Sprintf(format, v...))
 }

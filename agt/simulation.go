@@ -3,29 +3,36 @@ package agt
 import (
 	"log"
 	"time"
+
+	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
 // retourne un pointeur sur une nouvelle simulation
 func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64, maxStep int) (simu *Simulation) {
 	simu = &Simulation{}
+	simu.etatInit = EtatSimulation{nbEmployes, pariteInit}
 	simu.maxStep = maxStep
 
-	simu.ent = *NewEntreprise(nbEmployes, pariteInit)
-	recrut := NewRecrutement(&simu.ent, obj, sav, sap, trav, trap, ppav, ppap)
+	simu.logger.AjouterLogger(logger.NewConsoleLogger())
+
+	simu.ent = *NewEntreprise(nbEmployes, pariteInit, &simu.logger)
+	recrut := NewRecrutement(&simu.ent, obj, sav, sap, trav, trap, ppav, ppap, &simu.logger)
 	simu.ent.AjouterRecrutement(*recrut)
 
-	simu.status = CREATED
+	simu.mettreAJourStatus(CREATED)
 
 	return simu
 }
 
-func (simu *Simulation) Start() string {
+func (simu *Simulation) Start() {
 	if simu.status != CREATED {
-		log.Println("La simulation ne peut pas être démarrée depuis cet état.")
-		return "La simulation ne peut pas être démarrée depuis cet état."
+		simu.logger.Err("La simulation ne peut pas être démarrée depuis cet état.")
+		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"start", false})
+		return
 	}
 
-	simu.status = STARTED
+	simu.step = 0
+	simu.mettreAJourStatus(STARTED)
 	simu.start = time.Now()
 
 	// Démarrage de l'entreprise
@@ -33,8 +40,7 @@ func (simu *Simulation) Start() string {
 
 	simu.pariteInit = simu.ent.PourcentageFemmes()
 
-	msg_end := "La simulation démarre."
-
+	simu.locker.Add(1)
 	go func() {
 		for simu.step < simu.maxStep {
 			if simu.status == STARTED {
@@ -48,45 +54,120 @@ func (simu *Simulation) Start() string {
 			}
 		}
 
-		log.Println("La simulation est terminée.")
-		// Si on le récupère pas maintenant, les employés vont se terminer
-		pariteFin := simu.ent.PourcentageFemmes()
-		EnvoyerMessageEntreprise(&simu.ent, FIN, nil)
-		// Permet d'attendre la fin effective de l'entreprise
-		EnvoyerMessageEntreprise(&simu.ent, FIN, nil)
+		// On s'assure que le statut de la simulation est bien à jour
+		simu.mettreAJourStatus(ENDED)
 
-		log.Printf("Fin de la simulation [step: %d, nb employé fin : %d, début parité : %f, fin parité : %f]", simu.step, len(simu.ent.Employes()), simu.pariteInit, pariteFin)
+		simu.terminerSimulation()
+		simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
+		simu.locker.Done()
 	}()
-	return msg_end
 
+	simu.logger.Log("La simulation démarre.")
+	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"start", true})
 }
 
-func (simu *Simulation) Pause() string {
+func (simu *Simulation) Pause() {
 	if simu.status != STARTED {
-		msg := "La simulation ne peut pas être mise en pause depuis cet état."
-		log.Println(msg)
-		return msg
+		simu.logger.Err("La simulation ne peut pas être mise en pause depuis cet état.")
+		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"pause", false})
+		return
 	}
-	simu.status = PAUSED
-	return "La simulation est en pause."
+
+	simu.mettreAJourStatus(PAUSED)
+
+	simu.logger.Log("La simulation est en pause.")
+	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"pause", true})
 }
 
-func (simu *Simulation) Continue() string {
+func (simu *Simulation) Continue() {
 	if simu.status != PAUSED {
-		msg := "La simulation ne peut pas être reprise depuis cet état."
-		log.Println(msg)
-		return msg
+		simu.logger.Err("La simulation ne peut pas être reprise depuis cet état.")
+		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"continue", false})
+		return
 	}
-	simu.status = STARTED
-	return "La simulation est relancée."
+
+	simu.mettreAJourStatus(STARTED)
+
+	simu.logger.Log("La simulation est relancée.")
+	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"continue", true})
 }
 
-func (simu *Simulation) End() string {
+func (simu *Simulation) End() {
 	if simu.status == ENDED {
-		msg := "La simulation est déjà terminée."
-		log.Println(msg)
-		return msg
+		simu.logger.Err("La simulation est déjà terminée.")
+		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"stop", false})
+		return
 	}
-	simu.status = ENDED
-	return "La simulation est terminée."
+
+	simu.mettreAJourStatus(ENDED)
+
+	simu.locker.Wait()
+
+	simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
+	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"stop", true})
+}
+
+func (simu *Simulation) Relancer() {
+	if simu.status == CREATED {
+		simu.logger.Err("La simulation n'a pas encore commencé.")
+		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"relancer", false})
+		return
+	}
+
+	if simu.status != ENDED {
+		log.Printf("Termine la simulation en cours")
+		simu.mettreAJourStatus(ENDED)
+		simu.locker.Wait()
+	}
+
+	simulationPrec := simu.ent.Recrutement()
+
+	simu.ent = *NewEntreprise(
+		simu.etatInit.nbEmp,
+		simu.etatInit.parite,
+		&simu.logger,
+	)
+
+	recrut := NewRecrutement(
+		&simu.ent,
+		simulationPrec.Objectif(),
+		simulationPrec.StratAvant(),
+		simulationPrec.StratApres(),
+		simulationPrec.TypeRecrutementAvant(),
+		simulationPrec.TypeRecrutementApres(),
+		simulationPrec.PourcentagePlacesAvant(),
+		simulationPrec.PourcentagePlacesApres(),
+		&simu.logger,
+	)
+
+	simu.ent.AjouterRecrutement(*recrut)
+	simu.mettreAJourStatus(CREATED)
+
+	simu.logger.Log("La simulation a été récréé.")
+	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"relancer", true})
+}
+
+func (simu *Simulation) AjouteWebSockerLogger(wsLogger *logger.SocketLogger) {
+	simu.logger.AjouterLogger(wsLogger)
+}
+
+func (simu *Simulation) terminerSimulation() {
+	if simu.status != ENDED {
+		return
+	}
+
+	// Si on le récupère pas maintenant, les employés vont se terminer
+	pariteFin := simu.ent.PourcentageFemmes()
+	EnvoyerMessageEntreprise(&simu.ent, FIN, nil)
+	// Permet d'attendre la fin effective de l'entreprise
+	EnvoyerMessageEntreprise(&simu.ent, FIN, nil)
+
+	log.Printf("Fin de la simulation [step: %d, nb employé fin : %d, début parité : %.2f, fin parité : %.2f]", simu.step, len(simu.ent.Employes()), simu.pariteInit, pariteFin)
+}
+
+func (simu *Simulation) mettreAJourStatus(nouveauStatus Status) {
+	simu.locker.Lock()
+	defer simu.locker.Unlock()
+
+	simu.status = nouveauStatus
 }

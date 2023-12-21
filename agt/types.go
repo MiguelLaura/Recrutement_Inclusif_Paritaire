@@ -3,9 +3,34 @@ package agt
 import (
 	"sync"
 	"time"
+
+	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
+)
+
+// ------------ Types de logs --------------
+
+const (
+	LOG_AGRESSION   logger.LogType = "agression"
+	LOG_DEPART      logger.LogType = "depart"
+	LOG_RECRUTEMENT logger.LogType = "recrutement"
+	LOG_EMPLOYE     logger.LogType = "employe"
+	LOG_ENTREPRISE  logger.LogType = "entreprise"
+	LOG_EVENEMENT   logger.LogType = "evenement"
+	LOG_GLOBALE     logger.LogType = "globale"
+	LOG_REPONSE     logger.LogType = "reponse"
 )
 
 // ------------ SIMULATION ------------
+
+type EtatSimulation struct {
+	nbEmp  int
+	parite float64
+}
+
+type SimulationLocker struct {
+	sync.WaitGroup
+	sync.Mutex
+}
 
 type Simulation struct {
 	ent        Entreprise
@@ -14,6 +39,9 @@ type Simulation struct {
 	step       int // Stats
 	start      time.Time
 	status     Status // created, started, pause, finished
+	logger     logger.Loggers
+	etatInit   EtatSimulation
+	locker     SimulationLocker
 }
 
 type Action int
@@ -75,6 +103,7 @@ type Employe struct {
 	entreprise      *Entreprise
 	fin             bool
 	chnl            chan Communicateur
+	logger          *logger.Loggers
 }
 
 type Genre int
@@ -104,6 +133,7 @@ type Entreprise struct {
 	chnlActions     chan Communicateur
 	chnlRecrutement chan Communicateur_recrutement
 	chnlNotifAction chan Communicateur
+	logger          *logger.Loggers
 }
 
 // ------------ RECRUTEMENT ------------
@@ -136,4 +166,5 @@ type Recrutement struct {
 	pourcentagePlacesApres float64
 	chnl                   chan Communicateur_recrutement
 	fin                    bool
+	logger                 *logger.Loggers
 }

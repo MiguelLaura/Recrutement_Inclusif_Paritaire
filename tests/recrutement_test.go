@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"gitlab.utc.fr/mennynat/ia04-project/agt"
+	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
 // ------------------------------------------------------
@@ -11,13 +12,14 @@ import (
 // ------------------------------------------------------
 
 func TestFiltreFemme(t *testing.T) {
+	var logger logger.Loggers
 	var ent agt.Entreprise
-	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 6, &ent) //recruté
-	var e2 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 4, &ent)
-	var e3 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 8, &ent) //recrutée
-	var e4 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 1, &ent)
-	var e5 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 3, &ent)
-	var e6 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 5, &ent) //recrutée
+	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 6, &ent, &logger) //recruté
+	var e2 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 4, &ent, &logger)
+	var e3 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 8, &ent, &logger) //recrutée
+	var e4 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 1, &ent, &logger)
+	var e5 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 3, &ent, &logger)
+	var e6 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 5, &ent, &logger) //recrutée
 	var employes []agt.Employe
 	employes = append(employes, e1)
 	employes = append(employes, e2)
@@ -36,13 +38,14 @@ func TestFiltreFemme(t *testing.T) {
 }
 
 func TestFiltreHomme(t *testing.T) {
+	var logger logger.Loggers
 	var ent agt.Entreprise
-	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 6, &ent) //recruté
-	var e2 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 4, &ent)
-	var e3 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 8, &ent) //recrutée
-	var e4 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 1, &ent)
-	var e5 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 3, &ent)
-	var e6 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 5, &ent) //recrutée
+	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 6, &ent, &logger) //recruté
+	var e2 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 4, &ent, &logger)
+	var e3 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 8, &ent, &logger) //recrutée
+	var e4 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 1, &ent, &logger)
+	var e5 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 3, &ent, &logger)
+	var e6 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 5, &ent, &logger) //recrutée
 	var employes []agt.Employe
 	employes = append(employes, e1)
 	employes = append(employes, e2)
@@ -61,11 +64,12 @@ func TestFiltreHomme(t *testing.T) {
 
 func TestEmployeMaxCompetences(t *testing.T) {
 	// TEST 1 : un seul candidat renvoyé
+	var logger logger.Loggers
 	var ent agt.Entreprise
-	var e1 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 6, &ent)
-	var e2 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 4, &ent)
-	var e3 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 8, &ent) // renvoyé
-	var e4 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 1, &ent)
+	var e1 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 6, &ent, &logger)
+	var e2 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 4, &ent, &logger)
+	var e3 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 8, &ent, &logger) // renvoyé
+	var e4 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 1, &ent, &logger)
 	var cand []agt.Employe
 	cand = append(cand, e1)
 	cand = append(cand, e2)
@@ -85,10 +89,10 @@ func TestEmployeMaxCompetences(t *testing.T) {
 
 	// TEST 2: Plusieurs candidats renvoyés
 
-	e1 = *agt.NewEmploye(1, 0, 100, false, 6, &ent)
-	e2 = *agt.NewEmploye(1, 0, 100, false, 8, &ent) //renvoyé
-	e3 = *agt.NewEmploye(1, 0, 100, false, 8, &ent) //renvoyé
-	e4 = *agt.NewEmploye(1, 0, 100, false, 1, &ent)
+	e1 = *agt.NewEmploye(1, 0, 100, false, 6, &ent, &logger)
+	e2 = *agt.NewEmploye(1, 0, 100, false, 8, &ent, &logger) //renvoyé
+	e3 = *agt.NewEmploye(1, 0, 100, false, 8, &ent, &logger) //renvoyé
+	e4 = *agt.NewEmploye(1, 0, 100, false, 1, &ent, &logger)
 
 	cand = nil
 	cand = append(cand, e1)
@@ -110,13 +114,14 @@ func TestEmployeMaxCompetences(t *testing.T) {
 
 func TestRecrutementCompetencesEgales(t *testing.T) {
 	// TEST 1 : Pas d'utilisation des stratégies
+	var logger logger.Loggers
 	var ent agt.Entreprise
-	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 6, &ent) //recruté
-	var e2 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 4, &ent)
-	var e3 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 8, &ent) //recrutée
-	var e4 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 1, &ent)
-	var e5 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 3, &ent)
-	var e6 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 5, &ent) //recrutée
+	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 6, &ent, &logger) //recruté
+	var e2 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 4, &ent, &logger)
+	var e3 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 8, &ent, &logger) //recrutée
+	var e4 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 1, &ent, &logger)
+	var e5 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 3, &ent, &logger)
+	var e6 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 5, &ent, &logger) //recrutée
 	var cand []agt.Employe
 	cand = append(cand, e1)
 	cand = append(cand, e2)
@@ -137,12 +142,12 @@ func TestRecrutementCompetencesEgales(t *testing.T) {
 	}
 
 	// TEST 2: Utilisation de PrioFemme pour egalité HF
-	e1 = *agt.NewEmploye(0, 0, 100, false, 6, &ent)
-	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent)
-	e3 = *agt.NewEmploye(1, 0, 100, false, 8, &ent) // recruté
-	e4 = *agt.NewEmploye(0, 0, 100, false, 1, &ent)
-	e5 = *agt.NewEmploye(1, 0, 100, false, 3, &ent)
-	e6 = *agt.NewEmploye(1, 0, 100, false, 6, &ent) // recrutée
+	e1 = *agt.NewEmploye(0, 0, 100, false, 6, &ent, &logger)
+	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent, &logger)
+	e3 = *agt.NewEmploye(1, 0, 100, false, 8, &ent, &logger) // recruté
+	e4 = *agt.NewEmploye(0, 0, 100, false, 1, &ent, &logger)
+	e5 = *agt.NewEmploye(1, 0, 100, false, 3, &ent, &logger)
+	e6 = *agt.NewEmploye(1, 0, 100, false, 6, &ent, &logger) // recrutée
 	cand = nil
 	cand = append(cand, e1)
 	cand = append(cand, e2)
@@ -165,12 +170,12 @@ func TestRecrutementCompetencesEgales(t *testing.T) {
 
 	// TEST 3: Utilisation de PrioFemme pour egalité HH
 
-	e1 = *agt.NewEmploye(0, 0, 100, false, 6, &ent) // 50% de chance d'être recruté
-	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent)
-	e3 = *agt.NewEmploye(1, 0, 100, false, 8, &ent) // recrutée
-	e4 = *agt.NewEmploye(0, 0, 100, false, 1, &ent)
-	e5 = *agt.NewEmploye(1, 0, 100, false, 3, &ent)
-	e6 = *agt.NewEmploye(0, 0, 100, false, 6, &ent) // 50% de chance d'être recruté
+	e1 = *agt.NewEmploye(0, 0, 100, false, 6, &ent, &logger) // 50% de chance d'être recruté
+	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent, &logger)
+	e3 = *agt.NewEmploye(1, 0, 100, false, 8, &ent, &logger) // recrutée
+	e4 = *agt.NewEmploye(0, 0, 100, false, 1, &ent, &logger)
+	e5 = *agt.NewEmploye(1, 0, 100, false, 3, &ent, &logger)
+	e6 = *agt.NewEmploye(0, 0, 100, false, 6, &ent, &logger) // 50% de chance d'être recruté
 	cand = nil
 	cand = append(cand, e1)
 	cand = append(cand, e2)
@@ -191,12 +196,12 @@ func TestRecrutementCompetencesEgales(t *testing.T) {
 	}
 
 	// TEST 4: Utilisation de PrioHomme pour egalité HF
-	e1 = *agt.NewEmploye(0, 0, 100, false, 6, &ent) // recruté
-	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent)
-	e3 = *agt.NewEmploye(1, 0, 100, false, 8, &ent) // recruté
-	e4 = *agt.NewEmploye(0, 0, 100, false, 1, &ent)
-	e5 = *agt.NewEmploye(1, 0, 100, false, 3, &ent)
-	e6 = *agt.NewEmploye(1, 0, 100, false, 6, &ent) // recrutée
+	e1 = *agt.NewEmploye(0, 0, 100, false, 6, &ent, &logger) // recruté
+	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent, &logger)
+	e3 = *agt.NewEmploye(1, 0, 100, false, 8, &ent, &logger) // recruté
+	e4 = *agt.NewEmploye(0, 0, 100, false, 1, &ent, &logger)
+	e5 = *agt.NewEmploye(1, 0, 100, false, 3, &ent, &logger)
+	e6 = *agt.NewEmploye(1, 0, 100, false, 6, &ent, &logger) // recrutée
 	cand = nil
 	cand = append(cand, e1)
 	cand = append(cand, e2)
@@ -218,12 +223,12 @@ func TestRecrutementCompetencesEgales(t *testing.T) {
 	}
 
 	// TEST 5: Utilisation de PrioHomme pour egalité FF
-	e1 = *agt.NewEmploye(1, 0, 100, false, 6, &ent) // 50% de chance d'être recruté
-	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent)
-	e3 = *agt.NewEmploye(1, 0, 100, false, 8, &ent) // recrutée
-	e4 = *agt.NewEmploye(0, 0, 100, false, 1, &ent)
-	e5 = *agt.NewEmploye(1, 0, 100, false, 3, &ent)
-	e6 = *agt.NewEmploye(1, 0, 100, false, 6, &ent) // 50% de chance d'être recruté
+	e1 = *agt.NewEmploye(1, 0, 100, false, 6, &ent, &logger) // 50% de chance d'être recruté
+	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent, &logger)
+	e3 = *agt.NewEmploye(1, 0, 100, false, 8, &ent, &logger) // recrutée
+	e4 = *agt.NewEmploye(0, 0, 100, false, 1, &ent, &logger)
+	e5 = *agt.NewEmploye(1, 0, 100, false, 3, &ent, &logger)
+	e6 = *agt.NewEmploye(1, 0, 100, false, 6, &ent, &logger) // 50% de chance d'être recruté
 	cand = nil
 	cand = append(cand, e1)
 	cand = append(cand, e2)
@@ -246,11 +251,11 @@ func TestRecrutementCompetencesEgales(t *testing.T) {
 	// TEST 6: Erreurs
 
 	cand = nil
-	embauches, err = agt.RecrutementCompetencesEgales(2, agt.StratVide, cand)
+	_, err = agt.RecrutementCompetencesEgales(2, agt.StratVide, cand)
 	if err == nil {
 		t.Errorf("erreur : pas d'erreur renvoyée alors que stratégie inconnue %s", err)
 	}
-	embauches, err = agt.RecrutementCompetencesEgales(-1, agt.StratVide, cand)
+	_, err = agt.RecrutementCompetencesEgales(-1, agt.StratVide, cand)
 	if err == nil {
 		t.Errorf("erreur : pas d'erreur renvoyée alors que nombre négatif de personnes à recruter %s", err)
 	}
@@ -259,12 +264,13 @@ func TestRecrutementCompetencesEgales(t *testing.T) {
 func TestRecrutementPlacesReservees(t *testing.T) {
 	// TEST 1: Nombre de femmes à recruter tombe juste
 	var ent agt.Entreprise
-	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 6, &ent) //recruté
-	var e2 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 4, &ent) //recruté
-	var e3 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 8, &ent) //recrutée
-	var e4 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 1, &ent)
-	var e5 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 3, &ent) //recrutée
-	var e6 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 2, &ent)
+	var logger logger.Loggers
+	var e1 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 6, &ent, &logger) //recruté
+	var e2 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 4, &ent, &logger) //recruté
+	var e3 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 8, &ent, &logger) //recrutée
+	var e4 agt.Employe = *agt.NewEmploye(0, 0, 100, false, 1, &ent, &logger)
+	var e5 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 3, &ent, &logger) //recrutée
+	var e6 agt.Employe = *agt.NewEmploye(1, 0, 100, false, 2, &ent, &logger)
 	var cand []agt.Employe
 	cand = append(cand, e1)
 	cand = append(cand, e2)
@@ -285,11 +291,11 @@ func TestRecrutementPlacesReservees(t *testing.T) {
 	}
 
 	// TEST 2: Nombre de femmes à recruter ne tombe pas juste
-	e1 = *agt.NewEmploye(0, 0, 100, false, 7, &ent) //recruté
-	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent)
-	e3 = *agt.NewEmploye(1, 0, 100, false, 9, &ent) //recrutée
-	e4 = *agt.NewEmploye(1, 0, 100, false, 3, &ent) //recrutée
-	e5 = *agt.NewEmploye(1, 0, 100, false, 1, &ent)
+	e1 = *agt.NewEmploye(0, 0, 100, false, 7, &ent, &logger) //recruté
+	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent, &logger)
+	e3 = *agt.NewEmploye(1, 0, 100, false, 9, &ent, &logger) //recrutée
+	e4 = *agt.NewEmploye(1, 0, 100, false, 3, &ent, &logger) //recrutée
+	e5 = *agt.NewEmploye(1, 0, 100, false, 1, &ent, &logger)
 	cand = nil
 	cand = append(cand, e1)
 	cand = append(cand, e2)
@@ -309,11 +315,11 @@ func TestRecrutementPlacesReservees(t *testing.T) {
 	}
 
 	// TEST 3: Il n'y a pas assez de femmes pour atteindre l'objectif donné par le pourcentage
-	e1 = *agt.NewEmploye(0, 0, 100, false, 8, &ent) //recruté
-	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent) //recruté
-	e3 = *agt.NewEmploye(0, 0, 100, false, 5, &ent) //recruté
-	e4 = *agt.NewEmploye(0, 0, 100, false, 1, &ent)
-	e5 = *agt.NewEmploye(1, 0, 100, false, 7, &ent) //recrutée
+	e1 = *agt.NewEmploye(0, 0, 100, false, 8, &ent, &logger) //recruté
+	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent, &logger) //recruté
+	e3 = *agt.NewEmploye(0, 0, 100, false, 5, &ent, &logger) //recruté
+	e4 = *agt.NewEmploye(0, 0, 100, false, 1, &ent, &logger)
+	e5 = *agt.NewEmploye(1, 0, 100, false, 7, &ent, &logger) //recrutée
 	cand = nil
 	cand = append(cand, e1)
 	cand = append(cand, e2)
@@ -333,12 +339,12 @@ func TestRecrutementPlacesReservees(t *testing.T) {
 	}
 
 	// TEST 4: Egalité de compétences
-	e1 = *agt.NewEmploye(0, 0, 100, false, 6, &ent) //recruté
-	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent)
-	e3 = *agt.NewEmploye(0, 0, 100, false, 5, &ent) //recruté
-	e4 = *agt.NewEmploye(1, 0, 100, false, 6, &ent) //recrutée
-	e5 = *agt.NewEmploye(1, 0, 100, false, 7, &ent) //recrutée
-	e6 = *agt.NewEmploye(1, 0, 100, false, 3, &ent)
+	e1 = *agt.NewEmploye(0, 0, 100, false, 6, &ent, &logger) //recruté
+	e2 = *agt.NewEmploye(0, 0, 100, false, 4, &ent, &logger)
+	e3 = *agt.NewEmploye(0, 0, 100, false, 5, &ent, &logger) //recruté
+	e4 = *agt.NewEmploye(1, 0, 100, false, 6, &ent, &logger) //recrutée
+	e5 = *agt.NewEmploye(1, 0, 100, false, 7, &ent, &logger) //recrutée
+	e6 = *agt.NewEmploye(1, 0, 100, false, 3, &ent, &logger)
 	cand = nil
 	cand = append(cand, e1)
 	cand = append(cand, e2)
@@ -360,15 +366,15 @@ func TestRecrutementPlacesReservees(t *testing.T) {
 
 	// TEST 5: Gestion des erreurs
 	cand = nil
-	embauches, err = agt.RecrutementPlacesReservees(4, cand, 12)
+	_, err = agt.RecrutementPlacesReservees(4, cand, 12)
 	if err == nil {
 		t.Errorf("erreur : pas d'erreur renvoyée alors que pourcentagePlace > 1")
 	}
-	embauches, err = agt.RecrutementPlacesReservees(4, cand, -0.2)
+	_, err = agt.RecrutementPlacesReservees(4, cand, -0.2)
 	if err == nil {
 		t.Errorf("erreur : pas d'erreur renvoyée alors que pourcentagePlace <0")
 	}
-	embauches, err = agt.RecrutementPlacesReservees(-4, cand, 0.2)
+	_, err = agt.RecrutementPlacesReservees(-4, cand, 0.2)
 	if err == nil {
 		t.Errorf("erreur : pas d'erreur renvoyée alors que nbARecruter<0")
 	}

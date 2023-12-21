@@ -16,3 +16,6 @@ function addLog(contenu) {
     }
 }
 
+function resetLogs() {
+    logContainer.innerHTML = "";
+}

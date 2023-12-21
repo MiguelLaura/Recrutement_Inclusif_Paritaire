@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/gorilla/websocket"
+	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
 type WSClientsList map[*WSClient]bool
@@ -49,45 +50,46 @@ func (c *WSClient) readMessages() {
 		}
 
 		//actions : start, pause, continue, stop
-		resp := ""
 		if req.T == "action" {
-			resp, err = c.handleMessageFromWebSocket(req.IdSimu, req.D) //si type == action, on envoie l'action
+			err = c.handleMessageFromWebSocket(req.IdSimu, req.D) //si type == action, on envoie l'action
 			if err != nil {
 				log.Println("erreur :", err)
 			}
 		}
-
-		json, err := json.Marshal(resp)
-		if err != nil {
-			log.Println("erreur :", err)
-		}
-		c.connection.WriteMessage(websocket.TextMessage, json)
 	}
 }
 
-func (c *WSClient) handleMessageFromWebSocket(idSimulation string, message string) (resp string, err error) {
+func (c *WSClient) handleMessageFromWebSocket(idSimulation string, message string) (err error) {
 	simulation := c.manager.restServerAgent.simulations[idSimulation]
+	myLogger := logger.NewSocketLogger(c.connection, 10)
+	if c.idSimu != idSimulation {
+		c.idSimu = idSimulation
+		simulation.AjouteWebSockerLogger(myLogger)
+	}
+
 	if simulation == nil {
 		log.Println("erreur : Simulation introuvable")
-		resp = "Simulation introuvable"
+		myLogger.Err("Simulation introuvable")
 		err = errors.New("erreur : Simulation introuvable")
 		return
 	} else {
 		switch message {
 		case "start":
-			resp = simulation.Start()
+			simulation.Start()
 		case "pause":
-			resp = simulation.Pause()
+			simulation.Pause()
 		case "continue":
-			resp = simulation.Continue()
+			simulation.Continue()
 		case "stop":
-			resp = simulation.End()
+			simulation.End()
+		case "relancer":
+			simulation.Relancer()
 		default:
 			log.Println("erreur : Action non reconnue")
-			resp = ""
 			err = errors.New("erreur : Action non reconnue")
 			return
 		}
 	}
-	return resp, nil
+
+	return
 }
