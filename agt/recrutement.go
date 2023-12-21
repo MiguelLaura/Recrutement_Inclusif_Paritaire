@@ -107,7 +107,7 @@ func (r Recrutement) GenererCandidats(nbCandidats int) (candidats []Employe, err
 
 // Recrutement si TypeRecrutement = Competences
 // Les candidat.es les plus compétent.es sont recrutés. En cas d'égalité, le choix diffère en fonction de StratParite.
-func (r Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats []Employe) (embauches []Employe, err error) {
+func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats []Employe) (embauches []Employe, err error) {
 	if nbARecruter < 0 {
 		err := errors.New("erreur : nombre de candidats à recruter négatif")
 		return nil, err
@@ -181,7 +181,7 @@ func (r Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratPa
 
 // Recrutement si TypeRecrutement = PlacesReservees
 // Parmi les candidats à recruter, un certain pourcentage est réservé aux femmes, peu importe leurs compétences
-func (r Recrutement) RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentagePlace float64) (embauches []Employe, err error) {
+func (r *Recrutement) RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentagePlace float64) (embauches []Employe, err error) {
 	if nbARecruter < 0 {
 		err := errors.New("erreur : nombre de candidats à recruter négatif")
 		return nil, err

@@ -61,8 +61,8 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64, logger *logger.Logger
 	ent.departs = &departs
 	formation := make([]Employe, 0)
 	ent.formation = &formation
-	conge_parental := make([]Employe, 0)
-	ent.congeParental = &conge_parental
+	congeParental := make([]Employe, 0)
+	ent.congeParental = &congeParental
 	plaintes := make([][]Employe, 0)
 	ent.plaintes = &plaintes
 	ent.nbDepressions = 0
@@ -157,7 +157,6 @@ func (ent *Entreprise) RecevoirDemission(emp *Employe) {
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
 		ent.logger.LogfType(LOG_DEPART, "%s pose sa démission", emp.String())
-		return
 	}
 }
 
@@ -169,7 +168,7 @@ func (ent *Entreprise) RecevoirDemissionMaternite(emp *Employe) {
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
 		ent.logger.LogfType(LOG_DEPART, "%s pose sa démission après son congé maternité", emp.String())
-		return
+
 	}
 }
 
@@ -182,7 +181,7 @@ func (ent *Entreprise) RecevoirDepression(emp *Employe) {
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
 		ent.logger.LogfType(LOG_DEPART, "%s pose sa démission pour dépression", emp.String())
-		return
+
 	}
 }
 
@@ -194,7 +193,7 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	if i < 0 {
 		*ent.departs = append(*ent.departs, *emp)
 		ent.logger.LogfType(LOG_DEPART, "%s part à la retraite", emp.String())
-		return
+
 	}
 }
 
@@ -205,7 +204,6 @@ func (ent *Entreprise) RecevoirCongeParental(emp *Employe) {
 	if i < 0 {
 		*ent.congeParental = append(*ent.congeParental, *emp)
 		ent.logger.LogfType(LOG_ENTREPRISE, "%s part en congé parental", emp.String())
-		return
 	}
 }
 
