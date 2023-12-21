@@ -42,6 +42,7 @@ type Simulation struct {
 	logger     logger.Loggers
 	etatInit   EtatSimulation
 	locker     SimulationLocker
+	aCommencee bool
 }
 
 type Action int

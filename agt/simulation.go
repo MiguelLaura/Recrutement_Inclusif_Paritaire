@@ -12,6 +12,7 @@ func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratPar
 	simu = &Simulation{}
 	simu.etatInit = EtatSimulation{nbEmployes, pariteInit}
 	simu.maxStep = maxStep
+	simu.aCommencee = false
 
 	simu.logger.AjouterLogger(logger.NewConsoleLogger())
 
@@ -109,6 +110,7 @@ func (simu *Simulation) Relancer() {
 		simu.locker.Wait()
 	}
 
+	simu.aCommencee = false
 	simulationPrec := simu.ent.Recrutement()
 
 	simu.ent = *NewEntreprise(
@@ -162,6 +164,13 @@ func (simu *Simulation) mettreAJourStatus(nouveauStatus Status) {
 }
 
 func (simu *Simulation) startAgents() {
+	simu.locker.Lock()
+	defer simu.locker.Unlock()
+
+	if simu.aCommencee {
+		return
+	}
+
 	simu.step = 0
 	simu.start = time.Now()
 
@@ -196,4 +205,6 @@ func (simu *Simulation) startAgents() {
 		simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
 		simu.locker.Done()
 	}()
+
+	simu.aCommencee = true
 }
