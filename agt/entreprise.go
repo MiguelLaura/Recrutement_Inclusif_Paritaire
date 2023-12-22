@@ -537,3 +537,11 @@ func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
 	emp := empList[idx]
 	return emp
 }
+
+func (ent *Entreprise) MoyenneCompetences() float64 {
+	somme := 0
+	for _, e := range *ent.employes {
+		somme += e.competence
+	}
+	return float64(somme / ent.nbEmployes())
+}
