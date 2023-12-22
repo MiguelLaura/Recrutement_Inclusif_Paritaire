@@ -235,7 +235,7 @@ func (ent *Entreprise) RecevoirActions(nbActions int) {
 // ---------------------
 
 func (ent *Entreprise) teamBuilding() {
-	ent.logger.LogType(LOG_EVENEMENT, "Un team building est organisé. Les employés sont contents.")
+	ent.logger.LogType(LOG_EVENEMENT, "Un team building est organisé. Les employé.es sont content.es.")
 	for _, e := range *ent.employes {
 		test_presence, _ := TrouverEmploye(*ent.departs, func(emp Employe) bool { return e.Id() == emp.Id() }, 0)
 		// On vérifie que l'employé ne va pas partir
