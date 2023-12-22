@@ -348,8 +348,8 @@ func (ent *Entreprise) lancerRecrutements() {
 	go EnvoyerMessageRecrutement(&ent.recrutement, RECRUTEMENT, int(nbARecruter))
 }
 
-func (ent *Entreprise) calculerBenefice() (benef float64) {
-	benef = 0
+func (ent *Entreprise) calculerBenefice() int {
+	var benef float64 = 0
 
 	// Pour chaque employé, on calcule ce qu'il rapporte à l'entreprise en fonction de sa santé mentale et compétences
 	// Compétences varient entre 0 et 10 par une loi normale d'espérance 5.
@@ -372,6 +372,7 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 	// Bonus de productivité si %femmes supérieur à 35%
 	if ent.PourcentageFemmes() > constantes.SEUIL_IMPACT_FEMME {
 		benef = benef * (1.0 + constantes.BOOST_PRODUCTIVITE_FEMME)
+		ent.logger.LogfType(LOG_ENTREPRISE, "La parité est supérieure à 35 pourcents, ce qui a permis une ambiance productive : amélioration du bénéfice")
 	}
 
 	// Coût du recrutement
@@ -390,10 +391,12 @@ func (ent *Entreprise) calculerBenefice() (benef float64) {
 	// Modèle 2 plus proche de la réalité : amende si non respect pendant 3 ans consécutifs
 	// Modèle 3 le plus réaliste : amende à partir de 2029
 	if ent.PourcentageFemmes() < constantes.SEUIL_AMENDE {
-		benef = benef * (1 - constantes.POURCENTAGE_AMENDE)
+		amende := benef * constantes.POURCENTAGE_AMENDE
+		ent.logger.LogfType(LOG_ENTREPRISE, "L'entreprise ne respecte pas la loi Rixain sur la parité (40% minimum) et doit payer une amende de %d euros", int(math.Round(amende)))
+		benef -= amende
 	}
 
-	return benef
+	return int(math.Round(benef))
 }
 
 func (ent *Entreprise) obtenirSituationActuelle() SituationActuelle {
@@ -505,7 +508,8 @@ func (ent *Entreprise) nbEmployes() int {
 
 func (ent *Entreprise) PourcentageFemmes() float64 {
 	femmes := FiltreFemme(*ent.employes)
-	return float64(len(femmes)) / float64(len(*ent.employes))
+	parite := float64(len(femmes)) / float64(len(*ent.employes))
+	return math.Round(parite*100) / 100
 }
 
 func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
