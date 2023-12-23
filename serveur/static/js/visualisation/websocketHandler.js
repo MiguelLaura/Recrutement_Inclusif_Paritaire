@@ -13,6 +13,9 @@ const btnToggle = document.getElementById("toggle-simu");
 const btnStop = document.getElementById("stop-simu");
 const btnRelancer = document.getElementById("restart-simu");
 
+const statusSimu = document.getElementById("status-simu");
+const idNumberSimu = document.getElementById("id-number-simu");
+
 let conn = undefined;
 
 const currentURL = window.location.href;
@@ -20,7 +23,12 @@ const url = new URL(currentURL);
 const pathname = url.pathname;
 const pathParts = pathname.split('/');
 const id = pathParts[pathParts.length - 1];
-console.log("ID extrait de l'URL :", id);
+
+const numbersId = id.split("_")
+const numberId = numbersId[numbersId.length - 1]
+console.log(numberId)
+idNumberSimu.innerText = numberId; //mettre le numéro de la simulation dans le titre
+
 
 
 btnToggle.addEventListener("click", () => {
@@ -54,6 +62,8 @@ if (window["WebSocket"]) {
 
 conn.addEventListener("open", () => {
     popupInfo.info("connected", 1);
+    //pour dire que l'on souhaite récupérer les informations sur la simulation
+    conn.send(JSON.stringify({id_simulation : id, type: "init", data: ""}));
 });
 
 conn.addEventListener("close", () => {
@@ -102,6 +112,7 @@ function traiterReponseAction(action, succes) {
                 btnToggle.firstChild.classList.toggle("bi-pause-fill");
                 btnToggle.lastChild.textContent = "Pause";
                 btnToggle.dataset.state = PLAYING;
+                statusSimu.innerText = "[en cours]";
             }
             break;
         case "pause":
@@ -110,6 +121,7 @@ function traiterReponseAction(action, succes) {
                 btnToggle.firstChild.classList.toggle("bi-pause-fill");
                 btnToggle.lastChild.textContent = "Reprendre";
                 btnToggle.dataset.state = PAUSED;
+                statusSimu.innerText = "[en pause]";
             }
             break;
         case "continue":
@@ -118,11 +130,13 @@ function traiterReponseAction(action, succes) {
                 btnToggle.firstChild.classList.toggle("bi-pause-fill");
                 btnToggle.lastChild.textContent = "Pause";
                 btnToggle.dataset.state = PLAYING;
+                statusSimu.innerText = "[en cours]";
             }
             break;
         case "stop":
             if(succes) {
                 btnToggle.firstChild.classList.add("bi-play-fill");
+                statusSimu.innerText = "[terminée]";
             }
             break;
         case "relancer":
@@ -130,6 +144,7 @@ function traiterReponseAction(action, succes) {
                 btnToggle.firstChild.classList.add("bi-play-fill");
                 btnToggle.lastChild.textContent = "Commencer";
                 btnToggle.dataset.state = NOT_STARTED;
+                statusSimu.innerText = "[pas débutée]";
                 resetLogs();
 
                 // TODO : A voir si on reset le graph une fois la simulation relancée
@@ -137,5 +152,13 @@ function traiterReponseAction(action, succes) {
                 leGraph.render();
             }
             break;
+        case "not_started" : 
+            if(succes) {
+                btnToggle.firstChild.classList.add("bi-play-fill");
+                btnToggle.lastChild.textContent = "Commencer";
+                btnToggle.dataset.state = NOT_STARTED;
+                statusSimu.innerText = "[pas débutée]";
+            }
+        break;
     }
 }

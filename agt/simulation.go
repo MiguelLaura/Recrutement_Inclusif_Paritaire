@@ -97,6 +97,7 @@ func (simu *Simulation) Start() {
 
 		simu.terminerSimulation()
 		simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
+		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"stop", true})
 		simu.locker.Done()
 	}()
 
@@ -137,12 +138,18 @@ func (simu *Simulation) End() {
 		return
 	}
 
+	if simu.status == CREATED {
+		simu.logger.Err("La simulation n'a pas encore commencé.")
+		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"stop", false})
+		return
+	}
+
 	simu.mettreAJourStatus(ENDED)
 
 	simu.locker.Wait()
 
-	simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
-	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"stop", true})
+	//informations sur la fin (log & durée dans la boucle de simulation)
+
 }
 
 func (simu *Simulation) Relancer() {
@@ -208,4 +215,42 @@ func (simu *Simulation) mettreAJourStatus(nouveauStatus Status) {
 	defer simu.locker.Unlock()
 
 	simu.status = nouveauStatus
+}
+
+func (simu *Simulation) EnvoyerInfosInitiales() {
+
+	/*
+		CREATED Status = iota
+		STARTED
+		PAUSED
+		ENDED
+
+	*/
+
+	status := ""
+
+	if simu.status == CREATED {
+		status = "not_started"
+	}
+	if simu.status == STARTED {
+		status = "start"
+	}
+	if simu.status == PAUSED {
+		status = "pause"
+	}
+	if simu.status == ENDED {
+		status = "stop"
+	}
+
+	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{status, true})
+
+	/*
+		Recrutement choisi (dont objectif)
+		Parité début
+		Nombre d'années choisi ?
+		status actuel
+
+
+
+	*/
 }
