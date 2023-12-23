@@ -26,6 +26,9 @@ func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratPar
 
 	simu.mettreAJourStatus(CREATED)
 
+	simu.pariteInit = pariteInit
+	simu.nbEmployesInit = nbEmployes
+
 	return simu
 }
 
@@ -37,6 +40,10 @@ func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratPar
 
 func (simu *Simulation) PariteInit() float64 {
 	return simu.pariteInit
+}
+
+func (simu *Simulation) NbEmployeInit() int {
+	return simu.nbEmployesInit
 }
 
 func (simu *Simulation) MaxStep() int {
@@ -76,8 +83,6 @@ func (simu *Simulation) Start() {
 
 	// Démarrage de l'entreprise
 	go simu.ent.Start()
-
-	simu.pariteInit = simu.ent.PourcentageFemmes()
 
 	simu.locker.Add(1)
 	go func() {
@@ -279,6 +284,6 @@ func (simu *Simulation) EnvoyerInfosInitiales() {
 	}
 
 	simu.logger.LogType(LOG_INITIAL, InformationsInitiales{
-		simu.PariteInit(), status, recrut.Objectif(), infoRecrutementAvant, infoRecrutementApres,
+		simu.PariteInit(), simu.NbEmployeInit(), status, recrut.Objectif(), infoRecrutementAvant, infoRecrutementApres,
 	})
 }

@@ -21,6 +21,7 @@ type ReponseAuClient struct {
 
 type InformationsInitiales struct {
 	PariteInit           float64 `json:"pariteInit"`
+	NbEmployesInit       int     `json:"nbEmployesInit"`
 	Status               string  `json:"status"`
 	ObjectifRecrut       float64 `json:"objectif"`
 	InfoRecrutementAvant string  `json:"recrutAvant"`

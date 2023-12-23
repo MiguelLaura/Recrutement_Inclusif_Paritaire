@@ -96,9 +96,9 @@ conn.addEventListener("message", (evt) => {
 
 //fonction qui met à jour les informations de la simulation en cours du temps
 function mettreLesChosesAuBonEndroit(data) {
-    anneeElt.textContent = data.annee;
+    anneeElt.textContent = data.annee + " ans";
     nbEmpElt.textContent = data.nbEmp;
-    pariteElt.textContent = (data.parite * 100).toFixed(0);
+    pariteElt.textContent = (data.parite * 100).toFixed(0) + "% de femmes";
 
     //console.log(data.parite * data.nbEmp);
     
@@ -106,6 +106,12 @@ function mettreLesChosesAuBonEndroit(data) {
 }
 
 function afficherInformationsInitiales(data) {
+//     const nbEmployesInit = document.getElementById("nb-employes-init");
+// const pariteInit = document.getElementById("parite-init");
+
+    nbEmployesInit.innerText = "(début : "+data.nbEmployesInit+")"
+    pariteInit.innerText = "(début : "+(data.pariteInit * 100).toFixed(0)+"%)"
+
     if (data.objectif != "-1") {
         objectif.innerText = "Objectif : "+(data.objectif * 100).toFixed(0)+"%"
     } //sinon, pas de texte pour l'objectif
@@ -115,6 +121,11 @@ function afficherInformationsInitiales(data) {
         textHTMLrecrutement += "<li>"+data.recrutApres+"</li>"
     }
     recrutement.innerHTML = textHTMLrecrutement
+}
+
+function resetData() {
+    const dataElements = document.querySelectorAll('.data');
+    dataElements.forEach(span => span.innerHTML = "");
 }
 
 function traiterReponseAction(action, succes) {
@@ -159,6 +170,7 @@ function traiterReponseAction(action, succes) {
                 btnToggle.dataset.state = NOT_STARTED;
                 statusSimu.innerText = "[pas débutée]";
                 resetLogs();
+                resetData();
 
                 // TODO : A voir si on reset le graph une fois la simulation relancée
                 leGraph.reset();

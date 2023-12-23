@@ -34,15 +34,16 @@ type SimulationLocker struct {
 }
 
 type Simulation struct {
-	ent        Entreprise
-	pariteInit float64
-	maxStep    int
-	step       int // Stats
-	start      time.Time
-	status     Status // created, started, pause, finished
-	logger     logger.Loggers
-	etatInit   EtatSimulation
-	locker     SimulationLocker
+	ent            Entreprise
+	pariteInit     float64
+	nbEmployesInit int
+	maxStep        int
+	step           int // Stats
+	start          time.Time
+	status         Status // created, started, pause, finished
+	logger         logger.Loggers
+	etatInit       EtatSimulation
+	locker         SimulationLocker
 }
 
 type Action int
