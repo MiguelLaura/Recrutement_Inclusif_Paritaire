@@ -18,3 +18,11 @@ type ReponseAuClient struct {
 	Action string `json:"action"`
 	Succes bool   `json:"succes"`
 }
+
+type InformationsInitiales struct {
+	PariteInit           float64 `json:"pariteInit"`
+	Status               string  `json:"status"`
+	ObjectifRecrut       float64 `json:"objectif"`
+	InfoRecrutementAvant string  `json:"recrutAvant"`
+	InfoRecrutementApres string  `json:"recrutApres"`
+}

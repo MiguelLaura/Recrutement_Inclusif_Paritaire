@@ -1,6 +1,7 @@
 package agt
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -218,15 +219,6 @@ func (simu *Simulation) mettreAJourStatus(nouveauStatus Status) {
 }
 
 func (simu *Simulation) EnvoyerInfosInitiales() {
-
-	/*
-		CREATED Status = iota
-		STARTED
-		PAUSED
-		ENDED
-
-	*/
-
 	status := ""
 
 	if simu.status == CREATED {
@@ -242,15 +234,51 @@ func (simu *Simulation) EnvoyerInfosInitiales() {
 		status = "stop"
 	}
 
-	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{status, true})
+	recrut := simu.ent.Recrutement()
+	infoRecrutementAvant := ""
+	infoRecrutementApres := ""
 
-	/*
-		Recrutement choisi (dont objectif)
-		Parité début
-		Nombre d'années choisi ?
-		status actuel
+	//création de la chaine de caractère pour le recrutement Avant
+	if recrut.TypeRecrutementAvant() == Competences {
+		stratAvant := ""
+		if recrut.StratAvant() == PrioFemme {
+			stratAvant = "Femmes"
+		}
+		if recrut.StratAvant() == PrioHomme {
+			stratAvant = "Hommes"
+		}
+		if recrut.StratAvant() == Hasard {
+			stratAvant = "Hasard"
+		}
+		infoRecrutementAvant = fmt.Sprintf("Compétences égales : %s", stratAvant)
+	}
+	if recrut.TypeRecrutementAvant() == PlacesReservees {
+		infoRecrutementAvant = fmt.Sprintf("Places réservées : %d%%", int(recrut.PourcentagePlacesAvant()*100))
+	}
 
+	//création de la chaine de caractère pour le recrutement Après (si objectif)
+	if recrut.Objectif() != -1 { // avec objectif
+		infoRecrutementAvant = "(Avant) " + infoRecrutementAvant //ajout du qualificatif "avant" pour autre texte
+		if recrut.TypeRecrutementApres() == Competences {
+			stratApres := ""
+			if recrut.StratApres() == PrioFemme {
+				stratApres = "Femmes"
+			}
+			if recrut.StratApres() == PrioHomme {
+				stratApres = "Hommes"
+			}
+			if recrut.StratApres() == Hasard {
+				stratApres = "Hasard"
+			}
+			infoRecrutementApres = fmt.Sprintf("(Après) Compétences égales : %s", stratApres)
+		}
+		if recrut.TypeRecrutementApres() == PlacesReservees {
 
+			infoRecrutementApres = fmt.Sprintf("(Après) Places réservées : %d%%", int(recrut.PourcentagePlacesApres()*100))
+		}
+	}
 
-	*/
+	simu.logger.LogType(LOG_INITIAL, InformationsInitiales{
+		simu.PariteInit(), status, recrut.Objectif(), infoRecrutementAvant, infoRecrutementApres,
+	})
 }

@@ -13,9 +13,6 @@ const btnToggle = document.getElementById("toggle-simu");
 const btnStop = document.getElementById("stop-simu");
 const btnRelancer = document.getElementById("restart-simu");
 
-const statusSimu = document.getElementById("status-simu");
-const idNumberSimu = document.getElementById("id-number-simu");
-
 let conn = undefined;
 
 const currentURL = window.location.href;
@@ -26,7 +23,6 @@ const id = pathParts[pathParts.length - 1];
 
 const numbersId = id.split("_")
 const numberId = numbersId[numbersId.length - 1]
-console.log(numberId)
 idNumberSimu.innerText = numberId; //mettre le numéro de la simulation dans le titre
 
 
@@ -85,6 +81,10 @@ conn.addEventListener("message", (evt) => {
                 const data = resp.data[0];
                 mettreLesChosesAuBonEndroit(data);
                 break;
+            case "initial":
+                traiterReponseAction(resp.data[0].status, true) //utiliser le status de la simulation
+                afficherInformationsInitiales(resp.data[0])
+                break;
             case "reponse": 
                 traiterReponseAction(resp.data[0].action, resp.data[0].succes)
                 break;
@@ -94,14 +94,27 @@ conn.addEventListener("message", (evt) => {
     }
 });
 
+//fonction qui met à jour les informations de la simulation en cours du temps
 function mettreLesChosesAuBonEndroit(data) {
     anneeElt.textContent = data.annee;
     nbEmpElt.textContent = data.nbEmp;
-    pariteElt.textContent = (data.parite * 100).toFixed(2);
+    pariteElt.textContent = (data.parite * 100).toFixed(0);
 
-    console.log(data.parite * data.nbEmp);
+    //console.log(data.parite * data.nbEmp);
     
-    leGraph.addData(data.benefices.toFixed(2), (data.parite * 100).toFixed(2));
+    leGraph.addData(data.benefices.toFixed(0), (data.parite * 100).toFixed(0));
+}
+
+function afficherInformationsInitiales(data) {
+    if (data.objectif != "-1") {
+        objectif.innerText = "Objectif : "+(data.objectif * 100).toFixed(0)+"%"
+    } //sinon, pas de texte pour l'objectif
+
+    textHTMLrecrutement = "<li>"+data.recrutAvant+"</li>"
+    if(data.recrutApres != "") { //s'il y a un recrutement avant
+        textHTMLrecrutement += "<li>"+data.recrutApres+"</li>"
+    }
+    recrutement.innerHTML = textHTMLrecrutement
 }
 
 function traiterReponseAction(action, succes) {

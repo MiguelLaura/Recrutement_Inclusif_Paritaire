@@ -2,7 +2,6 @@ package agt
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"math"
 	"math/rand"
@@ -100,67 +99,6 @@ func (r Recrutement) GenererCandidats(nbCandidats int) (candidats []Employe, err
 		candidats = append(candidats, *e)
 	}
 	return candidats, nil
-}
-
-// renvoie les informations sur le recrutement (pour affichage page hmtl)
-func (r *Recrutement) RecapRecrutementTexte() string {
-
-	texte := ""
-	if r.objectif != -1 { // avec objectif
-		texte += fmt.Sprintf("Objectif : %f %%\n", r.objectif)
-		if r.typeRecrutementAvant == Competences {
-			stratAvant := ""
-			if r.stratAvant == PrioFemme {
-				stratAvant = "Femmes"
-			}
-			if r.stratAvant == PrioHomme {
-				stratAvant = "Hommes"
-			}
-			if r.stratAvant == Hasard {
-				stratAvant = "Hasard"
-			}
-			texte += fmt.Sprintf("Avant : Compétences égales - %s\n", stratAvant)
-		}
-		if r.typeRecrutementAvant == PlacesReservees {
-			texte += fmt.Sprintf("Avant : Places réserves - %f %%\n", r.pourcentagePlacesAvant)
-		}
-
-		if r.typeRecrutementApres == Competences {
-			stratApres := ""
-			if r.stratApres == PrioFemme {
-				stratApres = "Femmes"
-			}
-			if r.stratApres == PrioHomme {
-				stratApres = "Hommes"
-			}
-			if r.stratApres == Hasard {
-				stratApres = "Hasard"
-			}
-			texte += fmt.Sprintf("Après : Compétences égales - %s\n", stratApres)
-		}
-		if r.typeRecrutementApres == PlacesReservees {
-			texte += fmt.Sprintf("Après : Places réserves - %f %%\n", r.pourcentagePlacesApres)
-		}
-	} else {
-		if r.typeRecrutementAvant == Competences {
-			strat := ""
-			if r.stratAvant == PrioFemme {
-				strat = "Femmes"
-			}
-			if r.stratAvant == PrioHomme {
-				strat = "Hommes"
-			}
-			if r.stratAvant == Hasard {
-				strat = "Hasard"
-			}
-			texte += fmt.Sprintf("Compétences égales - %s\n", strat)
-		}
-		if r.typeRecrutementAvant == PlacesReservees {
-			texte += fmt.Sprintf("Places réserves - %f %%\n", r.pourcentagePlacesAvant)
-		}
-	}
-	return texte
-
 }
 
 // ---------------------
