@@ -323,7 +323,7 @@ func (ent *Entreprise) organisationFormation() {
 	// Génération des employés participant à une formation cette année
 
 	// 32% des français ont participé à une formation
-	nb_employes_formes := math.Round(constantes.POURCENTAGE_FORMATION * float64(ent.nbEmployes()))
+	nb_employes_formes := math.Round(constantes.POURCENTAGE_FORMATION * float64(ent.NbEmployes()))
 	// 50% des employés qui se forment sont des femmes
 	nb_femmes_formes := math.Round(nb_employes_formes / 2)
 	nb_hommes_formes := nb_femmes_formes
@@ -409,12 +409,12 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 }
 
 func (ent *Entreprise) lancerRecrutements() {
-	nbARecruter := float64(ent.nbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
+	nbARecruter := float64(ent.NbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
 
 	go EnvoyerMessageRecrutement(&ent.recrutement, RECRUTEMENT, int(nbARecruter))
 }
 
-func (ent *Entreprise) calculerBenefice() int {
+func (ent *Entreprise) CalculerBenefice() int {
 	var benef float64 = 0
 
 	// Pour chaque employé, on calcule ce qu'il rapporte à l'entreprise en fonction de sa santé mentale et compétences
@@ -442,11 +442,11 @@ func (ent *Entreprise) calculerBenefice() int {
 	}
 
 	// Coût du recrutement
-	nbARecruter := float64(ent.nbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
+	nbARecruter := float64(ent.NbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
 	benef -= float64(nbARecruter * constantes.COUT_RECRUTEMENT)
 
 	// Coût du teambuilding
-	benef -= 2 * float64(ent.nbEmployes()) * constantes.COUT_TB_PAR_EMPLOYE
+	benef -= 2 * float64(ent.NbEmployes()) * constantes.COUT_TB_PAR_EMPLOYE
 
 	// Coût des formations
 	nbFormes := len(ent.formation)
@@ -463,16 +463,6 @@ func (ent *Entreprise) calculerBenefice() int {
 	}
 
 	return int(math.Round(benef))
-}
-
-func (ent *Entreprise) obtenirSituationActuelle() SituationActuelle {
-	nbemp := ent.nbEmployes()
-	parite := ent.PourcentageFemmes()
-	benef := ent.calculerBenefice()
-	competence := ent.MoyenneCompetences()
-	santeMentale := ent.MoyenneSanteMentale()
-	situ := NewSituationActuelle(nbemp, parite, benef, competence, santeMentale)
-	return *situ
 }
 
 func (ent *Entreprise) bonneAnnee() {
@@ -526,13 +516,13 @@ func (ent *Entreprise) agir() {
 		return
 	}
 	ent.logger.LogType(LOG_ENTREPRISE, "Début d'année")
-	log.Printf("Nb employe %d", ent.nbEmployes())
+	log.Printf("Nb employe %d", ent.NbEmployes())
 	// Déterminer participants aux formations
 	ent.organisationFormation()
 	ent.teamBuilding()
 	// Envoyer le message aux employés pour qu'ils agissent
 	ent.bonneAnnee()
-	ent.RecevoirActions(ent.nbAgresseurs + ent.nbEmployes())
+	ent.RecevoirActions(ent.nbAgresseurs + ent.NbEmployes())
 	ent.teamBuilding()
 	ent.finirCycle()
 }
@@ -545,13 +535,13 @@ func (ent *Entreprise) stop() {
 			EnvoyerMessage(emp, FIN, nil)
 		}(emp)
 	}
-	ent.RecevoirActions(ent.nbEmployes())
+	ent.RecevoirActions(ent.NbEmployes())
 }
 
 func (ent *Entreprise) finirCycle() {
 	// // A faire avant GestionDeparts pour bien renvoyer les gens cette année
 	ent.gestionPlaintes()
-	ent.logger.LogType(LOG_GLOBALE, ent.obtenirSituationActuelle())
+
 	// Si on le fait en premier, on ne comptera pas ces employés dans les indicateurs ?
 	ent.gestionDeparts()
 	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
@@ -567,7 +557,7 @@ func (ent *Entreprise) AjouterRecrutement(recrut Recrutement) {
 	ent.recrutement = recrut
 }
 
-func (ent *Entreprise) nbEmployes() int {
+func (ent *Entreprise) NbEmployes() int {
 	return len(ent.employes)
 }
 
@@ -608,7 +598,7 @@ func (ent *Entreprise) MoyenneCompetences() float64 {
 	for _, e := range ent.employes {
 		somme += e.Competence()
 	}
-	return float64(somme) / float64(ent.nbEmployes())
+	return float64(somme) / float64(ent.NbEmployes())
 }
 
 func (ent *Entreprise) MoyenneSanteMentale() float64 {
@@ -616,5 +606,5 @@ func (ent *Entreprise) MoyenneSanteMentale() float64 {
 	for _, e := range ent.employes {
 		somme += e.SanteMentale()
 	}
-	return float64(somme) / float64(ent.nbEmployes())
+	return float64(somme) / float64(ent.NbEmployes())
 }

@@ -1,6 +1,7 @@
 package agt
 
 type SituationActuelle struct {
+	Annee        int     `json:"annee"`
 	NbEmp        int     `json:"nbEmp"`
 	Parite       float64 `json:"parite"`
 	Benef        int     `json:"benefices"`
@@ -8,8 +9,9 @@ type SituationActuelle struct {
 	SanteMentale float64 `json:"sante-mentale"`
 }
 
-func NewSituationActuelle(nbemp int, parite float64, benef int, competence float64, santeMentale float64) *SituationActuelle {
+func NewSituationActuelle(annee int, nbemp int, parite float64, benef int, competence float64, santeMentale float64) *SituationActuelle {
 	return &SituationActuelle{
+		Annee:        annee,
 		NbEmp:        nbemp,
 		Parite:       parite,
 		Benef:        benef,
@@ -21,4 +23,13 @@ func NewSituationActuelle(nbemp int, parite float64, benef int, competence float
 type ReponseAuClient struct {
 	Action string `json:"action"`
 	Succes bool   `json:"succes"`
+}
+
+type InformationsInitiales struct {
+	PariteInit           float64 `json:"pariteInit"`
+	NbEmployesInit       int     `json:"nbEmployesInit"`
+	Status               string  `json:"status"`
+	ObjectifRecrut       float64 `json:"objectif"`
+	InfoRecrutementAvant string  `json:"recrutAvant"`
+	InfoRecrutementApres string  `json:"recrutApres"`
 }
