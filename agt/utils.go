@@ -173,3 +173,14 @@ func FiltreHommePtr(employes []Employe) (f []*Employe) {
 	}
 	return f
 }
+
+// Renvoie string à partir de la valeur de type Genre
+func StringGenre(g Genre) string {
+	if g == Homme {
+		return "H"
+	} else if g == Femme {
+		return "F"
+	} else {
+		return ""
+	}
+}

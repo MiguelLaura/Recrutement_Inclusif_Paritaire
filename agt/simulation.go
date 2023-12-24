@@ -7,6 +7,10 @@ import (
 	"gitlab.utc.fr/mennynat/ia04-project/utils/logger"
 )
 
+// ---------------------
+//     Constructeur
+// ---------------------
+
 // retourne un pointeur sur une nouvelle simulation
 func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64, maxStep int) (simu *Simulation) {
 	simu = &Simulation{}
@@ -24,6 +28,40 @@ func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratPar
 
 	return simu
 }
+
+// ---------------------
+//        Getters
+// ---------------------
+
+// Pas de getters pour ent, logger et locker car les copies ne sont pas souhaitées (ils sont uniques)
+
+func (simu *Simulation) PariteInit() float64 {
+	return simu.pariteInit
+}
+
+func (simu *Simulation) MaxStep() int {
+	return simu.maxStep
+}
+
+func (simu *Simulation) Step() int {
+	return simu.step
+}
+
+func (simu *Simulation) StartTime() time.Time {
+	return simu.start
+}
+
+func (simu *Simulation) Status() Status {
+	return simu.status
+}
+
+func (simu *Simulation) EtatInit() EtatSimulation {
+	return simu.etatInit
+}
+
+// ---------------------
+//  Logique de simulation
+// ---------------------
 
 func (simu *Simulation) Start() {
 	if simu.status != CREATED {
@@ -65,7 +103,7 @@ func (simu *Simulation) Continue() {
 	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"continue", true})
 }
 
-func (simu *Simulation) Step() {
+func (simu *Simulation) NextStep() {
 	if simu.status == STARTED || simu.status == ENDED {
 		simu.logger.Err("La simulation ne peut pas continuer ainsi.")
 		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"step", false})
@@ -190,7 +228,7 @@ func (simu *Simulation) startAgents() {
 					simu.mettreAJourStatus(PAUSED)
 				}
 
-				time.Sleep(1 * time.Second)
+				time.Sleep(2 * time.Second)
 			} else if simu.status == PAUSED {
 				time.Sleep(100 * time.Millisecond)
 			} else if simu.status == ENDED {

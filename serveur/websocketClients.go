@@ -77,7 +77,7 @@ func (c *WSClient) handleMessageFromWebSocket(idSimulation string, message strin
 		case "start":
 			simulation.Start()
 		case "step":
-			simulation.Step()
+			simulation.NextStep()
 		case "pause":
 			simulation.Pause()
 		case "continue":
