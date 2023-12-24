@@ -1,8 +1,9 @@
 const logContainer = document.getElementById("logger");
 
-function addLog(contenu) {
+function addLog(type, contenu) {
     const newLog = document.createElement("p");
     newLog.classList.add("log");
+    newLog.classList.add(type);
     let moveScroll = logContainer.scrollTop == logContainer.scrollHeight - logContainer.clientHeight;
 
     const now = new Date();

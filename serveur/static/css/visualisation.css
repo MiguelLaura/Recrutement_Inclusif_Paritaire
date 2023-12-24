@@ -65,11 +65,34 @@ button {
 */
 
 .log {
-    background-color: rgb(253, 249, 222);
     border-top: 1px darkgray solid;
     text-align: center;
     margin: 0;
     padding: 2%;
+}
+
+.log.agression {
+    background-color: #FCBBBB;
+}
+
+.log.depart {
+    background-color: #FFEBA3;
+}
+
+.log.entreprise {
+    background-color: #E6E6E7;
+}
+
+.log.recrutement {
+    background-color: #C7E4FF
+}
+
+.log.employe {
+    background-color: #C4FFFF;
+}
+
+.log.evenement {
+    background-color: #CCFFC8;
 }
 
 #logger {
