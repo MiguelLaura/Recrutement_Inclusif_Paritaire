@@ -63,6 +63,34 @@ func (simu *Simulation) Status() Status {
 }
 
 // ---------------------
+//        Setters
+// ---------------------
+
+func (simu *Simulation) SetPariteInit(pariteInit float64) {
+	simu.pariteInit = pariteInit
+}
+
+func (simu *Simulation) SetnbEmployesInit(nbEmployesInit int) {
+	simu.nbEmployesInit = nbEmployesInit
+}
+
+func (simu *Simulation) SetMaxStep(maxStep int) {
+	simu.maxStep = maxStep
+}
+
+func (simu *Simulation) SetStep(step int) {
+	simu.step = step
+}
+
+func (simu *Simulation) SetStartTime(startTime time.Time) {
+	simu.start = startTime
+}
+
+func (simu *Simulation) SetStatus(status Status) {
+	simu.status = status
+}
+
+// ---------------------
 //  Logique de simulation
 // ---------------------
 
@@ -75,6 +103,34 @@ func (simu *Simulation) Start() {
 
 	simu.startAgents()
 	simu.mettreAJourStatus(STARTED)
+	simu.start = time.Now()
+
+	// Démarrage de l'entreprise
+	go simu.ent.Start()
+
+	simu.locker.Add(1)
+	go func() {
+		for simu.step < simu.maxStep {
+			if simu.status == STARTED {
+				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
+				simu.ent.logger.LogType(LOG_GLOBAL, simu.obtenirSituationActuelle())
+				simu.step++
+				time.Sleep(2 * time.Second)
+			} else if simu.status == PAUSED {
+				time.Sleep(100 * time.Millisecond)
+			} else if simu.status == ENDED {
+				break
+			}
+		}
+
+		// On s'assure que le statut de la simulation est bien à jour
+		simu.mettreAJourStatus(ENDED)
+
+		simu.terminerSimulation()
+		simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
+		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"stop", true})
+		simu.locker.Done()
+	}()
 
 	simu.logger.Log("La simulation démarre.")
 	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"start", true})
@@ -284,7 +340,9 @@ func (simu *Simulation) obtenirSituationActuelle() SituationActuelle {
 	nbemp := simu.ent.NbEmployes()
 	parite := simu.ent.PourcentageFemmes()
 	benef := simu.ent.CalculerBenefice()
-	situ := NewSituationActuelle(simu.step, nbemp, parite, benef)
+	competence := simu.ent.MoyenneCompetences()
+	santeMentale := simu.ent.MoyenneSanteMentale()
+	situ := NewSituationActuelle(simu.step, nbemp, parite, benef, competence, santeMentale)
 	return *situ
 
 }
@@ -317,7 +375,7 @@ func (simu *Simulation) startAgents() {
 					simu.mettreAJourStatus(PAUSED)
 				}
 
-				simu.ent.logger.LogType(LOG_GLOBALE, simu.obtenirSituationActuelle())
+				simu.ent.logger.LogType(LOG_GLOBAL, simu.obtenirSituationActuelle())
 
 				time.Sleep(2 * time.Second)
 			case PAUSED:

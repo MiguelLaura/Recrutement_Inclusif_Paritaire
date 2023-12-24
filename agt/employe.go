@@ -45,17 +45,17 @@ func GenererEmployeInit(ent **Entreprise, genre Genre, logger *logger.Loggers) *
 
 func NewEmploye(gen Genre, anc int, san int, ag bool, compet int, ent *Entreprise, logger *logger.Loggers) *Employe {
 	return &Employe{
-		id:              genererIDEmploye(),
-		genre:           gen,
-		anciennete:      anc,
-		santeMentale:    san,
-		agresseur:       ag,
-		competence:      compet,
-		cmpt_competence: 0,
-		entreprise:      ent,
-		fin:             false,
-		chnl:            make(chan Communicateur),
-		logger:          logger,
+		id:             genererIDEmploye(),
+		genre:          gen,
+		anciennete:     anc,
+		santeMentale:   san,
+		agresseur:      ag,
+		competence:     compet,
+		cmptCompetence: 0,
+		entreprise:     ent,
+		fin:            false,
+		chnl:           make(chan Communicateur),
+		logger:         logger,
 	}
 }
 
@@ -87,8 +87,8 @@ func (e *Employe) Competence() int {
 	return e.competence
 }
 
-func (e *Employe) Cmpt_competence() int {
-	return e.cmpt_competence
+func (e *Employe) CmptCompetence() int {
+	return e.cmptCompetence
 }
 
 func (e *Employe) Entreprise() *Entreprise {
@@ -109,6 +109,54 @@ func (e *Employe) Logger() *logger.Loggers {
 
 func (e *Employe) String() string {
 	return fmt.Sprintf("%s (%s)", e.id, StringGenre(e.genre))
+}
+
+// ---------------------
+//        Setters
+// ---------------------
+
+func (e *Employe) SetId(id EmployeID) {
+	e.id = id
+}
+
+func (e *Employe) SetGenre(genre Genre) {
+	e.genre = genre
+}
+
+func (e *Employe) SetAnciennete(anciennete int) {
+	e.anciennete = anciennete
+}
+
+func (e *Employe) SetSanteMentale(santeMentale int) {
+	e.santeMentale = santeMentale
+}
+
+func (e *Employe) SetAgresseur(agresseur bool) {
+	e.agresseur = agresseur
+}
+
+func (e *Employe) SetCompetence(competence int) {
+	e.competence = competence
+}
+
+func (e *Employe) SetCmptCompetence(competence int) {
+	e.cmptCompetence = competence
+}
+
+func (e *Employe) SetEntreprise(entreprise *Entreprise) {
+	e.entreprise = entreprise
+}
+
+func (e *Employe) SetFin(fin bool) {
+	e.fin = fin
+}
+
+func (e *Employe) SetChnl(chnl chan Communicateur) {
+	e.chnl = chnl
+}
+
+func (e *Employe) SetLogger(logger *logger.Loggers) {
+	e.logger = logger
 }
 
 // ---------------------
@@ -148,11 +196,11 @@ func (e *Employe) partirRetraite() {
 // Peut-être à nuancer si trop de gains de compétences
 func (e *Employe) seFormer() {
 	e.logger.LogfType(LOG_EVENEMENT, "%s a participé à une formation", e.String())
-	e.cmpt_competence += 1
-	if e.competence < 10 && e.cmpt_competence == 5 {
+	e.cmptCompetence += 1
+	if e.competence < 10 && e.cmptCompetence == 5 {
 		e.logger.LogfType(LOG_EMPLOYE, "%s a amélioré ses compétences", e.String())
 		e.competence += 1
-		e.cmpt_competence = 0
+		e.cmptCompetence = 0
 	}
 }
 
@@ -253,7 +301,7 @@ func (e *Employe) agir() {
 		}
 
 		// Participer à une formation
-		i, _ := TrouverEmploye(*e.entreprise.formation, func(emp Employe) bool { return e.Id() == emp.Id() }, 0)
+		i, _ := TrouverEmploye(e.entreprise.Formation(), func(emp *Employe) bool { return e.Id() == emp.Id() }, 0)
 		if i >= 0 {
 			e.seFormer()
 		}

@@ -16,7 +16,7 @@ const (
 	LOG_EMPLOYE     logger.LogType = "employe"
 	LOG_ENTREPRISE  logger.LogType = "entreprise"
 	LOG_EVENEMENT   logger.LogType = "evenement"
-	LOG_GLOBALE     logger.LogType = "globale"
+	LOG_GLOBAL      logger.LogType = "global"
 	LOG_REPONSE     logger.LogType = "reponse" //informations sur le status de la simulation
 	LOG_INITIAL     logger.LogType = "initial" //informations sur la simulation quand websocket se connecte
 )
@@ -69,18 +69,18 @@ type Communicateur struct {
 	Payload any
 }
 
-type Action_recrutement int
+type ActionRecrutement int
 
 const (
-	RECRUTEMENT Action_recrutement = iota
+	RECRUTEMENT ActionRecrutement = iota
 	FIN_RECRUTEMENT
 	ERREUR_RECRUTEMENT
 	FIN_AGENT
 )
 
 // Permet la communication entre agents
-type Communicateur_recrutement struct {
-	Act     Action_recrutement
+type CommunicateurRecrutement struct {
+	Act     ActionRecrutement
 	Payload any
 }
 
@@ -91,17 +91,17 @@ type EmployeID string
 var agtCnt int = 0
 
 type Employe struct {
-	id              EmployeID
-	genre           Genre
-	anciennete      int //entre 0 et 40
-	santeMentale    int //entre 0 et 100
-	agresseur       bool
-	competence      int //entre 0 et 10
-	cmpt_competence int // entre 0 et 5. Quand il atteint 5, competence +1
-	entreprise      *Entreprise
-	fin             bool
-	chnl            chan Communicateur
-	logger          *logger.Loggers
+	id             EmployeID
+	genre          Genre
+	anciennete     int //entre 0 et 40
+	santeMentale   int //entre 0 et 100
+	agresseur      bool
+	competence     int //entre 0 et 10
+	cmptCompetence int // entre 0 et 5. Quand il atteint 5, competence +1
+	entreprise     *Entreprise
+	fin            bool
+	chnl           chan Communicateur
+	logger         *logger.Loggers
 }
 
 type Genre int
@@ -115,11 +115,11 @@ const (
 
 type Entreprise struct {
 	sync.Mutex
-	employes        *[]Employe
-	departs         *[]Employe
-	formation       *[]Employe
-	congeParental   *[]Employe
-	plaintes        *[][]Employe
+	employes        []*Employe
+	departs         []*Employe
+	formation       []*Employe
+	congeParental   []*Employe
+	plaintes        [][]*Employe
 	nbDepressions   int
 	nbRenvois       int
 	recrutement     Recrutement
@@ -128,7 +128,7 @@ type Entreprise struct {
 	fin             bool
 	chnl            chan Communicateur
 	chnlActions     chan Communicateur
-	chnlRecrutement chan Communicateur_recrutement
+	chnlRecrutement chan CommunicateurRecrutement
 	chnlNotifAction chan Communicateur
 	logger          *logger.Loggers
 }
@@ -161,7 +161,7 @@ type Recrutement struct {
 	typeRecrutementApres   TypeRecrutement
 	pourcentagePlacesAvant float64 // -1 si non renseigné, entre 0 et 1 sinon
 	pourcentagePlacesApres float64
-	chnl                   chan Communicateur_recrutement
+	chnl                   chan CommunicateurRecrutement
 	fin                    bool
 	logger                 *logger.Loggers
 }

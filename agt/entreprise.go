@@ -26,8 +26,8 @@ func CollecterActions(dest *Entreprise, act Action, payload any) {
 	dest.chnlActions <- Communicateur{act, payload}
 }
 
-func EnvoyerMessageRecrutement(dest *Recrutement, act Action_recrutement, payload any) {
-	dest.chnl <- Communicateur_recrutement{act, payload}
+func EnvoyerMessageRecrutement(dest *Recrutement, act ActionRecrutement, payload any) {
+	dest.chnl <- CommunicateurRecrutement{act, payload}
 }
 
 // ---------------------
@@ -40,38 +40,38 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64, logger *logger.Logger
 
 	var nbFemmes int = int(math.Round(float64(nbEmployesInit) * float64(pariteInit)))
 	var nbHommes int = nbEmployesInit - nbFemmes
-	var employesInit []Employe
+	var employesInit []*Employe
 
 	for i := 0; i < nbFemmes; i++ {
 		emp := GenererEmployeInit(&ent, Femme, logger)
-		employesInit = append(employesInit, *emp)
-		if emp.agresseur {
+		employesInit = append(employesInit, emp)
+		if emp.Agresseur() {
 			ent.nbAgresseurs += 1
 		}
 	}
 	for i := 0; i < nbHommes; i++ {
 		emp := GenererEmployeInit(&ent, Homme, logger)
-		employesInit = append(employesInit, *emp)
-		if emp.agresseur {
+		employesInit = append(employesInit, emp)
+		if emp.Agresseur() {
 			ent.nbAgresseurs += 1
 		}
 	}
-	ent.employes = &employesInit
-	departs := make([]Employe, 0)
-	ent.departs = &departs
-	formation := make([]Employe, 0)
-	ent.formation = &formation
-	congeParental := make([]Employe, 0)
-	ent.congeParental = &congeParental
-	plaintes := make([][]Employe, 0)
-	ent.plaintes = &plaintes
+	ent.employes = employesInit
+	departs := make([]*Employe, 0)
+	ent.departs = departs
+	formation := make([]*Employe, 0)
+	ent.formation = formation
+	congeParental := make([]*Employe, 0)
+	ent.congeParental = congeParental
+	plaintes := make([][]*Employe, 0)
+	ent.plaintes = plaintes
 	ent.nbDepressions = 0
 	ent.nbRenvois = 0
 	ent.nbActions = 0
 	ent.fin = false
 	ent.chnl = make(chan Communicateur)
 	ent.chnlActions = make(chan Communicateur)
-	ent.chnlRecrutement = make(chan Communicateur_recrutement)
+	ent.chnlRecrutement = make(chan CommunicateurRecrutement)
 	ent.chnlNotifAction = make(chan Communicateur)
 	ent.logger = logger
 	return ent
@@ -81,24 +81,24 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64, logger *logger.Logger
 //        Getters
 // ---------------------
 
-func (ent *Entreprise) Employes() []Employe {
-	return *ent.employes
+func (ent *Entreprise) Employes() []*Employe {
+	return ent.employes
 }
 
-func (ent *Entreprise) Departs() []Employe {
-	return *ent.departs
+func (ent *Entreprise) Departs() []*Employe {
+	return ent.departs
 }
 
-func (ent *Entreprise) Formation() []Employe {
-	return *ent.formation
+func (ent *Entreprise) Formation() []*Employe {
+	return ent.formation
 }
 
-func (ent *Entreprise) CongeParental() []Employe {
-	return *ent.congeParental
+func (ent *Entreprise) CongeParental() []*Employe {
+	return ent.congeParental
 }
 
-func (ent *Entreprise) Plaintes() [][]Employe {
-	return *ent.plaintes
+func (ent *Entreprise) Plaintes() [][]*Employe {
+	return ent.plaintes
 }
 
 func (ent *Entreprise) NbDepressions() int {
@@ -133,7 +133,7 @@ func (ent *Entreprise) ChnlActions() chan Communicateur {
 	return ent.chnlActions
 }
 
-func (ent *Entreprise) ChnlRecrutement() chan Communicateur_recrutement {
+func (ent *Entreprise) ChnlRecrutement() chan CommunicateurRecrutement {
 	return ent.chnlRecrutement
 }
 
@@ -146,6 +146,74 @@ func (ent *Entreprise) Logger() *logger.Loggers {
 }
 
 // ---------------------
+//        Setters
+// ---------------------
+
+func (ent *Entreprise) SetEmployes(employes []*Employe) {
+	ent.employes = employes
+}
+
+func (ent *Entreprise) SetDeparts(departs []*Employe) {
+	ent.departs = departs
+}
+
+func (ent *Entreprise) SetFormation(formation []*Employe) {
+	ent.formation = formation
+}
+
+func (ent *Entreprise) SetCongeParental(congeParental []*Employe) {
+	ent.congeParental = congeParental
+}
+
+func (ent *Entreprise) SetPlaintes(plaintes [][]*Employe) {
+	ent.plaintes = plaintes
+}
+
+func (ent *Entreprise) SetNbDepressions(nbDepressions int) {
+	ent.nbDepressions = nbDepressions
+}
+
+func (ent *Entreprise) SetNbRenvois(nbRenvois int) {
+	ent.nbRenvois = nbRenvois
+}
+
+func (ent *Entreprise) SetRecrutement(recrut Recrutement) {
+	ent.recrutement = recrut
+}
+
+func (ent *Entreprise) SetNbActions(nbActions int) {
+	ent.nbActions = nbActions
+}
+
+func (ent *Entreprise) SetNbAgresseurs(nbAgresseurs int) {
+	ent.nbAgresseurs = nbAgresseurs
+}
+
+func (ent *Entreprise) SetFin(fin bool) {
+	ent.fin = fin
+}
+
+func (ent *Entreprise) SetChnl(chnl chan Communicateur) {
+	ent.chnl = chnl
+}
+
+func (ent *Entreprise) SetChnlActions(chnlActions chan Communicateur) {
+	ent.chnlActions = chnlActions
+}
+
+func (ent *Entreprise) SetChnlRecrutement(chnlRecrutement chan CommunicateurRecrutement) {
+	ent.chnlRecrutement = chnlRecrutement
+}
+
+func (ent *Entreprise) SetChnlNotifAction(chnlNotifAction chan Communicateur) {
+	ent.chnlNotifAction = chnlNotifAction
+}
+
+func (ent *Entreprise) SetLogger(logger *logger.Loggers) {
+	ent.logger = logger
+}
+
+// ---------------------
 //     En cours d'année (appelées par les employés)
 // ---------------------
 
@@ -153,9 +221,9 @@ func (ent *Entreprise) RecevoirDemission(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
 
-	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
+	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
-		*ent.departs = append(*ent.departs, *emp)
+		ent.departs = append(ent.departs, emp)
 		ent.logger.LogfType(LOG_DEPART, "%s pose sa démission", emp.String())
 	}
 }
@@ -164,9 +232,9 @@ func (ent *Entreprise) RecevoirDemissionMaternite(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
 
-	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
+	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
-		*ent.departs = append(*ent.departs, *emp)
+		ent.departs = append(ent.departs, emp)
 		ent.logger.LogfType(LOG_DEPART, "%s pose sa démission après son congé maternité", emp.String())
 
 	}
@@ -177,9 +245,9 @@ func (ent *Entreprise) RecevoirDepression(emp *Employe) {
 	defer ent.Unlock()
 
 	ent.nbDepressions += 1
-	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
+	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
-		*ent.departs = append(*ent.departs, *emp)
+		ent.departs = append(ent.departs, emp)
 		ent.logger.LogfType(LOG_DEPART, "%s pose sa démission pour dépression", emp.String())
 
 	}
@@ -189,9 +257,9 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
 
-	i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
+	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
-		*ent.departs = append(*ent.departs, *emp)
+		ent.departs = append(ent.departs, emp)
 		ent.logger.LogfType(LOG_DEPART, "%s part à la retraite", emp.String())
 
 	}
@@ -200,9 +268,9 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 func (ent *Entreprise) RecevoirCongeParental(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
-	i, _ := TrouverEmploye(*ent.congeParental, func(e Employe) bool { return e.Id() == emp.Id() }, 0)
+	i, _ := TrouverEmploye(ent.congeParental, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
-		*ent.congeParental = append(*ent.congeParental, *emp)
+		ent.congeParental = append(ent.congeParental, emp)
 		ent.logger.LogfType(LOG_ENTREPRISE, "%s part en congé parental", emp.String())
 	}
 }
@@ -211,7 +279,7 @@ func (ent *Entreprise) RecevoirPlainte(plaignant *Employe, accuse *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
 
-	*ent.plaintes = append(*ent.plaintes, []Employe{*plaignant, *accuse})
+	ent.plaintes = append(ent.plaintes, []*Employe{plaignant, accuse})
 	ent.logger.LogfType(LOG_AGRESSION, "%s porte plainte contre %s ", plaignant.String(), accuse.String())
 }
 
@@ -236,16 +304,14 @@ func (ent *Entreprise) RecevoirActions(nbActions int) {
 
 func (ent *Entreprise) teamBuilding() {
 	ent.logger.LogType(LOG_EVENEMENT, "Un team building est organisé. Les employé.es sont content.es.")
-	for _, e := range *ent.employes {
-		test_presence, _ := TrouverEmploye(*ent.departs, func(emp Employe) bool { return e.Id() == emp.Id() }, 0)
+	for _, e := range ent.employes {
+		testPresence, _ := TrouverEmploye(ent.departs, func(emp *Employe) bool { return e.Id() == emp.Id() }, 0)
 		// On vérifie que l'employé ne va pas partir
-		if test_presence < 0 {
-			if e.santeMentale < 100 {
-				if e.santeMentale+constantes.BOOST_TEAM_BUILDING > 100 {
-					e.santeMentale = 100
-				} else {
-					e.santeMentale += constantes.BOOST_TEAM_BUILDING
-				}
+		if testPresence < 0 && (e.SanteMentale() < 100) {
+			if (e.SanteMentale() + constantes.BOOST_TEAM_BUILDING) > 100 {
+				e.SetSanteMentale(100)
+			} else {
+				e.SetSanteMentale(e.SanteMentale() + constantes.BOOST_TEAM_BUILDING)
 			}
 		}
 	}
@@ -253,7 +319,7 @@ func (ent *Entreprise) teamBuilding() {
 
 func (ent *Entreprise) organisationFormation() {
 
-	*ent.formation = make([]Employe, 0)
+	ent.formation = make([]*Employe, 0)
 	// Génération des employés participant à une formation cette année
 
 	// 32% des français ont participé à une formation
@@ -261,14 +327,14 @@ func (ent *Entreprise) organisationFormation() {
 	// 50% des employés qui se forment sont des femmes
 	nb_femmes_formes := math.Round(nb_employes_formes / 2)
 	nb_hommes_formes := nb_femmes_formes
-	femmes := FiltreFemme(*ent.employes)
-	hommes := FiltreHomme(*ent.employes)
+	femmes := FiltreFemme(ent.employes)
+	hommes := FiltreHomme(ent.employes)
 	for idx := 0; idx < int(nb_femmes_formes); idx++ {
 		if len(femmes) == 0 {
 			break
 		}
 		i := rand.Intn(len(femmes))
-		*ent.formation = append(*ent.formation, femmes[i])
+		ent.formation = append(ent.formation, femmes[i])
 		// Pour ne pas avoir de doublons
 		femmes = enleverEmploye(femmes, femmes[i])
 	}
@@ -277,7 +343,7 @@ func (ent *Entreprise) organisationFormation() {
 			break
 		}
 		i := rand.Intn(len(hommes))
-		*ent.formation = append(*ent.formation, hommes[i])
+		ent.formation = append(ent.formation, hommes[i])
 		// Pour ne pas avoir de doublons
 		hommes = enleverEmploye(hommes, hommes[i])
 	}
@@ -289,37 +355,37 @@ func (ent *Entreprise) organisationFormation() {
 
 // // Renvoyer selon un certain pourcentage
 func (ent *Entreprise) gestionPlaintes() {
-	if len(*ent.plaintes) <= 0 {
+	if len(ent.plaintes) <= 0 {
 		return
 	}
-	for _, e := range *ent.plaintes {
+	for _, e := range ent.plaintes {
 		if rand.Float64() <= constantes.PROBA_LICENCIEMENT {
 			accuse := e[1]
-			i, _ := TrouverEmploye(*ent.departs, func(e Employe) bool { return e.Id() == accuse.Id() }, 0)
+			i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == accuse.Id() }, 0)
 			if i < 0 {
-				*ent.departs = append(*ent.departs, accuse)
+				ent.departs = append(ent.departs, accuse)
 				ent.logger.LogfType(LOG_DEPART, "%s est licencié pour faute grave", accuse.String())
 			}
 		}
 	}
-	*ent.plaintes = make([][]Employe, 0)
+	ent.plaintes = make([][]*Employe, 0)
 }
 
 func (ent *Entreprise) gestionDeparts() {
-	if len(*ent.departs) <= 0 {
+	if len(ent.departs) <= 0 {
 		return
 	}
-	for _, emp := range *ent.departs {
-		*ent.employes = enleverEmploye(*ent.employes, emp)
-		go func(emp Employe) {
-			EnvoyerMessage(&emp, FIN, nil)
+	for _, emp := range ent.departs {
+		ent.employes = enleverEmploye(ent.employes, emp)
+		go func(emp *Employe) {
+			EnvoyerMessage(emp, FIN, nil)
 		}(emp)
-		if emp.agresseur {
+		if emp.Agresseur() {
 			ent.nbAgresseurs -= 1
 		}
 	}
-	ent.RecevoirActions(len(*ent.departs))
-	*ent.departs = make([]Employe, 0)
+	ent.RecevoirActions(len(ent.departs))
+	ent.departs = make([]*Employe, 0)
 }
 
 func (ent *Entreprise) gestionRecrutements() (err error) {
@@ -327,11 +393,11 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 	if msg.Act == ERREUR_RECRUTEMENT {
 		return msg.Payload.(error)
 	} else if msg.Act == FIN_RECRUTEMENT {
-		embauches := msg.Payload.([]Employe)
+		embauches := msg.Payload.([]*Employe)
 		for _, emp := range embauches {
-			*ent.employes = append(*ent.employes, emp)
+			ent.employes = append(ent.employes, emp)
 			ent.logger.LogfType(LOG_RECRUTEMENT, "%s est embauché.e", emp.String())
-			if emp.agresseur {
+			if emp.Agresseur() {
 				ent.nbAgresseurs += 1
 			}
 		}
@@ -356,16 +422,16 @@ func (ent *Entreprise) CalculerBenefice() int {
 	// CA_PAR_EMPLOYE/5 * competences pour garder la valeur moyenne du CA_PAR_EMPLOYE mais prendre en compte les compétences
 	// benef plus faible si santé mentale plus basse
 
-	for _, e := range *ent.employes {
-		benef += (constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100 - constantes.COUT_EMPLOYE
+	for _, e := range ent.employes {
+		benef += (constantes.CA_PAR_EMPLOYE/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE
 	}
 
 	// Impact conges parental : pas de salaire et pas de productivité pendant une certaine période
-	for _, e := range *ent.congeParental {
+	for _, e := range ent.congeParental {
 		if e.Genre() == Femme {
-			benef -= constantes.PROPORTION_ARRET_F * ((constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100 - constantes.COUT_EMPLOYE)
+			benef -= constantes.PROPORTION_ARRET_F * ((constantes.CA_PAR_EMPLOYE/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE)
 		} else {
-			benef -= constantes.PROPORTION_ARRET_H * ((constantes.CA_PAR_EMPLOYE/5)*float64(e.competence)*float64(e.santeMentale)/100 - constantes.COUT_EMPLOYE)
+			benef -= constantes.PROPORTION_ARRET_H * ((constantes.CA_PAR_EMPLOYE/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE)
 		}
 	}
 
@@ -383,7 +449,7 @@ func (ent *Entreprise) CalculerBenefice() int {
 	benef -= 2 * float64(ent.NbEmployes()) * constantes.COUT_TB_PAR_EMPLOYE
 
 	// Coût des formations
-	nbFormes := len(*ent.formation)
+	nbFormes := len(ent.formation)
 	benef -= float64(constantes.PRIX_FORMATION * constantes.NB_JOURS_FORMATION * nbFormes)
 
 	// Amende si non parité
@@ -402,11 +468,11 @@ func (ent *Entreprise) CalculerBenefice() int {
 func (ent *Entreprise) bonneAnnee() {
 	ent.nbDepressions = 0
 	ent.nbRenvois = 0
-	*ent.congeParental = make([]Employe, 0)
+	ent.congeParental = make([]*Employe, 0)
 
-	for _, emp := range *ent.employes {
-		go func(emp Employe) {
-			EnvoyerMessage(&emp, LIBRE, nil)
+	for _, emp := range ent.employes {
+		go func(emp *Employe) {
+			EnvoyerMessage(emp, LIBRE, nil)
 		}(emp)
 	}
 
@@ -418,8 +484,8 @@ func (ent *Entreprise) bonneAnnee() {
 // ---------------------
 
 func (ent *Entreprise) Start() {
-	for _, emp := range *ent.employes {
-		go func(emp Employe) {
+	for _, emp := range ent.employes {
+		go func(emp *Employe) {
 			emp.Start()
 		}(emp)
 	}
@@ -445,7 +511,7 @@ func (ent *Entreprise) Start() {
 }
 
 func (ent *Entreprise) agir() {
-	if len(*ent.employes) <= 0 {
+	if len(ent.employes) <= 0 {
 		ent.fin = true
 		return
 	}
@@ -464,9 +530,9 @@ func (ent *Entreprise) agir() {
 func (ent *Entreprise) stop() {
 	ent.fin = true
 	go EnvoyerMessageRecrutement(&ent.recrutement, FIN_AGENT, nil)
-	for _, emp := range *ent.employes {
-		go func(emp Employe) {
-			EnvoyerMessage(&emp, FIN, nil)
+	for _, emp := range ent.employes {
+		go func(emp *Employe) {
+			EnvoyerMessage(emp, FIN, nil)
 		}(emp)
 	}
 	ent.RecevoirActions(ent.NbEmployes())
@@ -475,12 +541,12 @@ func (ent *Entreprise) stop() {
 func (ent *Entreprise) finirCycle() {
 	// // A faire avant GestionDeparts pour bien renvoyer les gens cette année
 	ent.gestionPlaintes()
+
 	// Si on le fait en premier, on ne comptera pas ces employés dans les indicateurs ?
 	ent.gestionDeparts()
 	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
 	ent.gestionRecrutements()
 	ent.logger.LogType(LOG_ENTREPRISE, "Fin d'année")
-
 }
 
 // ---------------------
@@ -492,17 +558,17 @@ func (ent *Entreprise) AjouterRecrutement(recrut Recrutement) {
 }
 
 func (ent *Entreprise) NbEmployes() int {
-	return len(*ent.employes)
+	return len(ent.employes)
 }
 
 func (ent *Entreprise) PourcentageFemmes() float64 {
-	femmes := FiltreFemme(*ent.employes)
-	parite := float64(len(femmes)) / float64(len(*ent.employes))
+	femmes := FiltreFemme(ent.employes)
+	parite := float64(len(femmes)) / float64(len(ent.employes))
 	return math.Round(parite*100) / 100
 }
 
 func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
-	if len(*ent.employes) == 0 {
+	if len(ent.employes) == 0 {
 		return nil
 	}
 
@@ -510,16 +576,16 @@ func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
 
 	switch g {
 	case Homme:
-		empList = FiltreHommePtr(*ent.employes)
+		empList = FiltreHomme(ent.employes)
 	case Femme:
-		empList = FiltreFemmePtr(*ent.employes)
+		empList = FiltreFemme(ent.employes)
 	}
 
 	// si on a personne pour le genre demandé, on va chercher dans l'autre genre
 	if len(empList) == 0 {
-		idx := rand.Intn(len(*ent.employes))
-		emp := (*ent.employes)[idx]
-		return &emp
+		idx := rand.Intn(len(ent.employes))
+		emp := (ent.employes)[idx]
+		return emp
 	}
 
 	idx := rand.Intn(len(empList))
@@ -529,8 +595,16 @@ func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
 
 func (ent *Entreprise) MoyenneCompetences() float64 {
 	somme := 0
-	for _, e := range *ent.employes {
-		somme += e.competence
+	for _, e := range ent.employes {
+		somme += e.Competence()
 	}
-	return float64(somme / ent.NbEmployes())
+	return float64(somme) / float64(ent.NbEmployes())
+}
+
+func (ent *Entreprise) MoyenneSanteMentale() float64 {
+	somme := 0
+	for _, e := range ent.employes {
+		somme += e.SanteMentale()
+	}
+	return float64(somme) / float64(ent.NbEmployes())
 }

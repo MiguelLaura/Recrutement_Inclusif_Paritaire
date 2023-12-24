@@ -83,7 +83,7 @@ conn.addEventListener("message", (evt) => {
             case "info":
                 popupInfo.info(resp.data, 10);
                 break;
-            case "globale":
+            case "global":
                 const data = resp.data[0];
                 mettreLesChosesAuBonEndroit(data);
                 break;
