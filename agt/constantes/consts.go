@@ -12,7 +12,7 @@ const (
 	SEUIL_IMPACT_FEMME      = 0.35 // D'après Rosabeth Kanter, une minorité doit représenter au minimum 35% du groupe dominant pour avoir une influence
 
 	// AGRESSION
-	DEGATS_TRAUMATISME = 20 // ...
+	DEGATS_TRAUMATISME = 50 // ...
 	TIMEOUT_AGRESSION  = 4
 	PROBA_PLAINTE      = .3
 	PROBA_LICENCIEMENT = .175

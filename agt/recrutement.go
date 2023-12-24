@@ -34,48 +34,96 @@ func NewRecrutement(ent *Entreprise, obj float64, sav StratParite, sap StratPari
 //        Getters
 // ---------------------
 
-func (r Recrutement) Entreprise() *Entreprise {
+func (r *Recrutement) Entreprise() *Entreprise {
 	return r.entreprise
 }
 
-func (r Recrutement) Objectif() float64 {
+func (r *Recrutement) Objectif() float64 {
 	return r.objectif
 }
 
-func (r Recrutement) StratAvant() StratParite {
+func (r *Recrutement) StratAvant() StratParite {
 	return r.stratAvant
 }
 
-func (r Recrutement) StratApres() StratParite {
+func (r *Recrutement) StratApres() StratParite {
 	return r.stratApres
 }
 
-func (r Recrutement) TypeRecrutementAvant() TypeRecrutement {
+func (r *Recrutement) TypeRecrutementAvant() TypeRecrutement {
 	return r.typeRecrutementAvant
 }
 
-func (r Recrutement) TypeRecrutementApres() TypeRecrutement {
+func (r *Recrutement) TypeRecrutementApres() TypeRecrutement {
 	return r.typeRecrutementApres
 }
 
-func (r Recrutement) PourcentagePlacesAvant() float64 {
+func (r *Recrutement) PourcentagePlacesAvant() float64 {
 	return r.pourcentagePlacesAvant
 }
 
-func (r Recrutement) PourcentagePlacesApres() float64 {
+func (r *Recrutement) PourcentagePlacesApres() float64 {
 	return r.pourcentagePlacesApres
 }
 
-func (r Recrutement) Chnl() chan Communicateur_recrutement {
+func (r *Recrutement) Chnl() chan CommunicateurRecrutement {
 	return r.chnl
 }
 
-func (r Recrutement) Fin() bool {
+func (r *Recrutement) Fin() bool {
 	return r.fin
 }
 
-func (r Recrutement) Logger() *logger.Loggers {
+func (r *Recrutement) Logger() *logger.Loggers {
 	return r.logger
+}
+
+// ---------------------
+//        Setters
+// ---------------------
+
+func (r *Recrutement) SetEntreprise(entreprise *Entreprise) {
+	r.entreprise = entreprise
+}
+
+func (r *Recrutement) SetObjectif(objectif float64) {
+	r.objectif = objectif
+}
+
+func (r *Recrutement) SetStratAvant(stratParite StratParite) {
+	r.stratAvant = stratParite
+}
+
+func (r *Recrutement) SetStratApres(stratParite StratParite) {
+	r.stratApres = stratParite
+}
+
+func (r *Recrutement) SetTypeRecrutementAvant(typeRecrutement TypeRecrutement) {
+	r.typeRecrutementAvant = typeRecrutement
+}
+
+func (r *Recrutement) SetTypeRecrutementApres(typeRecrutement TypeRecrutement) {
+	r.typeRecrutementApres = typeRecrutement
+}
+
+func (r *Recrutement) SetPourcentagePlacesAvant(pourcentagePlacesAvant float64) {
+	r.pourcentagePlacesAvant = pourcentagePlacesAvant
+}
+
+func (r *Recrutement) SetPourcentagePlacesApres(pourcentagePlacesApres float64) {
+	r.pourcentagePlacesApres = pourcentagePlacesApres
+}
+
+func (r *Recrutement) SetChnl(chnl chan CommunicateurRecrutement) {
+	r.chnl = chnl
+}
+
+func (r *Recrutement) SetFin(fin bool) {
+	r.fin = fin
+}
+
+func (r *Recrutement) SetLogger(logger *logger.Loggers) {
+	r.logger = logger
 }
 
 // ---------------------
@@ -83,12 +131,12 @@ func (r Recrutement) Logger() *logger.Loggers {
 // ---------------------
 
 // Permet de générer n candidat.es aléatoirement pour le besoin du recrutement
-func (r Recrutement) GenererCandidats(nbCandidats int) (candidats []Employe, err error) {
+func (r *Recrutement) GenererCandidats(nbCandidats int) (candidats []*Employe, err error) {
 	if nbCandidats < 0 {
 		err := errors.New("erreur : nombre de candidats à générer négatif")
 		return nil, err
 	}
-	candidats = make([]Employe, 0)
+	candidats = make([]*Employe, 0)
 	for i := 0; i < nbCandidats; i++ {
 		var genre Genre = genGenre()
 		var anciennete int = 0 // anciennete = 0 car candidat
@@ -96,7 +144,7 @@ func (r Recrutement) GenererCandidats(nbCandidats int) (candidats []Employe, err
 		var agresseur bool = genAgresseur(genre)
 		var competence int = genCompetence()
 		e := NewEmploye(genre, anciennete, santeMentale, agresseur, competence, r.entreprise, r.logger)
-		candidats = append(candidats, *e)
+		candidats = append(candidats, e)
 	}
 	return candidats, nil
 }
@@ -107,7 +155,7 @@ func (r Recrutement) GenererCandidats(nbCandidats int) (candidats []Employe, err
 
 // Recrutement si TypeRecrutement = Competences
 // Les candidat.es les plus compétent.es sont recrutés. En cas d'égalité, le choix diffère en fonction de StratParite.
-func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats []Employe) (embauches []Employe, err error) {
+func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratParite, candidats []*Employe) (embauches []*Employe, err error) {
 	if nbARecruter < 0 {
 		err := errors.New("erreur : nombre de candidats à recruter négatif")
 		return nil, err
@@ -117,7 +165,7 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 		return nil, err
 	}
 	// Pas d'erreur si len(candidats)=0 car dans ce cas, la fonction renvoie slice vide
-	embauches = make([]Employe, 0)
+	embauches = make([]*Employe, 0)
 	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d postes", nbARecruter)
 	for len(embauches) < nbARecruter {
 		maxCandidats := EmployeMaxCompetences(candidats)
@@ -181,7 +229,7 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 
 // Recrutement si TypeRecrutement = PlacesReservees
 // Parmi les candidats à recruter, un certain pourcentage est réservé aux femmes, peu importe leurs compétences
-func (r *Recrutement) RecrutementPlacesReservees(nbARecruter int, candidats []Employe, pourcentagePlace float64) (embauches []Employe, err error) {
+func (r *Recrutement) RecrutementPlacesReservees(nbARecruter int, candidats []*Employe, pourcentagePlace float64) (embauches []*Employe, err error) {
 	if nbARecruter < 0 {
 		err := errors.New("erreur : nombre de candidats à recruter négatif")
 		return nil, err
@@ -192,7 +240,7 @@ func (r *Recrutement) RecrutementPlacesReservees(nbARecruter int, candidats []Em
 	}
 	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d postes", nbARecruter)
 	// Pas d'erreur si len(candidats)=0 car dans ce cas, la fonction renvoie slice vide
-	embauches = make([]Employe, 0)
+	embauches = make([]*Employe, 0)
 	// Hypothèse : si le résultat ne tombe pas juste, on arrondit le nombre de femmes au supérieur
 	nbFemmesARecruter := int(math.Round(pourcentagePlace * float64(nbARecruter)))
 	candidatsFemmes := FiltreFemme(candidats) // permet d'isoler les femmes parmi les candidat.es
@@ -224,7 +272,7 @@ func (r *Recrutement) RecrutementPlacesReservees(nbARecruter int, candidats []Em
 
 // Fonction de recrutement générale que l'entreprise peut appeler à chaque pas de temps
 // Réalise un recrutement à partir des choix renseignés par l'utilisation lors de l'initialisation
-func (r Recrutement) Recruter(nbARecruter int) (embauches []Employe, err error) {
+func (r *Recrutement) Recruter(nbARecruter int) (embauches []*Employe, err error) {
 	if nbARecruter < 0 {
 		err := errors.New("erreur : nombre de candidats à recruter négatif")
 		return nil, err
@@ -374,20 +422,20 @@ func (r *Recrutement) Start() {
 		case RECRUTEMENT:
 			embauches, err := r.Recruter(msg.Payload.(int))
 			for _, emp := range embauches {
-				go func(emp Employe) {
+				go func(emp *Employe) {
 					emp.Start()
 				}(emp)
 			}
 			if err != nil {
-				r.chnl <- Communicateur_recrutement{ERREUR_RECRUTEMENT, err}
+				r.chnl <- CommunicateurRecrutement{ERREUR_RECRUTEMENT, err}
 			} else {
-				r.chnl <- Communicateur_recrutement{FIN_RECRUTEMENT, embauches}
+				r.chnl <- CommunicateurRecrutement{FIN_RECRUTEMENT, embauches}
 			}
 		case FIN_AGENT:
 			r.fin = true
 		default:
 			err := errors.New("erreur : mauvaise action du channel")
-			r.chnl <- Communicateur_recrutement{ERREUR_RECRUTEMENT, err}
+			r.chnl <- CommunicateurRecrutement{ERREUR_RECRUTEMENT, err}
 		}
 	}
 	log.Printf("Fin du recrutement")

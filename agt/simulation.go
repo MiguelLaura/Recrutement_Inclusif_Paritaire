@@ -59,6 +59,34 @@ func (simu *Simulation) EtatInit() EtatSimulation {
 }
 
 // ---------------------
+//        Setters
+// ---------------------
+
+func (simu *Simulation) SetPariteInit(pariteInit float64) {
+	simu.pariteInit = pariteInit
+}
+
+func (simu *Simulation) SetMaxStep(maxStep int) {
+	simu.maxStep = maxStep
+}
+
+func (simu *Simulation) SetStep(step int) {
+	simu.step = step
+}
+
+func (simu *Simulation) SetStartTime(startTime time.Time) {
+	simu.start = startTime
+}
+
+func (simu *Simulation) SetStatus(status Status) {
+	simu.status = status
+}
+
+func (simu *Simulation) SetEtatInit(etatSimulation EtatSimulation) {
+	simu.etatInit = etatSimulation
+}
+
+// ---------------------
 //  Logique de simulation
 // ---------------------
 
