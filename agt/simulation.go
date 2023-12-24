@@ -15,7 +15,6 @@ import (
 // retourne un pointeur sur une nouvelle simulation
 func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64, maxStep int) (simu *Simulation) {
 	simu = &Simulation{}
-	simu.etatInit = EtatSimulation{nbEmployes, pariteInit}
 	simu.maxStep = maxStep
 	simu.aCommencee = false
 
@@ -61,10 +60,6 @@ func (simu *Simulation) StartTime() time.Time {
 
 func (simu *Simulation) Status() Status {
 	return simu.status
-}
-
-func (simu *Simulation) EtatInit() EtatSimulation {
-	return simu.etatInit
 }
 
 // ---------------------
@@ -166,8 +161,8 @@ func (simu *Simulation) Relancer() {
 	simulationPrec := simu.ent.Recrutement()
 
 	simu.ent = *NewEntreprise(
-		simu.etatInit.nbEmp,
-		simu.etatInit.parite,
+		simu.nbEmployesInit,
+		simu.pariteInit,
 		&simu.logger,
 	)
 
@@ -305,25 +300,31 @@ func (simu *Simulation) startAgents() {
 	simu.step = 0
 	simu.start = time.Now()
 
-	// ----------------
-
-	simu.start = time.Now()
-
-	// Démarrage de l'entreprise
 	go simu.ent.Start()
 
 	simu.locker.Add(1)
+
 	go func() {
+
+	BOUCLE_SIMULATION:
 		for simu.step < simu.maxStep {
-			if simu.status == STARTED {
-				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
+			switch simu.status {
+			case STARTED:
 				simu.ent.logger.LogType(LOG_GLOBALE, simu.obtenirSituationActuelle())
+				fallthrough
+			case STEP:
+				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
 				simu.step++
+
+				if simu.status == STEP {
+					simu.mettreAJourStatus(PAUSED)
+				}
+
 				time.Sleep(2 * time.Second)
-			} else if simu.status == PAUSED {
+			case PAUSED:
 				time.Sleep(100 * time.Millisecond)
-			} else if simu.status == ENDED {
-				break
+			case ENDED:
+				break BOUCLE_SIMULATION
 			}
 		}
 
@@ -333,40 +334,6 @@ func (simu *Simulation) startAgents() {
 		simu.terminerSimulation()
 		simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
 		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"stop", true})
-		simu.locker.Done()
-	}()
-
-	// ----------------
-
-	// Démarrage de l'entreprise
-	go simu.ent.Start()
-
-	simu.pariteInit = simu.ent.PourcentageFemmes()
-
-	simu.locker.Add(1)
-	go func() {
-		for simu.step < simu.maxStep {
-			if simu.status == STARTED || simu.status == STEP {
-				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
-				simu.step++
-
-				if simu.status == STEP {
-					simu.mettreAJourStatus(PAUSED)
-				}
-
-				time.Sleep(2 * time.Second)
-			} else if simu.status == PAUSED {
-				time.Sleep(100 * time.Millisecond)
-			} else if simu.status == ENDED {
-				break
-			}
-		}
-
-		// On s'assure que le statut de la simulation est bien à jour
-		simu.mettreAJourStatus(ENDED)
-
-		simu.terminerSimulation()
-		simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
 		simu.locker.Done()
 	}()
 

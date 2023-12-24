@@ -23,11 +23,6 @@ const (
 
 // ------------ SIMULATION ------------
 
-type EtatSimulation struct {
-	nbEmp  int
-	parite float64
-}
-
 type SimulationLocker struct {
 	sync.WaitGroup
 	sync.Mutex
@@ -42,7 +37,6 @@ type Simulation struct {
 	start          time.Time
 	status         Status // created, started, pause, finished
 	logger         logger.Loggers
-	etatInit       EtatSimulation
 	locker         SimulationLocker
 	aCommencee     bool
 }
