@@ -309,16 +309,15 @@ func (simu *Simulation) startAgents() {
 	BOUCLE_SIMULATION:
 		for simu.step < simu.maxStep {
 			switch simu.status {
-			case STARTED:
-				simu.ent.logger.LogType(LOG_GLOBALE, simu.obtenirSituationActuelle())
-				fallthrough
-			case STEP:
+			case STARTED, STEP:
 				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
 				simu.step++
 
 				if simu.status == STEP {
 					simu.mettreAJourStatus(PAUSED)
 				}
+
+				simu.ent.logger.LogType(LOG_GLOBALE, simu.obtenirSituationActuelle())
 
 				time.Sleep(2 * time.Second)
 			case PAUSED:
