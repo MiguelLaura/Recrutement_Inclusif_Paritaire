@@ -74,6 +74,10 @@ func (simu *Simulation) SetPariteInit(pariteInit float64) {
 	simu.pariteInit = pariteInit
 }
 
+func (simu *Simulation) SetnbEmployesInit(nbEmployesInit int) {
+	simu.nbEmployesInit = nbEmployesInit
+}
+
 func (simu *Simulation) SetMaxStep(maxStep int) {
 	simu.maxStep = maxStep
 }
@@ -117,7 +121,7 @@ func (simu *Simulation) Start() {
 		for simu.step < simu.maxStep {
 			if simu.status == STARTED {
 				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
-				simu.ent.logger.LogType(LOG_GLOBALE, simu.obtenirSituationActuelle())
+				simu.ent.logger.LogType(LOG_GLOBAL, simu.obtenirSituationActuelle())
 				simu.step++
 				time.Sleep(2 * time.Second)
 			} else if simu.status == PAUSED {

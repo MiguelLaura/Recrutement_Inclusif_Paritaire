@@ -16,7 +16,7 @@ const (
 	LOG_EMPLOYE     logger.LogType = "employe"
 	LOG_ENTREPRISE  logger.LogType = "entreprise"
 	LOG_EVENEMENT   logger.LogType = "evenement"
-	LOG_GLOBALE     logger.LogType = "globale"
+	LOG_GLOBAL      logger.LogType = "global"
 	LOG_REPONSE     logger.LogType = "reponse" //informations sur le status de la simulation
 	LOG_INITIAL     logger.LogType = "initial" //informations sur la simulation quand websocket se connecte
 )
