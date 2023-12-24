@@ -51,7 +51,13 @@ func (c *WSClient) readMessages() {
 
 		//actions : start, pause, continue, stop
 		if req.T == "action" {
-			err = c.handleMessageFromWebSocket(req.IdSimu, req.D) //si type == action, on envoie l'action
+			err = c.handleActionMessageFromWebSocket(req.IdSimu, req.D) //si type == action, on envoie l'action
+			if err != nil {
+				log.Println("erreur :", err)
+			}
+		}
+		if req.T == "init" {
+			err = c.handleInitMessageFromWebSocket(req.IdSimu)
 			if err != nil {
 				log.Println("erreur :", err)
 			}
@@ -59,10 +65,31 @@ func (c *WSClient) readMessages() {
 	}
 }
 
-func (c *WSClient) handleMessageFromWebSocket(idSimulation string, message string) (err error) {
+func (c *WSClient) handleInitMessageFromWebSocket(idSimulation string) (err error) {
 	simulation := c.manager.restServerAgent.simulations[idSimulation]
 	myLogger := logger.NewSocketLogger(c.connection, 10)
-	if c.idSimu != idSimulation {
+
+	if simulation == nil {
+		log.Println("erreur : Simulation introuvable")
+		myLogger.Err("La simulation n'existe pas")
+		err = errors.New("erreur : Simulation introuvable")
+		return
+	}
+
+	if c.idSimu != idSimulation { //si pas déjà une simulation liée au client, on l'ajoute
+		c.idSimu = idSimulation
+		simulation.AjouteWebSockerLogger(myLogger)
+	}
+
+	simulation.EnvoyerInfosInitiales()
+
+	return
+}
+
+func (c *WSClient) handleActionMessageFromWebSocket(idSimulation string, message string) (err error) {
+	simulation := c.manager.restServerAgent.simulations[idSimulation]
+	myLogger := logger.NewSocketLogger(c.connection, 10)
+	if c.idSimu != idSimulation { //si pas déjà une simulation liée au client, on l'ajoute
 		c.idSimu = idSimulation
 		simulation.AjouteWebSockerLogger(myLogger)
 	}

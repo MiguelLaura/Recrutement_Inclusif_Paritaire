@@ -17,7 +17,8 @@ const (
 	LOG_ENTREPRISE  logger.LogType = "entreprise"
 	LOG_EVENEMENT   logger.LogType = "evenement"
 	LOG_GLOBALE     logger.LogType = "globale"
-	LOG_REPONSE     logger.LogType = "reponse"
+	LOG_REPONSE     logger.LogType = "reponse" //informations sur le status de la simulation
+	LOG_INITIAL     logger.LogType = "initial" //informations sur la simulation quand websocket se connecte
 )
 
 // ------------ SIMULATION ------------
@@ -33,15 +34,16 @@ type SimulationLocker struct {
 }
 
 type Simulation struct {
-	ent        Entreprise
-	pariteInit float64
-	maxStep    int
-	step       int // Stats
-	start      time.Time
-	status     Status // created, started, pause, finished
-	logger     logger.Loggers
-	etatInit   EtatSimulation
-	locker     SimulationLocker
+	ent            Entreprise
+	pariteInit     float64
+	nbEmployesInit int
+	maxStep        int
+	step           int // Stats
+	start          time.Time
+	status         Status // created, started, pause, finished
+	logger         logger.Loggers
+	etatInit       EtatSimulation
+	locker         SimulationLocker
 }
 
 type Action int

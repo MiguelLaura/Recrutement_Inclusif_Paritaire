@@ -1,6 +1,7 @@
 package agt
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -25,6 +26,9 @@ func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratPar
 
 	simu.mettreAJourStatus(CREATED)
 
+	simu.pariteInit = pariteInit
+	simu.nbEmployesInit = nbEmployes
+
 	return simu
 }
 
@@ -36,6 +40,10 @@ func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratPar
 
 func (simu *Simulation) PariteInit() float64 {
 	return simu.pariteInit
+}
+
+func (simu *Simulation) NbEmployeInit() int {
+	return simu.nbEmployesInit
 }
 
 func (simu *Simulation) MaxStep() int {
@@ -76,13 +84,12 @@ func (simu *Simulation) Start() {
 	// Démarrage de l'entreprise
 	go simu.ent.Start()
 
-	simu.pariteInit = simu.ent.PourcentageFemmes()
-
 	simu.locker.Add(1)
 	go func() {
 		for simu.step < simu.maxStep {
 			if simu.status == STARTED {
 				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
+				simu.ent.logger.LogType(LOG_GLOBALE, simu.obtenirSituationActuelle())
 				simu.step++
 				time.Sleep(2 * time.Second)
 			} else if simu.status == PAUSED {
@@ -97,6 +104,7 @@ func (simu *Simulation) Start() {
 
 		simu.terminerSimulation()
 		simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
+		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"stop", true})
 		simu.locker.Done()
 	}()
 
@@ -137,12 +145,18 @@ func (simu *Simulation) End() {
 		return
 	}
 
+	if simu.status == CREATED {
+		simu.logger.Err("La simulation n'a pas encore commencé.")
+		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"stop", false})
+		return
+	}
+
 	simu.mettreAJourStatus(ENDED)
 
 	simu.locker.Wait()
 
-	simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
-	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"stop", true})
+	//informations sur la fin (log & durée dans la boucle de simulation)
+
 }
 
 func (simu *Simulation) Relancer() {
@@ -208,4 +222,83 @@ func (simu *Simulation) mettreAJourStatus(nouveauStatus Status) {
 	defer simu.locker.Unlock()
 
 	simu.status = nouveauStatus
+}
+
+// -------------------------------------
+//  Fonctions pour envoyer informations
+// -------------------------------------
+
+func (simu *Simulation) EnvoyerInfosInitiales() {
+	status := ""
+
+	if simu.status == CREATED {
+		status = "not_started"
+	}
+	if simu.status == STARTED {
+		status = "start"
+	}
+	if simu.status == PAUSED {
+		status = "pause"
+	}
+	if simu.status == ENDED {
+		status = "stop"
+	}
+
+	recrut := simu.ent.Recrutement()
+	infoRecrutementAvant := ""
+	infoRecrutementApres := ""
+
+	//création de la chaine de caractère pour le recrutement Avant
+	if recrut.TypeRecrutementAvant() == Competences {
+		stratAvant := ""
+		if recrut.StratAvant() == PrioFemme {
+			stratAvant = "Femmes"
+		}
+		if recrut.StratAvant() == PrioHomme {
+			stratAvant = "Hommes"
+		}
+		if recrut.StratAvant() == Hasard {
+			stratAvant = "Hasard"
+		}
+		infoRecrutementAvant = fmt.Sprintf("Compétences égales : %s", stratAvant)
+	}
+	if recrut.TypeRecrutementAvant() == PlacesReservees {
+		infoRecrutementAvant = fmt.Sprintf("Places réservées : %d%%", int(recrut.PourcentagePlacesAvant()*100))
+	}
+
+	//création de la chaine de caractère pour le recrutement Après (si objectif)
+	if recrut.Objectif() != -1 { // avec objectif
+		infoRecrutementAvant = "(Avant) " + infoRecrutementAvant //ajout du qualificatif "avant" pour autre texte
+		if recrut.TypeRecrutementApres() == Competences {
+			stratApres := ""
+			if recrut.StratApres() == PrioFemme {
+				stratApres = "Femmes"
+			}
+			if recrut.StratApres() == PrioHomme {
+				stratApres = "Hommes"
+			}
+			if recrut.StratApres() == Hasard {
+				stratApres = "Hasard"
+			}
+			infoRecrutementApres = fmt.Sprintf("(Après) Compétences égales : %s", stratApres)
+		}
+		if recrut.TypeRecrutementApres() == PlacesReservees {
+
+			infoRecrutementApres = fmt.Sprintf("(Après) Places réservées : %d%%", int(recrut.PourcentagePlacesApres()*100))
+		}
+	}
+
+	simu.logger.LogType(LOG_INITIAL, InformationsInitiales{
+		simu.PariteInit(), simu.NbEmployeInit(), status, recrut.Objectif(), infoRecrutementAvant, infoRecrutementApres,
+	})
+}
+
+func (simu *Simulation) obtenirSituationActuelle() SituationActuelle {
+
+	nbemp := simu.ent.NbEmployes()
+	parite := simu.ent.PourcentageFemmes()
+	benef := simu.ent.CalculerBenefice()
+	situ := NewSituationActuelle(simu.step, nbemp, parite, benef)
+	return *situ
+
 }
