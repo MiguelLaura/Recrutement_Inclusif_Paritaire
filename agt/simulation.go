@@ -15,8 +15,8 @@ import (
 // retourne un pointeur sur une nouvelle simulation
 func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64, maxStep int) (simu *Simulation) {
 	simu = &Simulation{}
-	simu.etatInit = EtatSimulation{nbEmployes, pariteInit}
 	simu.maxStep = maxStep
+	simu.agentsLances = false
 
 	simu.logger.AjouterLogger(logger.NewConsoleLogger())
 
@@ -62,10 +62,6 @@ func (simu *Simulation) Status() Status {
 	return simu.status
 }
 
-func (simu *Simulation) EtatInit() EtatSimulation {
-	return simu.etatInit
-}
-
 // ---------------------
 //  Logique de simulation
 // ---------------------
@@ -77,36 +73,8 @@ func (simu *Simulation) Start() {
 		return
 	}
 
-	simu.step = 0
+	simu.startAgents()
 	simu.mettreAJourStatus(STARTED)
-	simu.start = time.Now()
-
-	// Démarrage de l'entreprise
-	go simu.ent.Start()
-
-	simu.locker.Add(1)
-	go func() {
-		for simu.step < simu.maxStep {
-			if simu.status == STARTED {
-				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
-				simu.ent.logger.LogType(LOG_GLOBALE, simu.obtenirSituationActuelle())
-				simu.step++
-				time.Sleep(2 * time.Second)
-			} else if simu.status == PAUSED {
-				time.Sleep(100 * time.Millisecond)
-			} else if simu.status == ENDED {
-				break
-			}
-		}
-
-		// On s'assure que le statut de la simulation est bien à jour
-		simu.mettreAJourStatus(ENDED)
-
-		simu.terminerSimulation()
-		simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
-		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"stop", true})
-		simu.locker.Done()
-	}()
 
 	simu.logger.Log("La simulation démarre.")
 	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"start", true})
@@ -136,6 +104,23 @@ func (simu *Simulation) Continue() {
 
 	simu.logger.Log("La simulation est relancée.")
 	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"continue", true})
+}
+
+func (simu *Simulation) NextStep() {
+	if simu.status == STARTED || simu.status == ENDED {
+		simu.logger.Err("La simulation ne peut pas continuer ainsi.")
+		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"step", false})
+		return
+	}
+
+	if simu.status == CREATED {
+		simu.startAgents()
+	}
+
+	simu.mettreAJourStatus(STEP)
+
+	simu.logger.Log("La simulation a avancé d'un pas")
+	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"step", true})
 }
 
 func (simu *Simulation) End() {
@@ -172,11 +157,12 @@ func (simu *Simulation) Relancer() {
 		simu.locker.Wait()
 	}
 
+	simu.agentsLances = false
 	simulationPrec := simu.ent.Recrutement()
 
 	simu.ent = *NewEntreprise(
-		simu.etatInit.nbEmp,
-		simu.etatInit.parite,
+		simu.nbEmployesInit,
+		simu.pariteInit,
 		&simu.logger,
 	)
 
@@ -301,4 +287,54 @@ func (simu *Simulation) obtenirSituationActuelle() SituationActuelle {
 	situ := NewSituationActuelle(simu.step, nbemp, parite, benef)
 	return *situ
 
+}
+
+func (simu *Simulation) startAgents() {
+	simu.locker.Lock()
+	defer simu.locker.Unlock()
+
+	if simu.agentsLances {
+		return
+	}
+
+	simu.step = 0
+	simu.start = time.Now()
+
+	go simu.ent.Start()
+
+	simu.locker.Add(1)
+
+	go func() {
+
+	BOUCLE_SIMULATION:
+		for simu.step < simu.maxStep {
+			switch simu.status {
+			case STARTED, STEP:
+				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
+				simu.step++
+
+				if simu.status == STEP {
+					simu.mettreAJourStatus(PAUSED)
+				}
+
+				simu.ent.logger.LogType(LOG_GLOBALE, simu.obtenirSituationActuelle())
+
+				time.Sleep(2 * time.Second)
+			case PAUSED:
+				time.Sleep(100 * time.Millisecond)
+			case ENDED:
+				break BOUCLE_SIMULATION
+			}
+		}
+
+		// On s'assure que le statut de la simulation est bien à jour
+		simu.mettreAJourStatus(ENDED)
+
+		simu.terminerSimulation()
+		simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
+		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"stop", true})
+		simu.locker.Done()
+	}()
+
+	simu.agentsLances = true
 }

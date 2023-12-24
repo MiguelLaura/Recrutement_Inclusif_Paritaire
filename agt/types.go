@@ -23,11 +23,6 @@ const (
 
 // ------------ SIMULATION ------------
 
-type EtatSimulation struct {
-	nbEmp  int
-	parite float64
-}
-
 type SimulationLocker struct {
 	sync.WaitGroup
 	sync.Mutex
@@ -42,8 +37,8 @@ type Simulation struct {
 	start          time.Time
 	status         Status // created, started, pause, finished
 	logger         logger.Loggers
-	etatInit       EtatSimulation
 	locker         SimulationLocker
+	agentsLances   bool
 }
 
 type Action int
@@ -65,6 +60,7 @@ const (
 	STARTED
 	PAUSED
 	ENDED
+	STEP
 )
 
 // Permet la communication entre entreprise et employé
