@@ -89,6 +89,7 @@ func (simu *Simulation) Start() {
 		for simu.step < simu.maxStep {
 			if simu.status == STARTED {
 				EnvoyerMessageEntreprise(&simu.ent, LIBRE, nil)
+				simu.ent.logger.LogType(LOG_GLOBALE, simu.obtenirSituationActuelle())
 				simu.step++
 				time.Sleep(2 * time.Second)
 			} else if simu.status == PAUSED {
@@ -223,6 +224,10 @@ func (simu *Simulation) mettreAJourStatus(nouveauStatus Status) {
 	simu.status = nouveauStatus
 }
 
+// -------------------------------------
+//  Fonctions pour envoyer informations
+// -------------------------------------
+
 func (simu *Simulation) EnvoyerInfosInitiales() {
 	status := ""
 
@@ -286,4 +291,14 @@ func (simu *Simulation) EnvoyerInfosInitiales() {
 	simu.logger.LogType(LOG_INITIAL, InformationsInitiales{
 		simu.PariteInit(), simu.NbEmployeInit(), status, recrut.Objectif(), infoRecrutementAvant, infoRecrutementApres,
 	})
+}
+
+func (simu *Simulation) obtenirSituationActuelle() SituationActuelle {
+
+	nbemp := simu.ent.NbEmployes()
+	parite := simu.ent.PourcentageFemmes()
+	benef := simu.ent.CalculerBenefice()
+	situ := NewSituationActuelle(simu.step, nbemp, parite, benef)
+	return *situ
+
 }

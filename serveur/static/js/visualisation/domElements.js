@@ -8,6 +8,7 @@ const pariteInit = document.getElementById("parite-init");
 const anneeElt = document.getElementById("annee");
 const nbEmpElt = document.getElementById("nb-emp");
 const pariteElt = document.getElementById("parite"); //parité actuelle
+const benefice = document.getElementById("benefice") //bénéfice indicateur
 
 // Les boutons pour selectionner le graphe que l'on souhaite
 const btnGraphVisuTout = document.getElementById("visu-tout");

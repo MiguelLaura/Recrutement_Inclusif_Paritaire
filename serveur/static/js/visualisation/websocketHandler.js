@@ -97,18 +97,14 @@ conn.addEventListener("message", (evt) => {
 //fonction qui met à jour les informations de la simulation en cours du temps
 function mettreLesChosesAuBonEndroit(data) {
     anneeElt.textContent = data.annee + " ans";
-    nbEmpElt.textContent = data.nbEmp;
+    nbEmpElt.textContent = data.nbEmp + " employé·es";
     pariteElt.textContent = (data.parite * 100).toFixed(0) + "% de femmes";
+    benefice.textContent = data.benefices + "€"
 
-    //console.log(data.parite * data.nbEmp);
-    
     leGraph.addData(data.benefices.toFixed(0), (data.parite * 100).toFixed(0));
 }
 
 function afficherInformationsInitiales(data) {
-//     const nbEmployesInit = document.getElementById("nb-employes-init");
-// const pariteInit = document.getElementById("parite-init");
-
     nbEmployesInit.innerText = "(début : "+data.nbEmployesInit+")"
     pariteInit.innerText = "(début : "+(data.pariteInit * 100).toFixed(0)+"%)"
 
