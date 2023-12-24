@@ -146,6 +146,7 @@ function traiterReponseAction(action, succes) {
             if(succes) {
                 btnToggle.dataset.state = PAUSED;
                 btnStep.disabled = false;
+                statusSimu.innerText = "[pas à pas]";
             }
             break;
         case "pause":
@@ -189,7 +190,6 @@ function traiterReponseAction(action, succes) {
                 resetLogs();
                 resetData();
 
-                // TODO : A voir si on reset le graph une fois la simulation relancée
                 leGraph.reset();
                 leGraph.render();
             }
