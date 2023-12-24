@@ -257,7 +257,7 @@ func (ent *Entreprise) organisationFormation() {
 	// Génération des employés participant à une formation cette année
 
 	// 32% des français ont participé à une formation
-	nb_employes_formes := math.Round(constantes.POURCENTAGE_FORMATION * float64(ent.nbEmployes()))
+	nb_employes_formes := math.Round(constantes.POURCENTAGE_FORMATION * float64(ent.NbEmployes()))
 	// 50% des employés qui se forment sont des femmes
 	nb_femmes_formes := math.Round(nb_employes_formes / 2)
 	nb_hommes_formes := nb_femmes_formes
@@ -343,12 +343,12 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 }
 
 func (ent *Entreprise) lancerRecrutements() {
-	nbARecruter := float64(ent.nbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
+	nbARecruter := float64(ent.NbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
 
 	go EnvoyerMessageRecrutement(&ent.recrutement, RECRUTEMENT, int(nbARecruter))
 }
 
-func (ent *Entreprise) calculerBenefice() int {
+func (ent *Entreprise) CalculerBenefice() int {
 	var benef float64 = 0
 
 	// Pour chaque employé, on calcule ce qu'il rapporte à l'entreprise en fonction de sa santé mentale et compétences
@@ -376,11 +376,11 @@ func (ent *Entreprise) calculerBenefice() int {
 	}
 
 	// Coût du recrutement
-	nbARecruter := float64(ent.nbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
+	nbARecruter := float64(ent.NbEmployes())*constantes.POURCENTAGE_RECRUTEMENT + 1.0
 	benef -= float64(nbARecruter * constantes.COUT_RECRUTEMENT)
 
 	// Coût du teambuilding
-	benef -= 2 * float64(ent.nbEmployes()) * constantes.COUT_TB_PAR_EMPLOYE
+	benef -= 2 * float64(ent.NbEmployes()) * constantes.COUT_TB_PAR_EMPLOYE
 
 	// Coût des formations
 	nbFormes := len(*ent.formation)
@@ -392,21 +392,11 @@ func (ent *Entreprise) calculerBenefice() int {
 	// Modèle 3 le plus réaliste : amende à partir de 2029
 	if ent.PourcentageFemmes() < constantes.SEUIL_AMENDE {
 		amende := benef * constantes.POURCENTAGE_AMENDE
-		ent.logger.LogfType(LOG_ENTREPRISE, "L'entreprise ne respecte pas la loi Rixain sur la parité (40% minimum) et doit payer une amende de %d euros", int(math.Round(amende)))
+		ent.logger.LogfType(LOG_ENTREPRISE, "L'entreprise ne respecte pas la loi Rixain sur la parité (40%% minimum) et doit payer une amende de %d euros", int(math.Round(amende)))
 		benef -= amende
 	}
 
 	return int(math.Round(benef))
-}
-
-func (ent *Entreprise) obtenirSituationActuelle() SituationActuelle {
-
-	nbemp := ent.nbEmployes()
-	parite := ent.PourcentageFemmes()
-	benef := ent.calculerBenefice()
-	situ := NewSituationActuelle(nbemp, parite, benef)
-	return *situ
-
 }
 
 func (ent *Entreprise) bonneAnnee() {
@@ -460,13 +450,13 @@ func (ent *Entreprise) agir() {
 		return
 	}
 	ent.logger.LogType(LOG_ENTREPRISE, "Début d'année")
-	log.Printf("Nb employe %d", ent.nbEmployes())
+	log.Printf("Nb employe %d", ent.NbEmployes())
 	// Déterminer participants aux formations
 	ent.organisationFormation()
 	ent.teamBuilding()
 	// Envoyer le message aux employés pour qu'ils agissent
 	ent.bonneAnnee()
-	ent.RecevoirActions(ent.nbAgresseurs + ent.nbEmployes())
+	ent.RecevoirActions(ent.nbAgresseurs + ent.NbEmployes())
 	ent.teamBuilding()
 	ent.finirCycle()
 }
@@ -479,7 +469,7 @@ func (ent *Entreprise) stop() {
 			EnvoyerMessage(&emp, FIN, nil)
 		}(emp)
 	}
-	ent.RecevoirActions(ent.nbEmployes())
+	ent.RecevoirActions(ent.NbEmployes())
 }
 
 func (ent *Entreprise) finirCycle() {
@@ -489,7 +479,6 @@ func (ent *Entreprise) finirCycle() {
 	ent.gestionDeparts()
 	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
 	ent.gestionRecrutements()
-	ent.logger.LogType(LOG_GLOBALE, ent.obtenirSituationActuelle())
 	ent.logger.LogType(LOG_ENTREPRISE, "Fin d'année")
 
 }
@@ -502,7 +491,7 @@ func (ent *Entreprise) AjouterRecrutement(recrut Recrutement) {
 	ent.recrutement = recrut
 }
 
-func (ent *Entreprise) nbEmployes() int {
+func (ent *Entreprise) NbEmployes() int {
 	return len(*ent.employes)
 }
 
@@ -543,5 +532,5 @@ func (ent *Entreprise) MoyenneCompetences() float64 {
 	for _, e := range *ent.employes {
 		somme += e.competence
 	}
-	return float64(somme / ent.nbEmployes())
+	return float64(somme / ent.NbEmployes())
 }
