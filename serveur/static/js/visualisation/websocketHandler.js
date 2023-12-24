@@ -95,7 +95,7 @@ conn.addEventListener("message", (evt) => {
                 traiterReponseAction(resp.data[0].action, resp.data[0].succes)
                 break;
             default:
-                addLog(`[${resp.type}] ${resp.data}`)
+                addLog(resp.type, `[${resp.type}] ${resp.data}`)
         }
     }
 });
