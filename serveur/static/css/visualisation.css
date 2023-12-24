@@ -178,7 +178,7 @@ button {
     margin-right: 2%;
 }
 
-.sim-ctrl button:hover {
+.sim-ctrl button:hover, .sim-ctrl button:disabled {
     cursor: pointer;
     background-color: darkgray;
 }
