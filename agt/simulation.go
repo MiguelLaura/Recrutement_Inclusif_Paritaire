@@ -16,7 +16,7 @@ import (
 func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratParite, sap StratParite, trav TypeRecrutement, trap TypeRecrutement, ppav float64, ppap float64, maxStep int) (simu *Simulation) {
 	simu = &Simulation{}
 	simu.maxStep = maxStep
-	simu.aCommencee = false
+	simu.agentsLances = false
 
 	simu.logger.AjouterLogger(logger.NewConsoleLogger())
 
@@ -157,7 +157,7 @@ func (simu *Simulation) Relancer() {
 		simu.locker.Wait()
 	}
 
-	simu.aCommencee = false
+	simu.agentsLances = false
 	simulationPrec := simu.ent.Recrutement()
 
 	simu.ent = *NewEntreprise(
@@ -293,7 +293,7 @@ func (simu *Simulation) startAgents() {
 	simu.locker.Lock()
 	defer simu.locker.Unlock()
 
-	if simu.aCommencee {
+	if simu.agentsLances {
 		return
 	}
 
@@ -336,5 +336,5 @@ func (simu *Simulation) startAgents() {
 		simu.locker.Done()
 	}()
 
-	simu.aCommencee = true
+	simu.agentsLances = true
 }

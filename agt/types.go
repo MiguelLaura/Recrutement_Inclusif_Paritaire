@@ -38,7 +38,7 @@ type Simulation struct {
 	status         Status // created, started, pause, finished
 	logger         logger.Loggers
 	locker         SimulationLocker
-	aCommencee     bool
+	agentsLances   bool
 }
 
 type Action int
