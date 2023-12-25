@@ -22,13 +22,13 @@ function afficher(idElemChecked, idAAfficher, idACacher) {
     }
 }
 
-function checkRequiered() { //vérifier qu'il n'y a pas d'élements recuiered non affichés
+function checkRequired() { //vérifier qu'il n'y a pas d'élements recuiered non affichés
     const requiredElements = document.querySelectorAll('form [required]');
     requiredElements.forEach(element => {
         const computedStyle = window.getComputedStyle(element);
         if (computedStyle.display === 'none') {
           element.removeAttribute('required');
-          console.log("enlever l'attribut requiered à ", element)
+          console.log("enlever l'attribut required à ", element)
         }
       });
 
@@ -37,7 +37,7 @@ function checkRequiered() { //vérifier qu'il n'y a pas d'élements recuiered no
 function sendData(event) {
     event.preventDefault();
 
-    checkRequiered();
+    checkRequired();
 
     const nb_employes = document.getElementById('nb_employes').value;
     const nb_annees = document.getElementById('nb_annees').value;

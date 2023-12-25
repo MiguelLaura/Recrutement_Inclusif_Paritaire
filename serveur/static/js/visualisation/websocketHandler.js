@@ -22,12 +22,6 @@ const pathname = url.pathname;
 const pathParts = pathname.split('/');
 const id = pathParts[pathParts.length - 1];
 
-// const numbersId = id.split("_")
-// const numberId = numbersId[numbersId.length - 1]
-// idNumberSimu.innerText = numberId; //mettre le numéro de la simulation dans le titre
-
-
-
 btnToggle.addEventListener("click", () => {
     switch(btnToggle.dataset.state) {
         case NOT_STARTED: // Pas encore démarrée
