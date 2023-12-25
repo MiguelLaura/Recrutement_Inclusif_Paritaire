@@ -95,7 +95,8 @@ conn.addEventListener("message", (evt) => {
                 traiterReponseAction(resp.data[0].action, resp.data[0].succes)
                 break;
             default:
-                leLogger.addLog(resp.type, `${resp.data}`)
+                const annee = anneeElt.textContent.split(" ")[0];
+                leLogger.addLog(resp.type, `${resp.data}`, annee.length > 0 ? `Année ${annee}` : "Année 0")
         }
     }
 });
