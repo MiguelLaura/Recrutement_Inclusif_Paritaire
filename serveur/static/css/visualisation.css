@@ -1,3 +1,12 @@
+:root {
+    --couleur-agression: #FCBBBB;
+    --couleur-depart: #FFEBA3;
+    --couleur-entreprise: #E6E6E7;
+    --couleur-recrutement: #C7E4FF;
+    --couleur-employe: #C4FFFF;
+    --couleur-evenement: #CCFFC8;
+}
+
 body, html {
     height: 100%;
 }
@@ -69,13 +78,15 @@ button {
 
 .dropdown-menu {
     display: none;
+    grid-template-columns: repeat(2, 1fr);
     position: absolute;
     margin: 0;
     right: 0;
-    background-color: #f1f1f1;
+    background-color: white;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
+    padding: 3px;
 }
 
 .dropdown-content {
@@ -86,8 +97,20 @@ button {
 }
 
 .dropdown-container:hover .dropdown-menu {
-    display: block;
+    display: grid;
 }
+
+#check-agression ~ i { color: var(--couleur-agression); }
+
+#check-depart ~ i { color: var(--couleur-depart); }
+
+#check-entreprise ~ i { color: var(--couleur-entreprise); }
+
+#check-recrutement ~ i { color: var(--couleur-recrutement); }
+
+#check-employe ~ i { color: var(--couleur-employe); }
+
+#check-evenement ~ i { color: var(--couleur-evenement); }
 
 /* ------
     Logger 
@@ -101,27 +124,27 @@ button {
 }
 
 .log.agression {
-    background-color: #FCBBBB;
+    background-color: var(--couleur-agression);
 }
 
 .log.depart {
-    background-color: #FFEBA3;
+    background-color: var(--couleur-depart);
 }
 
 .log.entreprise {
-    background-color: #E6E6E7;
+    background-color: var(--couleur-entreprise);
 }
 
 .log.recrutement {
-    background-color: #C7E4FF
+    background-color: var(--couleur-recrutement);
 }
 
 .log.employe {
-    background-color: #C4FFFF;
+    background-color: var(--couleur-employe);
 }
 
 .log.evenement {
-    background-color: #CCFFC8;
+    background-color: var(--couleur-recrutement);
 }
 
 #logger {
