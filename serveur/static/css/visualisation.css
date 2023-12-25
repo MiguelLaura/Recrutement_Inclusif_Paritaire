@@ -7,7 +7,8 @@
     --couleur-evenement: #CCFFC8;
 }
 
-body, html {
+body,
+html {
     height: 100%;
 }
 
@@ -34,6 +35,11 @@ button {
 
 .hidden {
     display: none;
+}
+
+#button-retour {
+    font-size: small;
+    cursor: pointer;
 }
 
 /* 
@@ -88,7 +94,7 @@ button {
     right: 0;
     background-color: white;
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
     padding: 3px;
 }
@@ -104,17 +110,29 @@ button {
     display: grid;
 }
 
-#check-agression ~ i { color: var(--couleur-agression); }
+#check-agression~i {
+    color: var(--couleur-agression);
+}
 
-#check-depart ~ i { color: var(--couleur-depart); }
+#check-depart~i {
+    color: var(--couleur-depart);
+}
 
-#check-entreprise ~ i { color: var(--couleur-entreprise); }
+#check-entreprise~i {
+    color: var(--couleur-entreprise);
+}
 
-#check-recrutement ~ i { color: var(--couleur-recrutement); }
+#check-recrutement~i {
+    color: var(--couleur-recrutement);
+}
 
-#check-employe ~ i { color: var(--couleur-employe); }
+#check-employe~i {
+    color: var(--couleur-employe);
+}
 
-#check-evenement ~ i { color: var(--couleur-evenement); }
+#check-evenement~i {
+    color: var(--couleur-evenement);
+}
 
 /* ------
     Logger 
@@ -179,11 +197,11 @@ button {
     padding-right: 5%;
 }
 
-.sim-main-info > h1 {
+.sim-main-info>h1 {
     font-size: 1.8em;
 }
 
-.sim-main-info > div {
+.sim-main-info>div {
     display: flex;
     flex-direction: row;
 }
@@ -201,7 +219,7 @@ button {
 }
 
 .sim-info-general li {
-    margin-bottom : 2%; 
+    margin-bottom: 2%;
 }
 
 .sim-info-general ul {
@@ -209,8 +227,8 @@ button {
     list-style-type: none;
 }
 
-.sim-info-general > ul {
-    padding : 0 0 0 1%;
+.sim-info-general>ul {
+    padding: 0 0 0 1%;
 }
 
 .sim-info-general ul ul:nth-last-child(1) {
@@ -234,7 +252,8 @@ button {
     margin-right: 2%;
 }
 
-.sim-ctrl button:hover, .sim-ctrl button:disabled {
+.sim-ctrl button:hover,
+.sim-ctrl button:disabled {
     cursor: pointer;
     background-color: darkgray;
 }
@@ -264,7 +283,7 @@ button {
     justify-content: space-between;
 }
 
-.sim-graph-info header > h1 {
+.sim-graph-info header>h1 {
     margin-top: 0;
     font-size: 1.8em;
 }
@@ -275,7 +294,8 @@ button {
     background-color: white;
 }
 
-.btn-presse, .sim-graph-info header button:hover {
+.btn-presse,
+.sim-graph-info header button:hover {
     background-color: lightgray !important;
     cursor: pointer;
 }
@@ -285,7 +305,7 @@ button {
     Recrutement
 */
 
-.sim-info-general + div {
+.sim-info-general+div {
     flex: .8;
 }
 
@@ -297,8 +317,10 @@ button {
 }
 
 
-.sim-info-recrutement p, ul, li {
-    margin:1px
+.sim-info-recrutement p,
+ul,
+li {
+    margin: 1px
 }
 
 .indicators-container td:nth-child(2) {

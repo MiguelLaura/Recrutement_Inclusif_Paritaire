@@ -244,7 +244,7 @@ func (r *Recrutement) RecrutementPlacesReservees(nbARecruter int, candidats []*E
 	// Hypothèse : si le résultat ne tombe pas juste, on arrondit le nombre de femmes au supérieur
 	nbFemmesARecruter := int(math.Round(pourcentagePlace * float64(nbARecruter)))
 	candidatsFemmes := FiltreFemme(candidats) // permet d'isoler les femmes parmi les candidat.es
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH veut recruter %.2f pourcents de femmes soit %d femmes", pourcentagePlace, nbFemmesARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH veut recruter %.2f pourcents de femmes soit %d femme(s)", pourcentagePlace, nbFemmesARecruter)
 	// 1ere etape : recruter les femmes les plus compétentes pour les places réservées
 	for i := 0; i < nbFemmesARecruter; i++ {
 		if len(candidatsFemmes) == 0 {
@@ -255,7 +255,7 @@ func (r *Recrutement) RecrutementPlacesReservees(nbARecruter int, candidats []*E
 		candidatsFemmes = enleverEmploye(candidatsFemmes, maxCandidates[0])
 		candidats = enleverEmploye(candidats, maxCandidates[0])
 	}
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH a pu recruter %d femmes sur %d femmes souhaitées", len(embauches), nbFemmesARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH a pu recruter %d femme(s) sur %d femme(s) souhaitées", len(embauches), nbFemmesARecruter)
 	// S'il n'y a pas assez de femmes dans les candidats pour toutes les places réservées, on recrute des hommes
 
 	// Le reste des candidats sont sélectionnés uniquement pour leurs compétences

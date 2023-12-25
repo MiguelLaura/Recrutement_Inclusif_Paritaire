@@ -34,6 +34,20 @@ func EnvoyerMessageRecrutement(dest *Recrutement, act ActionRecrutement, payload
 //     Constructeur
 // ---------------------
 
+func NewCompteur() *Compteur {
+	cmpt := new(Compteur)
+	cmpt.nbEmbauches = 0
+	cmpt.nbEmbauchesFemme = 0
+	cmpt.nbAgressions = 0
+	cmpt.nbPlaintes = 0
+	cmpt.nbDemissions = 0
+	cmpt.nbDemissionsMaternite = 0
+	cmpt.nbRetraites = 0
+	cmpt.nbLicenciements = 0
+	cmpt.nbDepressions = 0
+	return cmpt
+}
+
 // La fonction NewEntreprise doit créer l'entreprise et générer les employés de façon à respecter le quota de parité initial
 func NewEntreprise(nbEmployesInit int, pariteInit float64, logger *logger.Loggers) *Entreprise {
 	ent := new(Entreprise)
@@ -65,8 +79,7 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64, logger *logger.Logger
 	ent.congeParental = congeParental
 	plaintes := make([][]*Employe, 0)
 	ent.plaintes = plaintes
-	ent.nbDepressions = 0
-	ent.nbRenvois = 0
+	ent.cmpt = NewCompteur()
 	ent.nbActions = 0
 	ent.fin = false
 	ent.chnl = make(chan Communicateur)
@@ -101,12 +114,48 @@ func (ent *Entreprise) Plaintes() [][]*Employe {
 	return ent.plaintes
 }
 
-func (ent *Entreprise) NbDepressions() int {
-	return ent.nbDepressions
+func (ent *Entreprise) Cmpt() *Compteur {
+	return ent.cmpt
 }
 
-func (ent *Entreprise) NbRenvois() int {
-	return ent.nbRenvois
+func (ent *Entreprise) NbEmbauches() int {
+	return ent.Cmpt().nbEmbauches
+}
+
+func (ent *Entreprise) NbEmbauchesFemme() int {
+	return ent.Cmpt().nbEmbauchesFemme
+}
+
+func (ent *Entreprise) NbAgressions() int {
+	return ent.Cmpt().nbAgressions
+}
+
+func (ent *Entreprise) NbPlaintes() int {
+	return ent.Cmpt().nbPlaintes
+}
+
+func (ent *Entreprise) NbDemissions() int {
+	return ent.Cmpt().nbDemissions
+}
+
+func (ent *Entreprise) NbDemissionsMaternite() int {
+	return ent.Cmpt().nbDemissions
+}
+
+func (ent *Entreprise) NbRetraites() int {
+	return ent.Cmpt().nbRetraites
+}
+
+func (ent *Entreprise) NbLicenciements() int {
+	return ent.Cmpt().nbLicenciements
+}
+
+func (ent *Entreprise) NbDepressions() int {
+	return ent.Cmpt().nbDepressions
+}
+
+func (ent *Entreprise) NbDeparts() int {
+	return ent.NbLicenciements() + ent.NbDepressions() + ent.NbDemissions() + ent.NbDemissionsMaternite() + ent.NbRetraites()
 }
 
 func (ent *Entreprise) Recrutement() Recrutement {
@@ -169,12 +218,44 @@ func (ent *Entreprise) SetPlaintes(plaintes [][]*Employe) {
 	ent.plaintes = plaintes
 }
 
-func (ent *Entreprise) SetNbDepressions(nbDepressions int) {
-	ent.nbDepressions = nbDepressions
+func (ent *Entreprise) SetCompteur(cmpt *Compteur) {
+	ent.cmpt = cmpt
 }
 
-func (ent *Entreprise) SetNbRenvois(nbRenvois int) {
-	ent.nbRenvois = nbRenvois
+func (ent *Entreprise) SetNbEmbauches(nbEmbauches int) {
+	ent.cmpt.nbEmbauches = nbEmbauches
+}
+
+func (ent *Entreprise) SetNbEmbauchesFemme(nbEmbauchesFemme int) {
+	ent.cmpt.nbEmbauchesFemme = nbEmbauchesFemme
+}
+
+func (ent *Entreprise) SetNbAgressions(nbAgressions int) {
+	ent.cmpt.nbAgressions = nbAgressions
+}
+
+func (ent *Entreprise) SetNbPlaintes(nbPlaintes int) {
+	ent.cmpt.nbPlaintes = nbPlaintes
+}
+
+func (ent *Entreprise) SetNbDemissions(nbDemissions int) {
+	ent.cmpt.nbDemissions = nbDemissions
+}
+
+func (ent *Entreprise) SetNbDemissionsMaternite(nbDemissionsMaternite int) {
+	ent.cmpt.nbDemissionsMaternite = nbDemissionsMaternite
+}
+
+func (ent *Entreprise) SetNbRetraites(nbRetraites int) {
+	ent.cmpt.nbRetraites = nbRetraites
+}
+
+func (ent *Entreprise) SetNbLicenciements(nbLicenciements int) {
+	ent.cmpt.nbLicenciements = nbLicenciements
+}
+
+func (ent *Entreprise) SetNbDepressions(nbDepressions int) {
+	ent.cmpt.nbDepressions = nbDepressions
 }
 
 func (ent *Entreprise) SetRecrutement(recrut Recrutement) {
@@ -220,18 +301,18 @@ func (ent *Entreprise) SetLogger(logger *logger.Loggers) {
 func (ent *Entreprise) RecevoirDemission(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
-
+	ent.SetNbDemissions(ent.NbDemissions() + 1)
 	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		ent.departs = append(ent.departs, emp)
-		ent.logger.LogfType(LOG_DEPART, "%s pose sa démission", emp.String())
+		//ent.logger.LogfType(LOG_DEPART, "%s pose sa démission", emp.String())
 	}
 }
 
 func (ent *Entreprise) RecevoirDemissionMaternite(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
-
+	ent.SetNbDemissionsMaternite(ent.NbDemissionsMaternite() + 1)
 	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		ent.departs = append(ent.departs, emp)
@@ -244,11 +325,11 @@ func (ent *Entreprise) RecevoirDepression(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
 
-	ent.nbDepressions += 1
+	ent.SetNbDepressions(ent.NbDepressions() + 1)
 	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		ent.departs = append(ent.departs, emp)
-		ent.logger.LogfType(LOG_DEPART, "%s pose sa démission pour dépression", emp.String())
+		//ent.logger.LogfType(LOG_DEPART, "%s pose sa démission pour dépression", emp.String())
 
 	}
 }
@@ -256,11 +337,11 @@ func (ent *Entreprise) RecevoirDepression(emp *Employe) {
 func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
-
+	ent.SetNbRetraites(ent.NbRetraites() + 1)
 	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		ent.departs = append(ent.departs, emp)
-		ent.logger.LogfType(LOG_DEPART, "%s part à la retraite", emp.String())
+		//ent.logger.LogfType(LOG_DEPART, "%s part à la retraite", emp.String())
 
 	}
 }
@@ -278,9 +359,9 @@ func (ent *Entreprise) RecevoirCongeParental(emp *Employe) {
 func (ent *Entreprise) RecevoirPlainte(plaignant *Employe, accuse *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
-
+	ent.SetNbPlaintes(ent.NbPlaintes() + 1)
 	ent.plaintes = append(ent.plaintes, []*Employe{plaignant, accuse})
-	ent.logger.LogfType(LOG_AGRESSION, "%s porte plainte contre %s ", plaignant.String(), accuse.String())
+	//ent.logger.LogfType(LOG_AGRESSION, "%s porte plainte contre %s ", plaignant.String(), accuse.String())
 }
 
 func (ent *Entreprise) RecevoirActions(nbActions int) {
@@ -324,6 +405,7 @@ func (ent *Entreprise) organisationFormation() {
 
 	// 32% des français ont participé à une formation
 	nb_employes_formes := math.Round(constantes.POURCENTAGE_FORMATION * float64(ent.NbEmployes()))
+	ent.logger.LogfType(LOG_EVENEMENT, "%d employé.es ont participé à une formation", int(nb_employes_formes))
 	// 50% des employés qui se forment sont des femmes
 	nb_femmes_formes := math.Round(nb_employes_formes / 2)
 	nb_hommes_formes := nb_femmes_formes
@@ -363,8 +445,9 @@ func (ent *Entreprise) gestionPlaintes() {
 			accuse := e[1]
 			i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == accuse.Id() }, 0)
 			if i < 0 {
+				ent.SetNbLicenciements(ent.NbLicenciements() + 1)
 				ent.departs = append(ent.departs, accuse)
-				ent.logger.LogfType(LOG_DEPART, "%s est licencié pour faute grave", accuse.String())
+				//ent.logger.LogfType(LOG_DEPART, "%s est licencié pour faute grave", accuse.String())
 			}
 		}
 	}
@@ -395,8 +478,12 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 	} else if msg.Act == FIN_RECRUTEMENT {
 		embauches := msg.Payload.([]*Employe)
 		for _, emp := range embauches {
+			ent.SetNbEmbauches(ent.NbEmbauches() + 1)
+			if emp.Genre() == Femme {
+				ent.SetNbEmbauchesFemme(ent.NbEmbauchesFemme() + 1)
+			}
 			ent.employes = append(ent.employes, emp)
-			ent.logger.LogfType(LOG_RECRUTEMENT, "%s est embauché.e", emp.String())
+			//ent.logger.LogfType(LOG_RECRUTEMENT, "%s est embauché.e", emp.String())
 			if emp.Agresseur() {
 				ent.nbAgresseurs += 1
 			}
@@ -458,7 +545,7 @@ func (ent *Entreprise) CalculerBenefice() int {
 	// Modèle 3 le plus réaliste : amende à partir de 2029
 	if ent.PourcentageFemmes() < constantes.SEUIL_AMENDE {
 		amende := benef * constantes.POURCENTAGE_AMENDE
-		ent.logger.LogfType(LOG_ENTREPRISE, "L'entreprise ne respecte pas la loi Rixain sur la parité (40%% minimum) et doit payer une amende de %d euros", int(math.Round(amende)))
+		ent.logger.LogfType(LOG_ENTREPRISE, "L'entreprise ne respecte pas la loi Rixain sur la parité (40%% de femmes minimum) et doit payer une amende de %d euros", int(math.Round(amende)))
 		benef -= amende
 	}
 
@@ -466,8 +553,12 @@ func (ent *Entreprise) CalculerBenefice() int {
 }
 
 func (ent *Entreprise) bonneAnnee() {
-	ent.nbDepressions = 0
-	ent.nbRenvois = 0
+	// DEBUG
+	log.Printf("\n\n\n\nAVANT\n %d %d %d %d %d %d %d %d %d", ent.NbEmbauches(), ent.NbEmbauchesFemme(), ent.NbAgressions(), ent.NbPlaintes(), ent.NbDemissions(), ent.NbDemissionsMaternite(), ent.NbRetraites(), ent.NbLicenciements(), ent.NbDepressions())
+	// DEBUG
+	log.Printf("\n\n\n\nAPRES\n %d %d %d %d %d %d %d %d %d", ent.NbEmbauches(), ent.NbEmbauchesFemme(), ent.NbAgressions(), ent.NbPlaintes(), ent.NbDemissions(), ent.NbDemissionsMaternite(), ent.NbRetraites(), ent.NbLicenciements(), ent.NbDepressions())
+	ent.resetCompteur()
+	ent.SetNbAgressions(ent.NbAgresseurs())
 	ent.congeParental = make([]*Employe, 0)
 
 	for _, emp := range ent.employes {
@@ -546,6 +637,7 @@ func (ent *Entreprise) finirCycle() {
 	ent.gestionDeparts()
 	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
 	ent.gestionRecrutements()
+	ent.AfficherDonnéesCompteur()
 	ent.logger.LogType(LOG_ENTREPRISE, "Fin d'année")
 }
 
@@ -591,6 +683,28 @@ func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
 	idx := rand.Intn(len(empList))
 	emp := empList[idx]
 	return emp
+}
+
+func (ent *Entreprise) resetCompteur() {
+	ent.SetNbEmbauches(0)
+	ent.SetNbEmbauchesFemme(0)
+	ent.SetNbAgressions(0)
+	ent.SetNbPlaintes(0)
+	ent.SetNbDemissions(0)
+	ent.SetNbRetraites(0)
+	ent.SetNbLicenciements(0)
+	ent.SetNbDepressions(0)
+
+}
+
+func (ent *Entreprise) AfficherDonnéesCompteur() {
+	ent.logger.LogfType(LOG_RECRUTEMENT, "%d employé.e(s) recruté.e(s) dont %d femme(s)", ent.NbEmbauches(), ent.NbEmbauchesFemme())
+	ent.logger.LogfType(LOG_AGRESSION, "%d agression(s) ont eu lieu", ent.NbAgressions())
+	ent.logger.LogfType(LOG_AGRESSION, "%d employé.e(s) ont informé l'entreprise de l'agression subie", ent.NbPlaintes())
+	ent.logger.LogfType(LOG_DEPART, "%d employé.e(s) ont démissionné dont %d après leur(s) congé(s) maternité", ent.NbDemissions(), ent.NbDemissionsMaternite())
+	ent.logger.LogfType(LOG_DEPART, "%d employé.e(s) sont parti.e(s) à la retraite", ent.NbRetraites())
+	ent.logger.LogfType(LOG_DEPART, "%d employé.e(s) ont été licencié.e(s) pour faute grave", ent.NbLicenciements())
+	ent.logger.LogfType(LOG_DEPART, "%d employé.e(s) ont quitté l'entreprise pour raison de dépression", ent.NbDepressions())
 }
 
 func (ent *Entreprise) MoyenneCompetences() float64 {

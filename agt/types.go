@@ -120,9 +120,8 @@ type Entreprise struct {
 	formation       []*Employe
 	congeParental   []*Employe
 	plaintes        [][]*Employe
-	nbDepressions   int
-	nbRenvois       int
 	recrutement     Recrutement
+	cmpt            *Compteur
 	nbActions       int
 	nbAgresseurs    int
 	fin             bool
@@ -131,6 +130,21 @@ type Entreprise struct {
 	chnlRecrutement chan CommunicateurRecrutement
 	chnlNotifAction chan Communicateur
 	logger          *logger.Loggers
+}
+
+type Compteur struct {
+	// Recrutement
+	nbEmbauches      int
+	nbEmbauchesFemme int
+	// Agression
+	nbAgressions int
+	nbPlaintes   int
+	// Depart
+	nbDemissions          int
+	nbDemissionsMaternite int
+	nbRetraites           int
+	nbLicenciements       int
+	nbDepressions         int
 }
 
 // ------------ RECRUTEMENT ------------

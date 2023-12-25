@@ -195,10 +195,10 @@ func (e *Employe) partirRetraite() {
 
 // Peut-être à nuancer si trop de gains de compétences
 func (e *Employe) seFormer() {
-	e.logger.LogfType(LOG_EVENEMENT, "%s a participé à une formation", e.String())
 	e.cmptCompetence += 1
 	if e.competence < 10 && e.cmptCompetence == 5 {
-		e.logger.LogfType(LOG_EMPLOYE, "%s a amélioré ses compétences", e.String())
+		//e.logger.LogfType(LOG_EMPLOYE, "%s a amélioré ses compétences", e.String())
+		// Pas besoin si on affiche la moyenne des compétences
 		e.competence += 1
 		e.cmptCompetence = 0
 	}
@@ -224,7 +224,7 @@ func (e *Employe) avoirEnfant() {
 // L'Employé est agressé par quelqu'un
 func (agresse *Employe) etreAgresse(agresseur *Employe) {
 
-	agresse.logger.LogfType(LOG_AGRESSION, "%s agresse %s", agresseur.String(), agresse.String())
+	//agresse.logger.LogfType(LOG_AGRESSION, "%s agresse %s", agresseur.String(), agresse.String())
 
 	// Selon son comportement, il va porter plainte ou non
 	if rand.Float64() < constantes.PROBA_PLAINTE {
