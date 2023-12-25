@@ -15,6 +15,7 @@ class Message {
         this.parent = undefined;
         this.messageElement = undefined;
         this.loadingElt = undefined;
+        this.closed = false;
     }
 
     createElement(parent, type) {
@@ -100,7 +101,9 @@ class Message {
     // Ferme le message
     close() {
         if(this.timeout !== undefined) {
+            this.closed = true;
             clearTimeout(this.timeout);
+            this.onclose();
             try {
                 this.animation.commitStyles();
                 this.animation.cancel();
@@ -109,6 +112,8 @@ class Message {
             this.messageElement.classList.add("hidden");
         }
     }
+
+    onclose() {}
 }
 
 class InfoPopup {
@@ -124,7 +129,7 @@ class InfoPopup {
     // Créer le conteneur de messages
     createContainer() {
         const container = document.createElement("div");
-        container.classList.add("infopopup-container");
+        container.classList.add("infopopup-container", "hidden");
 
         document.body.appendChild(container);
 
@@ -139,19 +144,28 @@ class InfoPopup {
         }
 
         this.messages.unshift(message);
+        this.messageContainer.classList.remove("hidden");
         message.show();
+    }
+
+    _messageClosed() {
+        if(this.messages.every((v => v.closed))) {
+            this.messageContainer.classList.add("hidden");
+        }
     }
 
     // Affiche un message d'info qui disparaîtra après un certain temps donné (en s)
     info(content, timeoutAfter = Message.DEFAULT_TIMEOUT) {
-        const msg = new Message(content, timeoutAfter);
+        const msg = new Message(content, timeoutAfter, 0);
+        msg.onclose = () => { this._messageClosed(); }
         msg.createElement(this.messageContainer, Message.INFO);
         this.addMessage(msg);
     }
 
     // Affiche un message d'erreur qui disparaîtra après un certain temps donné (en s)
     error(content, timeoutAfter = Message.DEFAULT_TIMEOUT) {
-        const msg = new Message(content, timeoutAfter);
+        const msg = new Message(content, timeoutAfter, 0);
+        msg.onclose = () => { this._messageClosed(); }
         msg.createElement(this.messageContainer, Message.ERROR);
         this.addMessage(msg);
     }
