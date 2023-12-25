@@ -1,3 +1,10 @@
+// bouton retour fait revenir à l'index
+btnRetour.addEventListener("click", () => {
+    window.location.href = '../index.html';
+});
+
+
+
 // Initialise le graphe
 
 const leGraph = new Graph(document.getElementById('sim-graph'));
