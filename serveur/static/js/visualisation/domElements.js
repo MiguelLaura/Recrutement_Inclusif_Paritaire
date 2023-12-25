@@ -23,3 +23,5 @@ const idNumberSimu = document.getElementById("id-number-simu");
 const menuOpt = document.getElementById("dropdown-menu");
 const btnOpt = document.querySelector(".dropdown-icon");
 const containerOpt = document.querySelector(".dropdown-container");
+
+const checkOpts = document.querySelectorAll(".dropdown-menu input");

@@ -95,7 +95,7 @@ conn.addEventListener("message", (evt) => {
                 traiterReponseAction(resp.data[0].action, resp.data[0].succes)
                 break;
             default:
-                addLog(resp.type, `[${resp.type}] ${resp.data}`)
+                leLogger.addLog(resp.type, `${resp.data}`)
         }
     }
 });
@@ -187,7 +187,7 @@ function traiterReponseAction(action, succes) {
                 btnToggle.disabled = false;
                 btnStop.disabled = false;
                 statusSimu.innerText = "[pas débutée]";
-                resetLogs();
+                leLogger.reset();
                 resetData();
 
                 leGraph.reset();

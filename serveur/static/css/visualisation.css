@@ -148,7 +148,7 @@ button {
 }
 
 .log.evenement {
-    background-color: var(--couleur-recrutement);
+    background-color: var(--couleur-evenement);
 }
 
 #logger {
