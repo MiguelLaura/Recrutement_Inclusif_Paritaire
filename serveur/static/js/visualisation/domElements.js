@@ -18,3 +18,8 @@ const btnGraphVisuParite = document.getElementById("visu-parite");
 // Les informations sur la simulation
 const statusSimu = document.getElementById("status-simu");
 const idNumberSimu = document.getElementById("id-number-simu");
+
+// Les options de log
+const menuOpt = document.getElementById("dropdown-menu");
+const btnOpt = document.querySelector(".dropdown-icon");
+const containerOpt = document.querySelector(".dropdown-container");

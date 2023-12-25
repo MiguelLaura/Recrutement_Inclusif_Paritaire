@@ -20,3 +20,25 @@ function addLog(type, contenu) {
 function resetLogs() {
     logContainer.innerHTML = "";
 }
+
+/*
+
+    Le menu des options
+
+*/
+
+containerOpt.addEventListener("mouseover", () => {
+    if(containerOpt.dataset.toggle === "f") {
+        containerOpt.dataset.toggle = "t";
+        btnOpt.classList.remove("bi-chevron-down");
+        btnOpt.classList.add("bi-chevron-up");
+    }
+});
+
+containerOpt.addEventListener("mouseleave", () => {
+    if(containerOpt.dataset.toggle === "t") {
+        containerOpt.dataset.toggle = "f";
+        btnOpt.classList.add("bi-chevron-down");
+        btnOpt.classList.remove("bi-chevron-up");
+    }
+});
