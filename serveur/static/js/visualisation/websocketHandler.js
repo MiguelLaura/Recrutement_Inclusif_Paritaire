@@ -22,9 +22,9 @@ const pathname = url.pathname;
 const pathParts = pathname.split('/');
 const id = pathParts[pathParts.length - 1];
 
-const numbersId = id.split("_")
-const numberId = numbersId[numbersId.length - 1]
-idNumberSimu.innerText = numberId; //mettre le numéro de la simulation dans le titre
+// const numbersId = id.split("_")
+// const numberId = numbersId[numbersId.length - 1]
+// idNumberSimu.innerText = numberId; //mettre le numéro de la simulation dans le titre
 
 
 

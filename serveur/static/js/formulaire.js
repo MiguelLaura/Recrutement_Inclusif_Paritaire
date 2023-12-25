@@ -1,5 +1,3 @@
-let id_simulation = 0
-
 function updatePourcentage(val, idValue) {
     document.getElementById(idValue).innerText = val + '%';
 }
@@ -24,8 +22,22 @@ function afficher(idElemChecked, idAAfficher, idACacher) {
     }
 }
 
+function checkRequiered() { //vérifier qu'il n'y a pas d'élements recuiered non affichés
+    const requiredElements = document.querySelectorAll('form [required]');
+    requiredElements.forEach(element => {
+        const computedStyle = window.getComputedStyle(element);
+        if (computedStyle.display === 'none') {
+          element.removeAttribute('required');
+          console.log("enlever l'attribut requiered à ", element)
+        }
+      });
+
+}
+
 function sendData(event) {
     event.preventDefault();
+
+    checkRequiered();
 
     const nb_employes = document.getElementById('nb_employes').value;
     const nb_annees = document.getElementById('nb_annees').value;
@@ -101,7 +113,8 @@ function sendData(event) {
         }
     }
 
-    id_simulation +=1
+    //création d'un ID aléatoire pour ne pas avoir le problème de doublon quand on reload le formulaire
+    let id_simulation = Math.floor(Math.random() * 1000000000);
 
     const formData = {
       id_simulation : "id_simulation_"+id_simulation,
