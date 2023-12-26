@@ -60,7 +60,7 @@ class Graph {
      */
     addData(...allGraphData) {
         if(this.xs.length === 0) {
-            this.xs.push(0);
+            this.xs.push(1);
         } else {
             this.xs.push(this.xs[this.xs.length-1] + this.xIncr);
         }
