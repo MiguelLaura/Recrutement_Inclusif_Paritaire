@@ -145,6 +145,10 @@ type Compteur struct {
 	nbRetraites           int
 	nbLicenciements       int
 	nbDepressions         int
+	// Enfant
+	nbEnfants         int
+	nbCongesPaternite int
+	nbCongesMaternite int
 }
 
 // ------------ RECRUTEMENT ------------

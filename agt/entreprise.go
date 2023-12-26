@@ -35,17 +35,20 @@ func EnvoyerMessageRecrutement(dest *Recrutement, act ActionRecrutement, payload
 // ---------------------
 
 func NewCompteur() *Compteur {
-	cmpt := new(Compteur)
-	cmpt.nbEmbauches = 0
-	cmpt.nbEmbauchesFemme = 0
-	cmpt.nbAgressions = 0
-	cmpt.nbPlaintes = 0
-	cmpt.nbDemissions = 0
-	cmpt.nbDemissionsMaternite = 0
-	cmpt.nbRetraites = 0
-	cmpt.nbLicenciements = 0
-	cmpt.nbDepressions = 0
-	return cmpt
+	return &Compteur{
+		nbEmbauches:           0,
+		nbEmbauchesFemme:      0,
+		nbAgressions:          0,
+		nbPlaintes:            0,
+		nbDemissions:          0,
+		nbDemissionsMaternite: 0,
+		nbRetraites:           0,
+		nbLicenciements:       0,
+		nbDepressions:         0,
+		nbEnfants:             0,
+		nbCongesPaternite:     0,
+		nbCongesMaternite:     0,
+	}
 }
 
 // La fonction NewEntreprise doit créer l'entreprise et générer les employés de façon à respecter le quota de parité initial
@@ -158,6 +161,18 @@ func (ent *Entreprise) NbDeparts() int {
 	return ent.NbLicenciements() + ent.NbDepressions() + ent.NbDemissions() + ent.NbDemissionsMaternite() + ent.NbRetraites()
 }
 
+func (ent *Entreprise) NbEnfants() int {
+	return ent.Cmpt().nbEnfants
+}
+
+func (ent *Entreprise) NbCongesMaternite() int {
+	return ent.Cmpt().nbCongesMaternite
+}
+
+func (ent *Entreprise) NbCongesPaternite() int {
+	return ent.Cmpt().nbCongesPaternite
+}
+
 func (ent *Entreprise) Recrutement() Recrutement {
 	return ent.recrutement
 }
@@ -258,6 +273,18 @@ func (ent *Entreprise) SetNbDepressions(nbDepressions int) {
 	ent.cmpt.nbDepressions = nbDepressions
 }
 
+func (ent *Entreprise) SetNbEnfants(nbEnfants int) {
+	ent.cmpt.nbEnfants = nbEnfants
+}
+
+func (ent *Entreprise) SetNbCongesMaternite(nbCongesMaternite int) {
+	ent.cmpt.nbCongesMaternite = nbCongesMaternite
+}
+
+func (ent *Entreprise) SetNbCongesPaternite(nbCongesPaternite int) {
+	ent.cmpt.nbCongesPaternite = nbCongesPaternite
+}
+
 func (ent *Entreprise) SetRecrutement(recrut Recrutement) {
 	ent.recrutement = recrut
 }
@@ -316,7 +343,7 @@ func (ent *Entreprise) RecevoirDemissionMaternite(emp *Employe) {
 	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		ent.departs = append(ent.departs, emp)
-		ent.logger.LogfType(LOG_DEPART, "%s pose sa démission après son congé maternité", emp.String())
+		//ent.logger.LogfType(LOG_DEPART, "%s pose sa démission après son congé maternité", emp.String())
 
 	}
 }
@@ -349,10 +376,16 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 func (ent *Entreprise) RecevoirCongeParental(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
+	if emp.Genre() == Femme {
+		ent.SetNbCongesMaternite(ent.NbCongesMaternite() + 1)
+	} else {
+		ent.SetNbCongesPaternite(ent.NbCongesPaternite() + 1)
+	}
+
 	i, _ := TrouverEmploye(ent.congeParental, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		ent.congeParental = append(ent.congeParental, emp)
-		ent.logger.LogfType(LOG_ENTREPRISE, "%s part en congé parental", emp.String())
+		//ent.logger.LogfType(LOG_ENTREPRISE, "%s part en congé parental", emp.String())
 	}
 }
 
@@ -405,7 +438,7 @@ func (ent *Entreprise) organisationFormation() {
 
 	// 32% des français ont participé à une formation
 	nb_employes_formes := math.Round(constantes.POURCENTAGE_FORMATION * float64(ent.NbEmployes()))
-	ent.logger.LogfType(LOG_EVENEMENT, "%d employé.es ont participé à une formation", int(nb_employes_formes))
+	ent.logger.LogfType(LOG_EVENEMENT, "%d employé.e(s) ont participé à une formation", int(nb_employes_formes))
 	// 50% des employés qui se forment sont des femmes
 	nb_femmes_formes := math.Round(nb_employes_formes / 2)
 	nb_hommes_formes := nb_femmes_formes
@@ -553,10 +586,6 @@ func (ent *Entreprise) CalculerBenefice() int {
 }
 
 func (ent *Entreprise) bonneAnnee() {
-	// DEBUG
-	log.Printf("\n\n\n\nAVANT\n %d %d %d %d %d %d %d %d %d", ent.NbEmbauches(), ent.NbEmbauchesFemme(), ent.NbAgressions(), ent.NbPlaintes(), ent.NbDemissions(), ent.NbDemissionsMaternite(), ent.NbRetraites(), ent.NbLicenciements(), ent.NbDepressions())
-	// DEBUG
-	log.Printf("\n\n\n\nAPRES\n %d %d %d %d %d %d %d %d %d", ent.NbEmbauches(), ent.NbEmbauchesFemme(), ent.NbAgressions(), ent.NbPlaintes(), ent.NbDemissions(), ent.NbDemissionsMaternite(), ent.NbRetraites(), ent.NbLicenciements(), ent.NbDepressions())
 	ent.resetCompteur()
 	ent.SetNbAgressions(ent.NbAgresseurs())
 	ent.congeParental = make([]*Employe, 0)
@@ -691,20 +720,27 @@ func (ent *Entreprise) resetCompteur() {
 	ent.SetNbAgressions(0)
 	ent.SetNbPlaintes(0)
 	ent.SetNbDemissions(0)
+	ent.SetNbDemissionsMaternite(0)
 	ent.SetNbRetraites(0)
 	ent.SetNbLicenciements(0)
 	ent.SetNbDepressions(0)
-
+	ent.SetNbEnfants(0)
+	ent.SetNbCongesMaternite(0)
+	ent.SetNbCongesPaternite(0)
 }
 
 func (ent *Entreprise) AfficherDonnéesCompteur() {
-	ent.logger.LogfType(LOG_RECRUTEMENT, "%d employé.e(s) recruté.e(s) dont %d femme(s)", ent.NbEmbauches(), ent.NbEmbauchesFemme())
-	ent.logger.LogfType(LOG_AGRESSION, "%d agression(s) ont eu lieu", ent.NbAgressions())
-	ent.logger.LogfType(LOG_AGRESSION, "%d employé.e(s) ont informé l'entreprise de l'agression subie", ent.NbPlaintes())
-	ent.logger.LogfType(LOG_DEPART, "%d employé.e(s) ont démissionné dont %d après leur(s) congé(s) maternité", ent.NbDemissions(), ent.NbDemissionsMaternite())
-	ent.logger.LogfType(LOG_DEPART, "%d employé.e(s) sont parti.e(s) à la retraite", ent.NbRetraites())
-	ent.logger.LogfType(LOG_DEPART, "%d employé.e(s) ont été licencié.e(s) pour faute grave", ent.NbLicenciements())
-	ent.logger.LogfType(LOG_DEPART, "%d employé.e(s) ont quitté l'entreprise pour raison de dépression", ent.NbDepressions())
+	// Mettre des if pour que le log ne s'affiche que si valeur > 0 ? Perte d'info
+	ent.logger.LogfType(LOG_RECRUTEMENT, "Recrutement de %d employé.e(s) dont %d femme(s)", ent.NbEmbauches(), ent.NbEmbauchesFemme())
+	ent.logger.LogfType(LOG_AGRESSION, "%d agression(s) sur le lieu de travail. %d victimes ont prévenu l'entreprise ", ent.NbAgressions(), ent.NbPlaintes())
+	ent.logger.LogfType(LOG_DEPART, "Démission(s) spontanée(s) de %d employé.e(s)", ent.NbDemissions())
+	ent.logger.LogfType(LOG_DEPART, "Départ(s) à la retraite pour %d employé.e(s)", ent.NbRetraites())
+	ent.logger.LogfType(LOG_DEPART, "Licenciement pour faute grave appliqué à %d employé.e(s)", ent.NbLicenciements())
+	ent.logger.LogfType(LOG_DEPART, "Dépression(s) pour %d employé.e(s) conduisant à une démission", ent.NbDepressions())
+	ent.logger.LogfType(LOG_EMPLOYE, "Naissance d'un enfant pour %d employé.e(s)", ent.NbEnfants())
+	ent.logger.LogfType(LOG_EMPLOYE, "%d employé(s) en congé paternité et %d employée(s) en congé maternité", ent.NbCongesPaternite(), ent.NbCongesMaternite())
+	// Anomalie observée pour cette valeur : parfois supérieur à nbenfants
+	ent.logger.LogfType(LOG_DEPART, "Démission(s) de %d employée(s) après leur congé maternité", ent.NbDemissionsMaternite())
 }
 
 func (ent *Entreprise) MoyenneCompetences() float64 {

@@ -205,7 +205,8 @@ func (e *Employe) seFormer() {
 }
 
 func (e *Employe) avoirEnfant() {
-	e.logger.LogfType(LOG_EMPLOYE, "%s a un enfant", e.String())
+	//e.logger.LogfType(LOG_EMPLOYE, "%s a un enfant", e.String())
+	e.entreprise.SetNbEnfants(e.entreprise.NbEnfants() + 1)
 	if e.Genre() == Femme {
 		if rand.Float64() < constantes.PROBA_CONGE_F {
 			e.entreprise.RecevoirCongeParental(e)
