@@ -166,7 +166,7 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 	}
 	// Pas d'erreur si len(candidats)=0 car dans ce cas, la fonction renvoie slice vide
 	embauches = make([]*Employe, 0)
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d postes", nbARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s)", nbARecruter)
 	for len(embauches) < nbARecruter {
 		maxCandidats := EmployeMaxCompetences(candidats)
 		if len(maxCandidats) == 1 {
@@ -244,7 +244,7 @@ func (r *Recrutement) RecrutementPlacesReservees(nbARecruter int, candidats []*E
 	// Hypothèse : si le résultat ne tombe pas juste, on arrondit le nombre de femmes au supérieur
 	nbFemmesARecruter := int(math.Round(pourcentagePlace * float64(nbARecruter)))
 	candidatsFemmes := FiltreFemme(candidats) // permet d'isoler les femmes parmi les candidat.es
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH veut recruter %.2f pourcents de femmes soit %d femme(s)", pourcentagePlace, nbFemmesARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH veut recruter %.2f %% de femmes soit %d femme(s)", pourcentagePlace*100, nbFemmesARecruter)
 	// 1ere etape : recruter les femmes les plus compétentes pour les places réservées
 	for i := 0; i < nbFemmesARecruter; i++ {
 		if len(candidatsFemmes) == 0 {

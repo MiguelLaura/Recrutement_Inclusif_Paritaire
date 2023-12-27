@@ -736,7 +736,7 @@ func (ent *Entreprise) AfficherDonneesCompteur() {
 	ent.logger.LogfType(LOG_DEPART, "Démission(s) spontanée(s) de %d employé.e(s)", ent.NbDemissions())
 	ent.logger.LogfType(LOG_DEPART, "Départ(s) à la retraite pour %d employé.e(s)", ent.NbRetraites())
 	ent.logger.LogfType(LOG_DEPART, "Licenciement pour faute grave appliqué à %d employé.e(s)", ent.NbLicenciements())
-	ent.logger.LogfType(LOG_DEPART, "Dépression(s) pour %d employé.e(s) conduisant à une démission", ent.NbDepressions())
+	ent.logger.LogfType(LOG_DEPART, "Dépression(s) conduisant à une démission pour %d employé.e(s)", ent.NbDepressions())
 	ent.logger.LogfType(LOG_EMPLOYE, "Naissance d'un enfant pour %d employé.e(s)", ent.NbEnfants())
 	ent.logger.LogfType(LOG_EMPLOYE, "%d employé(s) en congé paternité et %d employée(s) en congé maternité", ent.NbCongesPaternite(), ent.NbCongesMaternite())
 	ent.logger.LogfType(LOG_DEPART, "Démission(s) de %d employée(s) après leur congé maternité", ent.NbDemissionsMaternite())
