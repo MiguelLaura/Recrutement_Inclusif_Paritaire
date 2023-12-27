@@ -368,7 +368,7 @@ func (simu *Simulation) startAgents() {
 		simu.mettreAJourStatus(ENDED)
 
 		simu.terminerSimulation()
-		simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start))
+		simu.logger.Logf("La simulation est terminée.\nElle a duré : %v", time.Since(simu.start).Round(time.Second))
 		simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"stop", true})
 		simu.locker.Done()
 	}()
