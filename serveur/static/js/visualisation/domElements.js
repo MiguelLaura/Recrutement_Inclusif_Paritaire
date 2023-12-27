@@ -20,7 +20,7 @@ const statusSimu = document.getElementById("status-simu");
 const idNumberSimu = document.getElementById("id-number-simu");
 
 // Bouton retour vers le formulaire
-const btnRetour = document.getElementById("button-retour")
+const btnRetour = document.getElementById("button-retour");
 
 // Les options de log
 const menuOpt = document.getElementById("dropdown-menu");
