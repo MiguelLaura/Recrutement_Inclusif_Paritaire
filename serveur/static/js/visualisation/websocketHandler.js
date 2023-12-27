@@ -2,10 +2,6 @@ NOT_STARTED = "0";
 PLAYING = "1";
 PAUSED = "2";
 
-// Crée un objet qui permet d'afficher des messages
-
-const popupInfo = new InfoPopup();
-
 // -------------------------
 // WebSocket
 

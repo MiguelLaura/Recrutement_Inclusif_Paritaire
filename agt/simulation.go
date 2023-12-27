@@ -217,7 +217,7 @@ func (simu *Simulation) Relancer() {
 	simu.ent.AjouterRecrutement(*recrut)
 	simu.mettreAJourStatus(CREATED)
 
-	simu.logger.Log("La simulation a été récréé.")
+	simu.logger.Log("La simulation a été récréée.")
 	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"relancer", true})
 }
 
@@ -270,7 +270,7 @@ func (simu *Simulation) EnvoyerInfosInitiales() {
 	infoRecrutementAvant := ""
 	infoRecrutementApres := ""
 
-	//création de la chaine de caractère pour le recrutement Avant
+	//création de la chaine de caractère pour le recrutement en dessous du seuil
 	if recrut.TypeRecrutementAvant() == Competences {
 		stratAvant := ""
 		if recrut.StratAvant() == PrioFemme {
@@ -288,9 +288,9 @@ func (simu *Simulation) EnvoyerInfosInitiales() {
 		infoRecrutementAvant = fmt.Sprintf("Places réservées : %d%%", int(recrut.PourcentagePlacesAvant()*100))
 	}
 
-	//création de la chaine de caractère pour le recrutement Après (si objectif)
+	//création de la chaine de caractère pour le recrutement au dessus du seuil (si objectif)
 	if recrut.Objectif() != -1 { // avec objectif
-		infoRecrutementAvant = "(Avant) " + infoRecrutementAvant //ajout du qualificatif "avant" pour autre texte
+		infoRecrutementAvant = "(En dessous du seuil) " + infoRecrutementAvant //ajout du qualificatif "en dessous du seuil" pour autre texte
 		if recrut.TypeRecrutementApres() == Competences {
 			stratApres := ""
 			if recrut.StratApres() == PrioFemme {
@@ -302,11 +302,11 @@ func (simu *Simulation) EnvoyerInfosInitiales() {
 			if recrut.StratApres() == Hasard {
 				stratApres = "Hasard"
 			}
-			infoRecrutementApres = fmt.Sprintf("(Après) Compétences égales : %s", stratApres)
+			infoRecrutementApres = fmt.Sprintf("(Au dessus du seuil) Compétences égales : %s", stratApres)
 		}
 		if recrut.TypeRecrutementApres() == PlacesReservees {
 
-			infoRecrutementApres = fmt.Sprintf("(Après) Places réservées : %d%%", int(recrut.PourcentagePlacesApres()*100))
+			infoRecrutementApres = fmt.Sprintf("(Au dessus du seuil) Places réservées : %d%%", int(recrut.PourcentagePlacesApres()*100))
 		}
 	}
 

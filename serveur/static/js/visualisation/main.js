@@ -3,6 +3,9 @@ btnRetour.addEventListener("click", () => {
     window.location.href = '../index.html';
 });
 
+// Crée un objet qui permet d'afficher des messages
+
+const popupInfo = new InfoPopup();
 
 
 // Initialise le graphe
