@@ -96,7 +96,7 @@ function mettreLesChosesAuBonEndroit(data) {
     anneeElt.textContent = data.annee + " ans";
     nbEmpElt.textContent = data.nbEmp + " employé·es";
     pariteElt.textContent = (data.parite * 100).toFixed(0) + "% de femmes";
-    benefice.textContent = data.benefices + "€"
+    benefice.textContent = data.benefices.toLocaleString() + "€"
 
     leGraph.addData(data.benefices.toFixed(0), (data.parite * 100).toFixed(0));
 }
