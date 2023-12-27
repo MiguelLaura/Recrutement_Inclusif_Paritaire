@@ -339,9 +339,10 @@ func (ent *Entreprise) RecevoirDemission(emp *Employe) {
 func (ent *Entreprise) RecevoirDemissionMaternite(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
-	ent.SetNbDemissionsMaternite(ent.NbDemissionsMaternite() + 1)
+
 	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
+		ent.SetNbDemissionsMaternite(ent.NbDemissionsMaternite() + 1)
 		ent.departs = append(ent.departs, emp)
 		log.Printf("%s pose sa démission après son congé maternité", emp.String())
 
@@ -352,9 +353,9 @@ func (ent *Entreprise) RecevoirDepression(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
 
-	ent.SetNbDepressions(ent.NbDepressions() + 1)
 	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
+		ent.SetNbDepressions(ent.NbDepressions() + 1)
 		ent.departs = append(ent.departs, emp)
 		log.Printf("%s pose sa démission pour dépression", emp.String())
 
@@ -364,9 +365,10 @@ func (ent *Entreprise) RecevoirDepression(emp *Employe) {
 func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
-	ent.SetNbRetraites(ent.NbRetraites() + 1)
+
 	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
+		ent.SetNbRetraites(ent.NbRetraites() + 1)
 		ent.departs = append(ent.departs, emp)
 		log.Printf("%s part à la retraite", emp.String())
 
@@ -376,14 +378,14 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 func (ent *Entreprise) RecevoirCongeParental(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
-	if emp.Genre() == Femme {
-		ent.SetNbCongesMaternite(ent.NbCongesMaternite() + 1)
-	} else {
-		ent.SetNbCongesPaternite(ent.NbCongesPaternite() + 1)
-	}
 
 	i, _ := TrouverEmploye(ent.congeParental, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
+		if emp.Genre() == Femme {
+			ent.SetNbCongesMaternite(ent.NbCongesMaternite() + 1)
+		} else {
+			ent.SetNbCongesPaternite(ent.NbCongesPaternite() + 1)
+		}
 		ent.congeParental = append(ent.congeParental, emp)
 		log.Printf("%s part en congé parental", emp.String())
 	}
