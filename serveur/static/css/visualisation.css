@@ -32,6 +32,11 @@ button {
     border: none;
 }
 
+#button-retour {
+    font-size: small;
+    cursor: pointer;
+}
+
 .hidden {
     display: none;
 }
