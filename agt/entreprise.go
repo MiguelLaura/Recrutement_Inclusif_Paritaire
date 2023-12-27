@@ -730,7 +730,7 @@ func (ent *Entreprise) resetCompteur() {
 func (ent *Entreprise) AfficherDonneesCompteur() {
 	// Mettre des if pour que le log ne s'affiche que si valeur > 0 ? Perte d'info
 	ent.logger.LogfType(LOG_RECRUTEMENT, "Recrutement de %d employé.e(s) dont %d femme(s)", ent.NbEmbauches(), ent.NbEmbauchesFemme())
-	ent.logger.LogfType(LOG_AGRESSION, "%d agression(s) sur le lieu de travail. %d victimes ont prévenu l'entreprise ", ent.NbAgressions(), ent.NbPlaintes())
+	ent.logger.LogfType(LOG_AGRESSION, "%d agression(s) sur le lieu de travail dont %d remontée(s) à l'entreprise", ent.NbAgressions(), ent.NbPlaintes())
 	ent.logger.LogfType(LOG_DEPART, "Démission(s) spontanée(s) de %d employé.e(s)", ent.NbDemissions())
 	ent.logger.LogfType(LOG_DEPART, "Départ(s) à la retraite pour %d employé.e(s)", ent.NbRetraites())
 	ent.logger.LogfType(LOG_DEPART, "Licenciement pour faute grave appliqué à %d employé.e(s)", ent.NbLicenciements())
