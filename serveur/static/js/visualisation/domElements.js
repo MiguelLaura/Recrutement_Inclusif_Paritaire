@@ -18,3 +18,6 @@ const btnGraphVisuParite = document.getElementById("visu-parite");
 // Les informations sur la simulation
 const statusSimu = document.getElementById("status-simu");
 const idNumberSimu = document.getElementById("id-number-simu");
+
+// Bouton retour vers le formulaire
+const btnRetour = document.getElementById("button-retour")

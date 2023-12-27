@@ -23,6 +23,11 @@ button {
     border: none;
 }
 
+#button-retour {
+    font-size: small;
+    cursor: pointer;
+}
+
 /* 
 ----------------------------------
            Log section 
