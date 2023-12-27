@@ -54,35 +54,38 @@ class Graph {
 
     /**
      * Ajoute une ligne horizontale sur le graphe
-     * @param {string} graphLabel - Le nom du graph auquel la ligne est rattachée
-     * @param {string} limitLabel - Le label de la ligne
-     * @param {float} limitValue - La valeur en y de la ligne
-     * @param {*} limitLineColor - La couleur de la ligne
-     * @param {*} limitBkgColor - La couleur du fond du label
-     * @param {int} width - La largeur de la ligne
+     * @param {string} graphLabel - Le nom du graph auquel la ligne est rattachée 
+     *      (si le graphe n'existe pas, une exception est générée)
+     * @param {string} lineLabel - Le label de la ligne
+     * @param {float} value - La valeur en y de la ligne
+     * @param {object}  - Paramètres optionnels :
+     *      lineColor - La couleur de la ligne (defaut: "black")
+     *      labelBkgColor - La couleur du fond du label (defaut: "red")
+     *      width - La largeur de la ligne (en px) (defaut: 3)
+     *      showLabel - Est-ce que le label est visible ou non (defaut : true)
      */
-    addHorizontalLine(graphLabel, limitLabel, limitValue, limitLineColor="black", limitBkgColor="red", width=3) {
+    addHorizontalLine(graphLabel, lineLabel, value, { lineColor="black", labelBkgColor="red", width=3, showLabel=true } = {}) {
         if(Object.keys(this.theLimits).indexOf(graphLabel) === -1) {
             throw new Error("Ne peut pas ajouter de limites à un graphe qui n'existe pas.");
         }
 
         const limit = {
-            limitName: limitLabel,
+            lineLabel: lineLabel,
             type: 'line',
-            borderColor: limitLineColor,
+            borderColor: lineColor,
             borderWidth: width,
             label: {
-                backgroundColor: limitBkgColor,
-                content: limitLabel,
-                display: true
+                backgroundColor: labelBkgColor,
+                content: lineLabel,
+                display: showLabel
             },
             scaleID: 'y',
-            value: limitValue
+            value: value
         };
 
         this.theLimits[graphLabel].push(limit);
         if(this.isGraphActive(graphLabel)) {
-            this.renderedLimits[`${graphLabel}_${limitLabel}`] = limit;
+            this.renderedLimits[`${graphLabel}_${lineLabel}`] = limit;
         }
     }
 
@@ -97,7 +100,7 @@ class Graph {
             if(graphNames.indexOf(graph.label) !== -1) {
                 this.graph.data.datasets.push(graph);
                 for(const limit of this.theLimits[graph.label]) {
-                    this.renderedLimits[`${graph.label}_${limit.limitName}`] = limit;
+                    this.renderedLimits[`${graph.label}_${limit.lineLabel}`] = limit;
                 }
             }
         }
