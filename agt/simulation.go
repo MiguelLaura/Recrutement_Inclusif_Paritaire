@@ -62,6 +62,10 @@ func (simu *Simulation) Status() Status {
 	return simu.status
 }
 
+func (simu *Simulation) AgentsLances() bool {
+	return simu.agentsLances
+}
+
 // ---------------------
 //        Setters
 // ---------------------
@@ -88,6 +92,10 @@ func (simu *Simulation) SetStartTime(startTime time.Time) {
 
 func (simu *Simulation) SetStatus(status Status) {
 	simu.status = status
+}
+
+func (simu *Simulation) SetAgentsLances(lances bool) {
+	simu.agentsLances = lances
 }
 
 // ---------------------
