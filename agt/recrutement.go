@@ -308,11 +308,11 @@ func (r *Recrutement) Recruter(nbARecruter int) (embauches []*Employe) {
 	}
 
 	// Génération des candidats
-
 	candidats := r.GenererCandidats(constantes.NB_CANDIDATS_PAR_OFFRE * nbARecruter)
 	if candidats == nil {
 		return nil
 	}
+
 	if r.objectif == -1 {
 		// L'utilisateur n'a pas défini un objectif de parité à atteindre
 
