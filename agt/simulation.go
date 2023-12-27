@@ -155,7 +155,6 @@ func (simu *Simulation) NextStep() {
 
 	simu.mettreAJourStatus(STEP)
 
-	simu.logger.Log("La simulation a avancé d'un pas")
 	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"step", true})
 }
 
