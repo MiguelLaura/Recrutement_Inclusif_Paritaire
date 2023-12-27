@@ -106,7 +106,7 @@ function afficherInformationsInitiales(data) {
     pariteInit.innerText = "(début : "+(data.pariteInit * 100).toFixed(0)+"%)";
 
     if (data.objectif != "-1") {
-        objectif.innerText = "Objectif : "+(data.objectif * 100).toFixed(0)+"%";
+        objectif.innerText = "Pourcentage de femmes souhaité : "+(data.objectif * 100).toFixed(0)+"%";
         leGraph.addHorizontalLine("Parité", "seuil", data.objectif * 100);
     } //sinon, pas de texte pour l'objectif
 

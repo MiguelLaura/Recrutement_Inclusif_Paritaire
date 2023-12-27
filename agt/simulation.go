@@ -216,7 +216,7 @@ func (simu *Simulation) Relancer() {
 	simu.ent.AjouterRecrutement(*recrut)
 	simu.mettreAJourStatus(CREATED)
 
-	simu.logger.Log("La simulation a été récréée.")
+	simu.logger.Log("La simulation a été recréée.")
 	simu.logger.LogType(LOG_REPONSE, ReponseAuClient{"relancer", true})
 }
 
