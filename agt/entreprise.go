@@ -142,7 +142,7 @@ func (ent *Entreprise) NbDemissions() int {
 }
 
 func (ent *Entreprise) NbDemissionsMaternite() int {
-	return ent.Cmpt().nbDemissions
+	return ent.Cmpt().nbDemissionsMaternite
 }
 
 func (ent *Entreprise) NbRetraites() int {
@@ -332,7 +332,7 @@ func (ent *Entreprise) RecevoirDemission(emp *Employe) {
 	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		ent.departs = append(ent.departs, emp)
-		//ent.logger.LogfType(LOG_DEPART, "%s pose sa démission", emp.String())
+		log.Printf("%s pose sa démission", emp.String())
 	}
 }
 
@@ -343,7 +343,7 @@ func (ent *Entreprise) RecevoirDemissionMaternite(emp *Employe) {
 	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		ent.departs = append(ent.departs, emp)
-		//ent.logger.LogfType(LOG_DEPART, "%s pose sa démission après son congé maternité", emp.String())
+		log.Printf("%s pose sa démission après son congé maternité", emp.String())
 
 	}
 }
@@ -356,7 +356,7 @@ func (ent *Entreprise) RecevoirDepression(emp *Employe) {
 	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		ent.departs = append(ent.departs, emp)
-		//ent.logger.LogfType(LOG_DEPART, "%s pose sa démission pour dépression", emp.String())
+		log.Printf("%s pose sa démission pour dépression", emp.String())
 
 	}
 }
@@ -368,7 +368,7 @@ func (ent *Entreprise) RecevoirRetraite(emp *Employe) {
 	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		ent.departs = append(ent.departs, emp)
-		//ent.logger.LogfType(LOG_DEPART, "%s part à la retraite", emp.String())
+		log.Printf("%s part à la retraite", emp.String())
 
 	}
 }
@@ -385,7 +385,7 @@ func (ent *Entreprise) RecevoirCongeParental(emp *Employe) {
 	i, _ := TrouverEmploye(ent.congeParental, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
 		ent.congeParental = append(ent.congeParental, emp)
-		//ent.logger.LogfType(LOG_ENTREPRISE, "%s part en congé parental", emp.String())
+		log.Printf("%s part en congé parental", emp.String())
 	}
 }
 
@@ -394,7 +394,7 @@ func (ent *Entreprise) RecevoirPlainte(plaignant *Employe, accuse *Employe) {
 	defer ent.Unlock()
 	ent.SetNbPlaintes(ent.NbPlaintes() + 1)
 	ent.plaintes = append(ent.plaintes, []*Employe{plaignant, accuse})
-	//ent.logger.LogfType(LOG_AGRESSION, "%s porte plainte contre %s ", plaignant.String(), accuse.String())
+	log.Printf("%s porte plainte contre %s ", plaignant.String(), accuse.String())
 }
 
 func (ent *Entreprise) RecevoirActions(nbActions int) {
@@ -402,8 +402,6 @@ func (ent *Entreprise) RecevoirActions(nbActions int) {
 		<-ent.chnlNotifAction
 
 		ent.nbActions += 1
-
-		// ent.logger.LogfType(LOG_ENTREPRISE, "Nb actions %d/%d", ent.nbActions, nbActions)
 
 		if ent.nbActions == nbActions {
 			ent.nbActions = 0
@@ -480,7 +478,7 @@ func (ent *Entreprise) gestionPlaintes() {
 			if i < 0 {
 				ent.SetNbLicenciements(ent.NbLicenciements() + 1)
 				ent.departs = append(ent.departs, accuse)
-				//ent.logger.LogfType(LOG_DEPART, "%s est licencié pour faute grave", accuse.String())
+				log.Printf("%s est licencié pour faute grave", accuse.String())
 			}
 		}
 	}
@@ -516,7 +514,7 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 				ent.SetNbEmbauchesFemme(ent.NbEmbauchesFemme() + 1)
 			}
 			ent.employes = append(ent.employes, emp)
-			//ent.logger.LogfType(LOG_RECRUTEMENT, "%s est embauché.e", emp.String())
+			log.Printf("%s est embauché.e", emp.String())
 			if emp.Agresseur() {
 				ent.nbAgresseurs += 1
 			}
@@ -558,7 +556,7 @@ func (ent *Entreprise) CalculerBenefice() int {
 	// Bonus de productivité si %femmes supérieur à 35%
 	if ent.PourcentageFemmes() > constantes.SEUIL_IMPACT_FEMME {
 		benef = benef * (1.0 + constantes.BOOST_PRODUCTIVITE_FEMME)
-		ent.logger.LogfType(LOG_ENTREPRISE, "La parité est supérieure à 35 pourcents, ce qui a permis une ambiance productive : amélioration du bénéfice")
+		ent.logger.LogfType(LOG_ENTREPRISE, "Il y a plus de 35%% de femmes dans l'entreprise, ce qui a permis une ambiance productive : amélioration du bénéfice")
 	}
 
 	// Coût du recrutement
@@ -666,7 +664,7 @@ func (ent *Entreprise) finirCycle() {
 	ent.gestionDeparts()
 	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
 	ent.gestionRecrutements()
-	ent.AfficherDonnéesCompteur()
+	ent.AfficherDonneesCompteur()
 	ent.logger.LogType(LOG_ENTREPRISE, "Fin d'année")
 }
 
@@ -729,7 +727,7 @@ func (ent *Entreprise) resetCompteur() {
 	ent.SetNbCongesPaternite(0)
 }
 
-func (ent *Entreprise) AfficherDonnéesCompteur() {
+func (ent *Entreprise) AfficherDonneesCompteur() {
 	// Mettre des if pour que le log ne s'affiche que si valeur > 0 ? Perte d'info
 	ent.logger.LogfType(LOG_RECRUTEMENT, "Recrutement de %d employé.e(s) dont %d femme(s)", ent.NbEmbauches(), ent.NbEmbauchesFemme())
 	ent.logger.LogfType(LOG_AGRESSION, "%d agression(s) sur le lieu de travail. %d victimes ont prévenu l'entreprise ", ent.NbAgressions(), ent.NbPlaintes())
@@ -739,7 +737,6 @@ func (ent *Entreprise) AfficherDonnéesCompteur() {
 	ent.logger.LogfType(LOG_DEPART, "Dépression(s) pour %d employé.e(s) conduisant à une démission", ent.NbDepressions())
 	ent.logger.LogfType(LOG_EMPLOYE, "Naissance d'un enfant pour %d employé.e(s)", ent.NbEnfants())
 	ent.logger.LogfType(LOG_EMPLOYE, "%d employé(s) en congé paternité et %d employée(s) en congé maternité", ent.NbCongesPaternite(), ent.NbCongesMaternite())
-	// Anomalie observée pour cette valeur : parfois supérieur à nbenfants
 	ent.logger.LogfType(LOG_DEPART, "Démission(s) de %d employée(s) après leur congé maternité", ent.NbDemissionsMaternite())
 }
 

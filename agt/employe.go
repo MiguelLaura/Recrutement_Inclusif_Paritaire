@@ -197,7 +197,7 @@ func (e *Employe) partirRetraite() {
 func (e *Employe) seFormer() {
 	e.cmptCompetence += 1
 	if e.competence < 10 && e.cmptCompetence == 5 {
-		//e.logger.LogfType(LOG_EMPLOYE, "%s a amélioré ses compétences", e.String())
+		log.Printf("%s a amélioré ses compétences", e.String())
 		// Pas besoin si on affiche la moyenne des compétences
 		e.competence += 1
 		e.cmptCompetence = 0
@@ -205,7 +205,7 @@ func (e *Employe) seFormer() {
 }
 
 func (e *Employe) avoirEnfant() {
-	//e.logger.LogfType(LOG_EMPLOYE, "%s a un enfant", e.String())
+	log.Printf("%s a un enfant", e.String())
 	e.entreprise.SetNbEnfants(e.entreprise.NbEnfants() + 1)
 	if e.Genre() == Femme {
 		if rand.Float64() < constantes.PROBA_CONGE_F {
@@ -225,7 +225,7 @@ func (e *Employe) avoirEnfant() {
 // L'Employé est agressé par quelqu'un
 func (agresse *Employe) etreAgresse(agresseur *Employe) {
 
-	//agresse.logger.LogfType(LOG_AGRESSION, "%s agresse %s", agresseur.String(), agresse.String())
+	log.Printf("%s agresse %s", agresseur.String(), agresse.String())
 
 	// Selon son comportement, il va porter plainte ou non
 	if rand.Float64() < constantes.PROBA_PLAINTE {
@@ -257,7 +257,6 @@ func (agresseur *Employe) agresser() {
 		cible = agresseur.entreprise.EnvoyerEmploye(genreAgresse)
 		timeout++
 	}
-	// agresseur.logger.LogfType(LOG_AGRESSION, "Employé %s agresse %s", agresseur.id, cible.id)
 
 	if timeout < constantes.TIMEOUT_AGRESSION {
 		go EnvoyerMessage(cible, AGRESSION, agresseur)
@@ -294,7 +293,6 @@ func (e *Employe) agir() {
 	case NOOP: // Ne fait rien
 		return
 	case LIBRE: // Vie une année complète
-		// e.logger.LogfType(LOG_EMPLOYE, "action libre %s", e.id)
 
 		// Si l'agent est un agresseur, il agresse
 		if e.Agresseur() {
@@ -342,7 +340,6 @@ func (e *Employe) agir() {
 		}
 
 	case AGRESSION: // Se fait agresser par quelqu'un
-		// e.logger.LogfType(LOG_EMPLOYE, "action agression %s", e.id)
 
 		if msg.Payload != nil {
 			e.etreAgresse(msg.Payload.(*Employe))
@@ -356,7 +353,6 @@ func (e *Employe) agir() {
 		}
 
 	case FIN: // Arrêter l'employé
-		// e.logger.LogfType(LOG_EMPLOYE, "action fin %s", e.id)
 		e.fin = true
 	}
 
