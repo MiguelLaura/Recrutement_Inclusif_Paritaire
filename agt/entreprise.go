@@ -1,7 +1,6 @@
 package agt
 
 import (
-	"errors"
 	"log"
 	"math"
 	"math/rand"
@@ -388,11 +387,9 @@ func (ent *Entreprise) gestionDeparts() {
 	ent.departs = make([]*Employe, 0)
 }
 
-func (ent *Entreprise) gestionRecrutements() (err error) {
+func (ent *Entreprise) gestionRecrutements() {
 	msg := <-ent.chnlRecrutement
-	if msg.Act == ERREUR_RECRUTEMENT {
-		return msg.Payload.(error)
-	} else if msg.Act == FIN_RECRUTEMENT {
+	if msg.Act == FIN_RECRUTEMENT {
 		embauches := msg.Payload.([]*Employe)
 		for _, emp := range embauches {
 			ent.employes = append(ent.employes, emp)
@@ -401,11 +398,7 @@ func (ent *Entreprise) gestionRecrutements() (err error) {
 				ent.nbAgresseurs += 1
 			}
 		}
-		return nil
 	}
-
-	err = errors.New("erreur : erreur recrutement")
-	return err
 }
 
 func (ent *Entreprise) lancerRecrutements() {

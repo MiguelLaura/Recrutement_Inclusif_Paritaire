@@ -74,7 +74,6 @@ type ActionRecrutement int
 const (
 	RECRUTEMENT ActionRecrutement = iota
 	FIN_RECRUTEMENT
-	ERREUR_RECRUTEMENT
 	FIN_AGENT
 )
 
