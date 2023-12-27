@@ -238,7 +238,7 @@ func (r *Recrutement) RecrutementPlacesReservees(nbARecruter int, candidats []*E
 		err := errors.New("erreur : pourcentagePlace doit être compris entre 0 et 1")
 		return nil, err
 	}
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d postes", nbARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s)", nbARecruter)
 	// Pas d'erreur si len(candidats)=0 car dans ce cas, la fonction renvoie slice vide
 	embauches = make([]*Employe, 0)
 	// Hypothèse : si le résultat ne tombe pas juste, on arrondit le nombre de femmes au supérieur
