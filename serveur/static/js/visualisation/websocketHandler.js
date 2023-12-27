@@ -96,24 +96,25 @@ function mettreLesChosesAuBonEndroit(data) {
     anneeElt.textContent = data.annee + " ans";
     nbEmpElt.textContent = data.nbEmp + " employé·es";
     pariteElt.textContent = (data.parite * 100).toFixed(0) + "% de femmes";
-    benefice.textContent = data.benefices.toLocaleString() + "€"
+    benefice.textContent = data.benefices.toLocaleString() + "€";
 
     leGraph.addData(data.benefices.toFixed(0), (data.parite * 100).toFixed(0));
 }
 
 function afficherInformationsInitiales(data) {
-    nbEmployesInit.innerText = "(début : "+data.nbEmployesInit+")"
-    pariteInit.innerText = "(début : "+(data.pariteInit * 100).toFixed(0)+"%)"
+    nbEmployesInit.innerText = "(début : "+data.nbEmployesInit+")";
+    pariteInit.innerText = "(début : "+(data.pariteInit * 100).toFixed(0)+"%)";
 
     if (data.objectif != "-1") {
-        objectif.innerText = "Objectif : "+(data.objectif * 100).toFixed(0)+"%"
+        objectif.innerText = "Objectif : "+(data.objectif * 100).toFixed(0)+"%";
+        leGraph.addHorizontalLine("Parité", "seuil", data.objectif * 100);
     } //sinon, pas de texte pour l'objectif
 
-    textHTMLrecrutement = "<li>"+data.recrutAvant+"</li>"
+    textHTMLrecrutement = "<li>"+data.recrutAvant+"</li>";
     if(data.recrutApres != "") { //s'il y a un recrutement avant
-        textHTMLrecrutement += "<li>"+data.recrutApres+"</li>"
+        textHTMLrecrutement += "<li>"+data.recrutApres+"</li>";
     }
-    recrutement.innerHTML = textHTMLrecrutement
+    recrutement.innerHTML = textHTMLrecrutement;
 }
 
 function resetData() {
