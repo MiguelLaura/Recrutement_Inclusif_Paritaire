@@ -89,7 +89,8 @@ conn.addEventListener("message", (evt) => {
                 traiterReponseAction(resp.data[0].action, resp.data[0].succes)
                 break;
             default:
-                addLog(resp.type, `[${resp.type}] ${resp.data}`)
+                const annee = anneeElt.textContent.split(" ")[0];
+                leLogger.addLog(resp.type, `[${resp.type}] ${resp.data}`, annee.length > 0 ? `Année ${annee}` : "Année 1")
         }
     }
 });
@@ -181,7 +182,7 @@ function traiterReponseAction(action, succes) {
                 btnToggle.disabled = false;
                 btnStop.disabled = false;
                 statusSimu.innerText = "[pas débutée]";
-                resetLogs();
+                leLogger.reset();
                 resetData();
 
                 leGraph.reset();

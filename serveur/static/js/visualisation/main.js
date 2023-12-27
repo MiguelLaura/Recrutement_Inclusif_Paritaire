@@ -42,3 +42,6 @@ function pressBtn(btn) {
 
 // Initialise la taille max de la partie log
 document.querySelector(".logs-container").style.maxHeight = document.querySelector(".logs-container").clientHeight + "px";
+
+const leLogger = new Logger(document.getElementById("logger"));
+
