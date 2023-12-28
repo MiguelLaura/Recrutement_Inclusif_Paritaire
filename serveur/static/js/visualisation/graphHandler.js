@@ -3,16 +3,26 @@
 
 class Graph {
     constructor(parent) {
+        this.xIncr = 1;
         this.xs = [];
         this.theGraphs = [];
+        this.theLimits = {};
+
+        this.renderedLimits = {}
         this.graph = new Chart(parent, {
             type: 'line',
             data: {
                 labels: this.xs,
                 datasets: []
+            },
+            options: {
+                plugins: {
+                    annotation: {
+                        annotations: this.renderedLimits
+                    }
+                }
             }
         });
-        this.xIncr = 1;
     }
 
     setIncrement(newIncr) {
@@ -39,6 +49,44 @@ class Graph {
         }
 
         this.theGraphs.push(newY);
+        this.theLimits[label] = [];
+    }
+
+    /**
+     * Ajoute une ligne horizontale sur le graphe
+     * @param {string} graphLabel - Le nom du graph auquel la ligne est rattachée 
+     *      (si le graphe n'existe pas, une exception est générée)
+     * @param {string} lineLabel - Le label de la ligne
+     * @param {float} value - La valeur en y de la ligne
+     * @param {object}  - Paramètres optionnels :
+     *      lineColor - La couleur de la ligne (defaut: "black")
+     *      labelBkgColor - La couleur du fond du label (defaut: "red")
+     *      width - La largeur de la ligne (en px) (defaut: 3)
+     *      showLabel - Est-ce que le label est visible ou non (defaut : true)
+     */
+    addHorizontalLine(graphLabel, lineLabel, value, { lineColor="black", labelBkgColor="red", width=3, showLabel=true } = {}) {
+        if(Object.keys(this.theLimits).indexOf(graphLabel) === -1) {
+            throw new Error("Ne peut pas ajouter de limites à un graphe qui n'existe pas.");
+        }
+
+        const limit = {
+            lineLabel: lineLabel,
+            type: 'line',
+            borderColor: lineColor,
+            borderWidth: width,
+            label: {
+                backgroundColor: labelBkgColor,
+                content: lineLabel,
+                display: showLabel
+            },
+            scaleID: 'y',
+            value: value
+        };
+
+        this.theLimits[graphLabel].push(limit);
+        if(this.isGraphActive(graphLabel)) {
+            this.renderedLimits[`${graphLabel}_${lineLabel}`] = limit;
+        }
     }
 
     /**
@@ -47,9 +95,13 @@ class Graph {
      */
     selectGraphs(...graphNames) {
         this.graph.data.datasets = [];
+        emptyObject(this.renderedLimits);
         for(const graph of this.theGraphs) {
             if(graphNames.indexOf(graph.label) !== -1) {
                 this.graph.data.datasets.push(graph);
+                for(const limit of this.theLimits[graph.label]) {
+                    this.renderedLimits[`${graph.label}_${limit.lineLabel}`] = limit;
+                }
             }
         }
     }
@@ -76,6 +128,10 @@ class Graph {
         this.render();
     }
 
+    isGraphActive(graphLabel) {
+        return this.graph.data.datasets.some(graph => graph.label === graphLabel);
+    }
+
     render() {
         this.graph.update();
     }
@@ -94,4 +150,11 @@ function randomRGBColor() {
         Math.floor(Math.random() * 256),
         Math.floor(Math.random() * 256)
     ]
+}
+
+function emptyObject(obj) {
+    for(let keyName in obj) {
+        delete obj[keyName]
+    }
+    return obj
 }

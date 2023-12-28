@@ -161,7 +161,7 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 		return nil
 	}
 	embauches = make([]*Employe, 0)
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d postes", nbARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s)", nbARecruter)
 	for len(embauches) < nbARecruter {
 		maxCandidats := EmployeMaxCompetences(candidats)
 		if len(maxCandidats) == 1 {
@@ -229,13 +229,13 @@ func (r *Recrutement) RecrutementPlacesReserveesFemme(nbARecruter int, candidats
 	if pourcentagePlace < 0 || pourcentagePlace > 1 {
 		return nil
 	}
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d postes", nbARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s)", nbARecruter)
 	// Pas d'erreur si len(candidats)=0 car dans ce cas, la fonction renvoie slice vide
 	embauches = make([]*Employe, 0)
 	// Hypothèse : si le résultat ne tombe pas juste, on arrondit le nombre de femmes au supérieur
 	nbFemmesARecruter := int(math.Round(pourcentagePlace * float64(nbARecruter)))
 	candidatsFemmes := FiltreFemme(candidats) // permet d'isoler les femmes parmi les candidat.es
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH veut recruter %.2f pourcents de femmes soit %d femmes", pourcentagePlace, nbFemmesARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH veut recruter %d %% de femmes soit %d femme(s)", int(pourcentagePlace*100), nbFemmesARecruter)
 	// 1ere etape : recruter les femmes les plus compétentes pour les places réservées
 	for i := 0; i < nbFemmesARecruter; i++ {
 		if len(candidatsFemmes) == 0 {
@@ -246,7 +246,7 @@ func (r *Recrutement) RecrutementPlacesReserveesFemme(nbARecruter int, candidats
 		candidatsFemmes = enleverEmploye(candidatsFemmes, maxCandidates[0])
 		candidats = enleverEmploye(candidats, maxCandidates[0])
 	}
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH a pu recruter %d femmes sur %d femmes souhaitées", len(embauches), nbFemmesARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH a pu recruter %d femme(s) sur %d femme(s) souhaitées", len(embauches), nbFemmesARecruter)
 	// S'il n'y a pas assez de femmes dans les candidats pour toutes les places réservées, on recrute des hommes
 
 	// Le reste des candidats sont sélectionnés uniquement pour leurs compétences

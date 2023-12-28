@@ -3,6 +3,9 @@ btnRetour.addEventListener("click", () => {
     window.location.href = '../index.html';
 });
 
+// Crée un objet qui permet d'afficher des messages
+
+const popupInfo = new InfoPopup();
 
 
 // Initialise le graphe
@@ -13,12 +16,7 @@ leGraph.setIncrement(1);
 leGraph.addNewGraph("Bénéfices", [130, 174, 210]);
 leGraph.addNewGraph("Parité", [231, 54, 56]);
 
-leGraph.selectGraphs("Bénéfices", "Parité");
-
-btnGraphVisuTout.addEventListener("click", (evt) => {
-    leGraph.selectGraphs("Bénéfices", "Parité");
-    pressBtn(evt.target);
-});
+leGraph.selectGraphs("Bénéfices");
 
 btnGraphVisuBenefices.addEventListener("click", (evt) => {
     leGraph.selectGraphs("Bénéfices");
