@@ -78,19 +78,19 @@
                             <!--- RECRUTEMENT AVANT OBJECTIF -->
                             <div class="rounded-black-border">
                                 <div class="form-row">
-                                    <label for="type_recrutement_avant"><b>Pour atteindre l’objectif,</b> quel type de
+                                    <label for="type_recrutement_avant"><b>En dessous du pourcentage de femmes à atteindre,</b> quel type de
                                         recrutement
                                         est mis en place ?</label>
                                     <div class="input-group">
                                         <input type="radio" id="competencesAvant" name="type_recrutement_avant" value=1
                                             onclick="afficher(idElemChecked='competencesAvant', idAAfficher='competencesAvantDiv', idACacher='placesReserveesAvantDiv');">
-                                        <label for="competences">Compétences égales</label>
+                                        <label for="competencesAvant">Compétences égales</label>
                                     </div>
                                     <div class="input-group">
                                         <input type="radio" id="placesReserveesAvant" name="type_recrutement_avant"
                                             value=2
                                             onclick="afficher(idElemChecked='placesReserveesAvant', idAAfficher='placesReserveesAvantDiv', idACacher='competencesAvantDiv');">
-                                        <label for="placesReservees">Places réservées</label>
+                                        <label for="placesReserveesAvant">Places réservées</label>
                                     </div>
                                 </div>
 
@@ -101,15 +101,15 @@
                                                 :</label>
                                             <div class="input-group">
                                                 <input type="radio" id="homme_avant" name="strat_avant" value=1>
-                                                <label for="homme">Un homme</label>
+                                                <label for="homme_avant">Un homme</label>
                                             </div>
                                             <div class="input-group">
                                                 <input type="radio" id="femme_avant" name="strat_avant" value=2>
-                                                <label for="femme">Une femme</label>
+                                                <label for="femme_avant">Une femme</label>
                                             </div>
                                             <div class="input-group">
                                                 <input type="radio" id="hasard_avant" name="strat_avant" value=3>
-                                                <label for="hasard">Au hasard</label>
+                                                <label for="hasard_avant">Au hasard</label>
                                             </div>
                                         </div>
                                     </div>
@@ -131,19 +131,19 @@
                             <!--- RECRUTEMENT APRES OBJECTIF -->
                             <div class="rounded-black-border">
                                 <div class="form-row">
-                                    <label for="type_recrutement_apres"><b>Après avoir atteint l’objectif,</b> quel type de
+                                    <label for="type_recrutement_apres"><b>Au dessus du pourcentage de femmes à atteindre,</b> quel type de
                                         recrutement
                                         est mis en place ?</label>
                                     <div class="input-group">
                                         <input type="radio" id="competencesApres" name="type_recrutement_apres" value=1
                                             onclick="afficher(idElemChecked='competencesApres', idAAfficher='competencesApresDiv', idACacher='placesReserveesApresDiv');">
-                                        <label for="competences">Compétences égales</label>
+                                        <label for="competencesApres">Compétences égales</label>
                                     </div>
                                     <div class="input-group">
                                         <input type="radio" id="placesReserveesApres" name="type_recrutement_apres"
                                             value=2
                                             onclick="afficher(idElemChecked='placesReserveesApres', idAAfficher='placesReserveesApresDiv', idACacher='competencesApresDiv');">
-                                        <label for="placesReservees">Places réservées</label>
+                                        <label for="placesReserveesApres">Places réservées</label>
                                     </div>
                                 </div>
 
@@ -154,15 +154,15 @@
                                                 :</label>
                                             <div class="input-group">
                                                 <input type="radio" id="homme_apres" name="strat_apres" value=1>
-                                                <label for="homme">Un homme</label>
+                                                <label for="homme_apres">Un homme</label>
                                             </div>
                                             <div class="input-group">
                                                 <input type="radio" id="femme_apres" name="strat_apres" value=2>
-                                                <label for="femme">Une femme</label>
+                                                <label for="femme_apres">Une femme</label>
                                             </div>
                                             <div class="input-group">
                                                 <input type="radio" id="hasard_apres" name="strat_apres" value=3>
-                                                <label for="hasard">Au hasard</label>
+                                                <label for="hasard_apres">Au hasard</label>
                                             </div>
                                         </div>
                                     </div>
@@ -256,18 +256,17 @@
                 <p>Le recrutement est une étape systématique dans une entreprise et peut influer sur la parité.
                     Dans cette simulation, nous créons une entreprise, avec des employé-es généré-es aléatoirement,
                     et elle va mettre en place un recrutement selon les stratégies choisies par les utilisateur-rices.
-                    Nous étudions ensuite la “vie” de l’entreprise au cours du temps : les bénéfices, la parité, les
-                    agressions,
-                    les départs... De cette manière, nous pouvons comprendre l’impact du recrutement choisi sur
-                    l’entreprise.</p>
+                    Nous étudions ensuite l'évolution de la <b>santé</b> de l'entreprise au fil des années, soit ses bénéfices, 
+                    son pourcentage de femmes parmi son effectif, les compétences et la santé mentale moyennes des employés, ou 
+                    encore le nombre d'agressions et de dénonciations ainsi que le nombre et le motif des départs des employés.</p>
             </div>
 
             <div id="sur-le-recrutement">
                 <h2>Sur le recrutement</h2>
-                <p><b>Pourquoi un objectif ?</b> Les entreprises peuvent vouloir atteindre une certaine parité
-                    (pour respecter une loi, favoriser l’innovation, ...) et mettre en place des stratégies temporaires,
-                    notamment au niveau du recrutement. Ainsi, les manières de recruter ne seront pas les mêmes avant
-                    et après que l’objectif de parité soit atteint.
+                <p><b>Pourquoi un pourcentage de femmes ?</b> Les entreprises peuvent vouloir atteindre une certaine 
+                    parité (pour respecter une loi, favoriser l’innovation, ...) et mettre en place des stratégies 
+                    temporaires, notamment au niveau du recrutement. Ainsi, les manières de recruter ne seront pas
+                    les mêmes en dessous ou au dessus du seuil défini.
                 </p>
                 <p><b>Compétences égales ?</b> Pour cette stratégie, on recrute d’abord la personne la plus compétente.
                     Si jamais deux personnes sont similaires sur ce point, on choisira qui recruter en fonction de ce

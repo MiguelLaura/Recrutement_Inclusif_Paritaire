@@ -11,7 +11,6 @@ const pariteElt = document.getElementById("parite"); //parité actuelle
 const benefice = document.getElementById("benefice") //bénéfice indicateur
 
 // Les boutons pour selectionner le graphe que l'on souhaite
-const btnGraphVisuTout = document.getElementById("visu-tout");
 const btnGraphVisuBenefices = document.getElementById("visu-benef");
 const btnGraphVisuParite = document.getElementById("visu-parite");
 
