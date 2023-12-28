@@ -44,6 +44,32 @@ button {
 
 /* 
 ----------------------------------
+           Infos en plus
+----------------------------------
+*/
+
+
+.texts-infos-container {
+    position: relative;
+    display: inline-block;
+}
+
+.texts-infos {
+    display: none;
+    position: absolute;
+    margin: 0;
+    right: 1;
+    background-color: lightgrey;
+    min-width: 300px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    padding: 10px;
+}
+.texts-infos-containerr:hover .texts-infos {
+    display: grid;
+}
+/* 
+----------------------------------
            Log section 
 ----------------------------------
 */

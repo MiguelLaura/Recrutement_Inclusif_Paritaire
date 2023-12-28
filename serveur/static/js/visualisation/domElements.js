@@ -27,3 +27,7 @@ const btnOpt = document.querySelector(".dropdown-icon");
 const containerOpt = document.querySelector(".dropdown-container");
 
 const checkOpts = document.querySelectorAll(".dropdown-menu input");
+
+// Les informations en plus (dans les petits i)
+const infosBenefices = document.getElementById("infos-benefice")
+const textInfosBenefices = document.getElementById("text-infos-benefice")
