@@ -161,8 +161,8 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 		return nil
 	}
 	embauches = make([]*Employe, 0)
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s)", nbARecruter)
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH cherche à recruter les candidat.es les plus compétent.es")
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s).", nbARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH cherche à recruter les candidat.es les plus compétent.es.")
 	for len(embauches) < nbARecruter {
 		maxCandidats := EmployeMaxCompetences(candidats)
 		if len(maxCandidats) == 1 {
@@ -187,7 +187,7 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 					embauches = append(embauches, lFemmes[idx])
 					candidats = enleverEmploye(candidats, lFemmes[idx])
 				} else {
-					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es avec des compétences équivalentes ont postulé. On veut privilégier les femmes, mais il n'y en a pas dans le groupe. Un homme est recruté")
+					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es avec des compétences équivalentes ont postulé. On veut privilégier les femmes, mais il n'y en a pas dans le groupe. Un homme est recruté.")
 					// S'il n'y a pas de femmes parmi les candidats les plus compétents, on choisit au hasard
 					idx = rand.Intn(len(maxCandidats))
 					embauches = append(embauches, maxCandidats[idx])
@@ -203,7 +203,7 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 					embauches = append(embauches, lHommes[idx])
 					candidats = enleverEmploye(candidats, lHommes[idx])
 				} else {
-					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es avec des compétences équivalentes ont postulé. On veut privilégier les hommes, mais il n'y en a pas dans le groupe. Une femme est recrutée")
+					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es avec des compétences équivalentes ont postulé. On veut privilégier les hommes, mais il n'y en a pas dans le groupe. Une femme est recrutée.")
 					// S'il n'y a pas d'hommes parmi les candidats les plus compétents, on choisit au hasard
 					idx = rand.Intn(len(maxCandidats))
 					embauches = append(embauches, maxCandidats[idx])
@@ -230,7 +230,7 @@ func (r *Recrutement) RecrutementPlacesReserveesFemme(nbARecruter int, candidats
 	if pourcentagePlace < 0 || pourcentagePlace > 1 {
 		return nil
 	}
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s)", nbARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s).", nbARecruter)
 	// Pas d'erreur si len(candidats)=0 car dans ce cas, la fonction renvoie slice vide
 	embauches = make([]*Employe, 0)
 	// Hypothèse : si le résultat ne tombe pas juste, on arrondit le nombre de femmes au supérieur
@@ -275,7 +275,7 @@ func (r *Recrutement) RecrutementPlacesReserveesHomme(nbARecruter int, candidats
 	if pourcentagePlace < 0 || pourcentagePlace > 1 {
 		return nil
 	}
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s)", nbARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s).", nbARecruter)
 	// Pas d'erreur si len(candidats)=0 car dans ce cas, la fonction renvoie slice vide
 	embauches = make([]*Employe, 0)
 	// Hypothèse : si le résultat ne tombe pas juste, on arrondit le nombre d'hommes au supérieur
