@@ -727,7 +727,7 @@ func (ent *Entreprise) AfficherDonneesCompteur() {
 	ent.logger.LogfType(LOG_RECRUTEMENT, "Recrutement de %d employé.e(s), %d femme(s) et %d homme(s).", ent.NbEmbauches(), ent.NbEmbauchesFemme(), ent.NbEmbauches()-ent.NbEmbauchesFemme())
 	ent.logger.LogfType(LOG_AGRESSION, "%d agression(s) sur le lieu de travail dont %d remontée(s) à l'entreprise.", ent.NbAgressions(), ent.NbPlaintes())
 	ent.logger.LogfType(LOG_DEPART, "Démission(s) spontanée(s) de %d employé.e(s).", ent.NbDemissions())
-	ent.logger.LogfType(LOG_DEPART, "Départ(s) à la retraite pour %d employé.e(s)", ent.NbRetraites())
+	ent.logger.LogfType(LOG_DEPART, "Départ(s) à la retraite pour %d employé.e(s).", ent.NbRetraites())
 	ent.logger.LogfType(LOG_DEPART, "Licenciement pour faute grave appliqué à %d employé.e(s).", ent.NbLicenciements())
 	ent.logger.LogfType(LOG_DEPART, "Dépression(s) conduisant à une démission pour %d employé.e(s).", ent.NbDepressions())
 	ent.logger.LogfType(LOG_EMPLOYE, "Naissance d'un enfant pour %d employé.e(s).", ent.NbEnfants())
