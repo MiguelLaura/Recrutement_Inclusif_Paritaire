@@ -283,8 +283,11 @@ func (simu *Simulation) EnvoyerInfosInitiales() {
 		}
 		infoRecrutementAvant = fmt.Sprintf("Compétences égales : %s", stratAvant)
 	}
-	if recrut.TypeRecrutementAvant() == PlacesReservees {
-		infoRecrutementAvant = fmt.Sprintf("Places réservées : %d%%", int(recrut.PourcentagePlacesAvant()*100))
+	if recrut.TypeRecrutementAvant() == PlacesReserveesFemme {
+		infoRecrutementAvant = fmt.Sprintf("Places réservées aux femmes : %d%%", int(recrut.PourcentagePlacesAvant()*100))
+	}
+	if recrut.TypeRecrutementAvant() == PlacesReserveesHomme {
+		infoRecrutementAvant = fmt.Sprintf("Places réservées aux hommes : %d%%", int(recrut.PourcentagePlacesAvant()*100))
 	}
 
 	//création de la chaine de caractère pour le recrutement au dessus du seuil (si objectif)
@@ -303,9 +306,11 @@ func (simu *Simulation) EnvoyerInfosInitiales() {
 			}
 			infoRecrutementApres = fmt.Sprintf("(Au dessus du seuil) Compétences égales : %s", stratApres)
 		}
-		if recrut.TypeRecrutementApres() == PlacesReservees {
-
-			infoRecrutementApres = fmt.Sprintf("(Au dessus du seuil) Places réservées : %d%%", int(recrut.PourcentagePlacesApres()*100))
+		if recrut.TypeRecrutementApres() == PlacesReserveesFemme {
+			infoRecrutementApres = fmt.Sprintf("(Au dessus du seuil) Places réservées aux femmes : %d%%", int(recrut.PourcentagePlacesApres()*100))
+		}
+		if recrut.TypeRecrutementApres() == PlacesReserveesHomme {
+			infoRecrutementApres = fmt.Sprintf("(Au dessus du seuil) Places réservées aux hommes : %d%%", int(recrut.PourcentagePlacesApres()*100))
 		}
 	}
 

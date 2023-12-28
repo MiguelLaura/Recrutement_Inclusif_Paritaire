@@ -87,11 +87,18 @@
                                         <label for="competencesAvant">Compétences égales</label>
                                     </div>
                                     <div class="input-group">
-                                        <input type="radio" id="placesReserveesAvant" name="type_recrutement_avant"
+                                        <input type="radio" id="placesReserveesFemmeAvant" name="type_recrutement_avant"
                                             value=2
-                                            onclick="afficher(idElemChecked='placesReserveesAvant', idAAfficher='placesReserveesAvantDiv', idACacher='competencesAvantDiv');">
-                                        <label for="placesReserveesAvant">Places réservées</label>
+                                            onclick="afficher(idElemChecked='placesReserveesFemmeAvant', idAAfficher='placesReserveesAvantDiv', idACacher='competencesAvantDiv');">
+                                        <label for="placesReserveesFemmeAvant">Places réservées aux femmes</label>
                                     </div>
+                                    <div class="input-group">
+                                        <input type="radio" id="placesReserveesHommeAvant" name="type_recrutement_avant"
+                                            value=3
+                                            onclick="afficher(idElemChecked='placesReserveesHommeAvant', idAAfficher='placesReserveesAvantDiv', idACacher='competencesAvantDiv');">
+                                        <label for="placesReserveesHommeAvant">Places réservées aux hommes</label>
+                                    </div>
+                                    
                                 </div>
 
                                 <div>
@@ -116,9 +123,7 @@
 
                                     <div id="placesReserveesAvantDiv" style="display: none;">
                                         <div class="form-row">
-                                            <label for="pourcentage_places_avant">Pourcentage de places réservées aux
-                                                femmes
-                                                parmi les recruté·es:</label>
+                                            <label for="pourcentage_places_avant">Pourcentage de places réservées parmi les recruté·es:</label>
                                             <input type="range" id="pourcentage_places_avant"
                                                 name="pourcentage_places_avant" min="0" max="100" value=30
                                                 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesAvantValue');">
@@ -140,10 +145,16 @@
                                         <label for="competencesApres">Compétences égales</label>
                                     </div>
                                     <div class="input-group">
-                                        <input type="radio" id="placesReserveesApres" name="type_recrutement_apres"
+                                        <input type="radio" id="placesReserveesFemmeApres" name="type_recrutement_apres"
                                             value=2
-                                            onclick="afficher(idElemChecked='placesReserveesApres', idAAfficher='placesReserveesApresDiv', idACacher='competencesApresDiv');">
-                                        <label for="placesReserveesApres">Places réservées</label>
+                                            onclick="afficher(idElemChecked='placesReserveesFemmeApres', idAAfficher='placesReserveesApresDiv', idACacher='competencesApresDiv');">
+                                        <label for="placesReserveesApres">Places réservées aux femmes</label>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="radio" id="placesReserveesHommeApres" name="type_recrutement_apres"
+                                            value=3
+                                            onclick="afficher(idElemChecked='placesReserveesHommeApres', idAAfficher='placesReserveesApresDiv', idACacher='competencesApresDiv');">
+                                        <label for="placesReserveesApres">Places réservées aux hommes</label>
                                     </div>
                                 </div>
 
@@ -169,9 +180,7 @@
 
                                     <div id="placesReserveesApresDiv" style="display: none;">
                                         <div class="form-row">
-                                            <label for="pourcentage_places_apres">Pourcentage de places réservées aux
-                                                femmes
-                                                parmi les recruté·es :</label>
+                                            <label for="pourcentage_places_apres">Pourcentage de places réservées parmi les recruté·es :</label>
                                             <input type="range" id="pourcentage_places_apres"
                                                 name="pourcentage_places_apres" min="0" max="100" value=30
                                                 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesApresValue');">
@@ -196,9 +205,14 @@
                                         <label for="competences">Compétences égales</label>
                                     </div>
                                     <div class="input-group">
-                                        <input type="radio" id="placesReservees" name="type_recrutement_sans" value=2
-                                            onclick="afficher(idElemChecked='placesReservees', idAAfficher='placesReserveesDiv', idACacher='competencesDiv');">
-                                        <label for="placesReservees">Places réservées</label>
+                                        <input type="radio" id="placesReserveesFemme" name="type_recrutement_sans" value=2
+                                            onclick="afficher(idElemChecked='placesReserveesFemme', idAAfficher='placesReserveesDiv', idACacher='competencesDiv');">
+                                        <label for="placesReservees">Places réservées aux femmes</label>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="radio" id="placesReserveesHomme" name="type_recrutement_sans" value=2
+                                            onclick="afficher(idElemChecked='placesReserveesHomme', idAAfficher='placesReserveesDiv', idACacher='competencesDiv');">
+                                        <label for="placesReservees">Places réservées aux hommes</label>
                                     </div>
                                 </div>
 
@@ -224,9 +238,7 @@
 
                                     <div id="placesReserveesDiv" style="display: none;">
                                         <div class="form-row">
-                                            <label for="pourcentage_places_sans">Pourcentage de places réservées aux
-                                                femmes
-                                                parmi les recruté·es :</label>
+                                            <label for="pourcentage_places_sans">Pourcentage de places réservées parmi les recruté·es :</label>
                                             <input type="range" id="pourcentage_places_sans"
                                                 name="pourcentage_places_sans" min="0" max="100" value=30
                                                 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesValue');">
@@ -272,10 +284,9 @@
                     Si jamais deux personnes sont similaires sur ce point, on choisira qui recruter en fonction de ce
                     qui a été demandé par l’utilisateur-rice.
                 </p>
-                <p><b>Places réservées ?</b> Pour cette stratégie, sur le nombre de personnes à recruter, on choisira
-                    un pourcentage fixe de femmes (les plus compétentes) puis on recrutera en fonction des compétences
-                    seulement.
-                    S’il n’y a assez de femmes parmi les candidat-es, on recrutera les hommes les plus compétents.
+                <p><b>Places réservées ?</b> Pour cette stratégie, sur le nombre de personnes à recruter, on choisira de recruter
+                    un pourcentage fixe de femmes ou d'hommes (les plus compétent-es) puis, pour le reste des candidat-es, on recrutera en fonction des compétences
+                    seulement. 
                 </p>
             </div>
         </div>
