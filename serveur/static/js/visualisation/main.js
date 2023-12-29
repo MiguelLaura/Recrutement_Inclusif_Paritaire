@@ -4,8 +4,29 @@ btnRetour.addEventListener("click", () => {
 });
 
 // Crée un objet qui permet d'afficher des messages
-
 const popupInfo = new InfoPopup();
+
+
+// Gestion des infos des petits "i"
+infosBenefices.addEventListener("mouseover", () => {
+    textInfosBenefices.style.display = "block"
+});
+infosBenefices.addEventListener("mouseleave", () => {
+    textInfosBenefices.style.display = "none"
+});
+infosRecrutement.addEventListener("mouseover", () => {
+    textInfosRecrutement.style.display = "block"
+});
+infosRecrutement.addEventListener("mouseleave", () => {
+    textInfosRecrutement.style.display = "none"
+});
+infosLog.addEventListener("mouseover", () => {
+    textInfosLog.style.display = "block"
+});
+infosLog.addEventListener("mouseleave", () => {
+    textInfosLog.style.display = "none"
+});
+
 
 
 // Initialise le graphe
