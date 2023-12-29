@@ -254,7 +254,7 @@ func (r *Recrutement) RecrutementPlacesReserveesFemme(nbARecruter int, candidats
 	}
 	// S'il n'y a pas assez de femmes dans les candidats pour toutes les places réservées, on recrute des hommes
 	if len(embauches) < nbFemmesARecruter {
-		r.logger.LogfType(LOG_RECRUTEMENT, "Pas assez de femmes ont postulé a l'offre pour remplir les places reservées. Le service RH a donc recruté des hommes pour occuper tous les postes vacants.")
+		r.logger.LogfType(LOG_RECRUTEMENT, "Pas assez de femmes ont postulé à l'offre pour remplir les places reservées. Le service RH a donc recruté des hommes pour occuper tous les postes vacants.")
 	} else {
 		if len(embauches) < nbARecruter {
 			r.logger.LogfType(LOG_RECRUTEMENT, "Pour les postes vacants, les candidat.es les plus compétent.es sont recruté.es sans tenir compte de leur genre.")
@@ -307,7 +307,7 @@ func (r *Recrutement) RecrutementPlacesReserveesHomme(nbARecruter int, candidats
 	}
 	// S'il n'y a pas assez de femmes dans les candidats pour toutes les places réservées, on recrute des hommes
 	if len(embauches) < nbHommesARecruter {
-		r.logger.LogfType(LOG_RECRUTEMENT, "Pas assez d'hommes ont postulé a l'offre pour remplir les places reservées. Le service RH a donc recruté des femmes pour occuper tous les postes vacants.")
+		r.logger.LogfType(LOG_RECRUTEMENT, "Pas assez d'hommes ont postulé à l'offre pour remplir les places reservées. Le service RH a donc recruté des femmes pour occuper tous les postes vacants.")
 	} else {
 		if len(embauches) < nbARecruter {
 			r.logger.LogfType(LOG_RECRUTEMENT, "Pour les postes vacants, les candidat.es les plus compétent.es sont recruté.es sans tenir compte de leur genre.")
