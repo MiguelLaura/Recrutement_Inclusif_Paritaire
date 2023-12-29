@@ -340,60 +340,39 @@ func (r *Recrutement) Recruter(nbARecruter int) (embauches []*Employe) {
 
 	if r.objectif == -1 {
 		// L'utilisateur n'a pas défini un objectif de parité à atteindre
-		return r.ChoixRecrutement(nbARecruter, candidats, r.typeRecrutementAvant, true)
+		return r.ChoixRecrutement(nbARecruter, candidats, r.typeRecrutementAvant, r.stratAvant, r.pourcentagePlacesAvant)
 
 	} else {
 		// L'utilisateur a défini un pourcentage de parité a atteindre
 
 		if r.objectif > r.entreprise.PourcentageFemmes() {
 			// L'objectif n'est pas atteint, on applique TypeRecrutementAvant
-			return r.ChoixRecrutement(nbARecruter, candidats, r.typeRecrutementAvant, true)
+			return r.ChoixRecrutement(nbARecruter, candidats, r.typeRecrutementAvant, r.stratAvant, r.pourcentagePlacesAvant)
 		} else {
 			// L'objectif est atteint, on applique TypeRecrutementApres
-			return r.ChoixRecrutement(nbARecruter, candidats, r.typeRecrutementApres, false)
+			return r.ChoixRecrutement(nbARecruter, candidats, r.typeRecrutementApres, r.stratApres, r.pourcentagePlacesApres)
 		}
 	}
 }
 
-func (r *Recrutement) ChoixRecrutement(nbARecruter int, candidats []*Employe, typeRecrutement TypeRecrutement, avant bool) (embauches []*Employe) {
-	if avant {
-		if typeRecrutement == Competences {
-			embauches := r.RecrutementCompetencesEgales(nbARecruter, r.stratAvant, candidats)
-			return embauches
-		} else if typeRecrutement == PlacesReserveesFemme {
-			if r.pourcentagePlacesAvant < 0 || r.pourcentagePlacesAvant > 1 {
-				return nil
-			}
-			embauches := r.RecrutementPlacesReserveesFemme(nbARecruter, candidats, r.pourcentagePlacesAvant)
-			return embauches
-		} else if typeRecrutement == PlacesReserveesHomme {
-			if r.pourcentagePlacesAvant < 0 || r.pourcentagePlacesAvant > 1 {
-				return nil
-			}
-			embauches := r.RecrutementPlacesReserveesHomme(nbARecruter, candidats, r.pourcentagePlacesAvant)
-			return embauches
-		} else {
+func (r *Recrutement) ChoixRecrutement(nbARecruter int, candidats []*Employe, typeRecrutement TypeRecrutement, strat StratParite, pourcentagePlaces float64) (embauches []*Employe) {
+	if typeRecrutement == Competences {
+		embauches := r.RecrutementCompetencesEgales(nbARecruter, strat, candidats)
+		return embauches
+	} else if typeRecrutement == PlacesReserveesFemme {
+		if pourcentagePlaces < 0 || pourcentagePlaces > 1 {
 			return nil
 		}
+		embauches := r.RecrutementPlacesReserveesFemme(nbARecruter, candidats, pourcentagePlaces)
+		return embauches
+	} else if typeRecrutement == PlacesReserveesHomme {
+		if pourcentagePlaces < 0 || pourcentagePlaces > 1 {
+			return nil
+		}
+		embauches := r.RecrutementPlacesReserveesHomme(nbARecruter, candidats, pourcentagePlaces)
+		return embauches
 	} else {
-		if typeRecrutement == Competences {
-			embauches := r.RecrutementCompetencesEgales(nbARecruter, r.stratApres, candidats)
-			return embauches
-		} else if typeRecrutement == PlacesReserveesFemme {
-			if r.pourcentagePlacesApres < 0 || r.pourcentagePlacesApres > 1 {
-				return nil
-			}
-			embauches := r.RecrutementPlacesReserveesFemme(nbARecruter, candidats, r.pourcentagePlacesApres)
-			return embauches
-		} else if typeRecrutement == PlacesReserveesHomme {
-			if r.pourcentagePlacesApres < 0 || r.pourcentagePlacesApres > 1 {
-				return nil
-			}
-			embauches := r.RecrutementPlacesReserveesHomme(nbARecruter, candidats, r.pourcentagePlacesApres)
-			return embauches
-		} else {
-			return nil
-		}
+		return nil
 	}
 }
 
