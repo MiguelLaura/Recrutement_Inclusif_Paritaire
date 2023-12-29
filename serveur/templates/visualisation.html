@@ -70,7 +70,12 @@
                         <aside class="sim-info-recrutement">
                             <table class="indicators-container">
                                 <tr>
-                                    <b>Recrutement choisi</b>
+                                    <b>Recrutement choisi <i class="bi bi-info-circle clickable-icon dropdown-icon" id="infos-recrutement"></i></b>
+                                    <div class="texts-infos-container" data-toggle="f">
+                                        <div class="texts-infos" id="text-infos-recrutement">
+                                            <p>Chaque année, l'entreprise recrute 5% de son effectif.</p>
+                                        </div>
+                                    </div>
                                 </tr>
                                 <tr>
                                     <td id="objectif"></td>
@@ -110,7 +115,19 @@
 
         <aside class="log-info-container">
             <header>
-                <h1>Tableau de bord</h1>
+                <h1>Tableau de bord <i class="bi bi-info-circle clickable-icon dropdown-icon" id="infos-log"></i></h1>
+                <div class="texts-infos-container" data-toggle="f">
+                    <div class="texts-infos-log" id="text-infos-log">
+                        <ul>
+                            <li>Agression : agressions et dénonciations à l'entreprise</li>
+                            <li>Départ : démissions (spontanées, après dépression ou congé maternité), retraites, licenciements</li>
+                            <li>Entreprise : amendes et bonus productivité</li>
+                            <li>Recrutement : embauches et comportement RH</li>
+                            <li>Employé : naissances d'enfants et congés parentaux</li>
+                            <li>Evénements : teambuilding et formations</li>
+                        </ul>
+                    </div>
+                </div>
                 <div class="dropdown-container" data-toggle="f">
                     <p>Catégories <i class="bi bi-chevron-down clickable-icon dropdown-icon"></i></p>          
                     <div class="dropdown-menu">
@@ -155,9 +172,6 @@
                 </div>
             </header>
             <div class="logs-container">
-                <div class="flex-center-container">
-                    <img src="../static/img/red-pin.png" class="pin-img" />
-                </div>
                 <article id="logger">
                     <!-- Là où les logs se mettront -->
                 </article>

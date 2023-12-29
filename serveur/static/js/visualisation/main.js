@@ -11,10 +11,22 @@ const popupInfo = new InfoPopup();
 infosBenefices.addEventListener("mouseover", () => {
     textInfosBenefices.style.display = "block"
 });
-
 infosBenefices.addEventListener("mouseleave", () => {
     textInfosBenefices.style.display = "none"
 });
+infosRecrutement.addEventListener("mouseover", () => {
+    textInfosRecrutement.style.display = "block"
+});
+infosRecrutement.addEventListener("mouseleave", () => {
+    textInfosRecrutement.style.display = "none"
+});
+infosLog.addEventListener("mouseover", () => {
+    textInfosLog.style.display = "block"
+});
+infosLog.addEventListener("mouseleave", () => {
+    textInfosLog.style.display = "none"
+});
+
 
 
 // Initialise le graphe
