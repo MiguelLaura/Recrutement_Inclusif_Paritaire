@@ -725,14 +725,31 @@ func (ent *Entreprise) resetCompteur() {
 func (ent *Entreprise) AfficherDonneesCompteur() {
 	// Mettre des if pour que le log ne s'affiche que si valeur > 0 ? Perte d'info
 	ent.logger.LogfType(LOG_RECRUTEMENT, "Recrutement de %d employé.e(s), %d femme(s) et %d homme(s).", ent.NbEmbauches(), ent.NbEmbauchesFemme(), ent.NbEmbauches()-ent.NbEmbauchesFemme())
-	ent.logger.LogfType(LOG_AGRESSION, "%d agression(s) sur le lieu de travail dont %d remontée(s) à l'entreprise.", ent.NbAgressions(), ent.NbPlaintes())
-	ent.logger.LogfType(LOG_DEPART, "Démission(s) spontanée(s) de %d employé.e(s).", ent.NbDemissions())
-	ent.logger.LogfType(LOG_DEPART, "Départ(s) à la retraite pour %d employé.e(s).", ent.NbRetraites())
-	ent.logger.LogfType(LOG_DEPART, "Licenciement pour faute grave appliqué à %d employé.e(s).", ent.NbLicenciements())
-	ent.logger.LogfType(LOG_DEPART, "Dépression(s) conduisant à une démission pour %d employé.e(s).", ent.NbDepressions())
+	if ent.NbAgressions() != 0 {
+		ent.logger.LogfType(LOG_AGRESSION, "%d agression(s) sur le lieu de travail dont %d remontée(s) à l'entreprise.", ent.NbAgressions(), ent.NbPlaintes())
+	}
+	if ent.NbDemissions() != 0 {
+		ent.logger.LogfType(LOG_DEPART, "Démission(s) spontanée(s) de %d employé.e(s).", ent.NbDemissions())
+	}
+	if ent.NbRetraites() != 0 {
+		ent.logger.LogfType(LOG_DEPART, "Départ(s) à la retraite pour %d employé.e(s).", ent.NbRetraites())
+	}
+	if ent.NbAgressions() != 0 {
+		// Même s'il y a aucun licenciement, on veut le montrer pour illustrer le manque d'action de l'entreprise
+		ent.logger.LogfType(LOG_DEPART, "Licenciement pour faute grave appliqué à %d employé.e(s).", ent.NbLicenciements())
+	}
+	if ent.NbDepressions() != 0 {
+		ent.logger.LogfType(LOG_DEPART, "Dépression(s) conduisant à une démission pour %d employé.e(s).", ent.NbDepressions())
+	}
 	ent.logger.LogfType(LOG_EMPLOYE, "Naissance d'un enfant pour %d employé.e(s).", ent.NbEnfants())
-	ent.logger.LogfType(LOG_EMPLOYE, "%d employé(s) en congé paternité et %d employée(s) en congé maternité.", ent.NbCongesPaternite(), ent.NbCongesMaternite())
-	ent.logger.LogfType(LOG_DEPART, "Démission(s) de %d employée(s) après leur congé maternité.", ent.NbDemissionsMaternite())
+	if ent.NbEnfants() != 0 {
+		// S'il n'y a pas d'enfants, il n'y a pas de congés parentaux
+		ent.logger.LogfType(LOG_EMPLOYE, "%d employé(s) en congé paternité et %d employée(s) en congé maternité.", ent.NbCongesPaternite(), ent.NbCongesMaternite())
+	}
+	if ent.NbCongesMaternite() != 0 {
+		// S'il n'y a pas de congé maternité, il n'y a pas de démission après congé maternité
+		ent.logger.LogfType(LOG_DEPART, "Démission(s) de %d employée(s) après leur congé maternité.", ent.NbDemissionsMaternite())
+	}
 }
 
 func (ent *Entreprise) MoyenneCompetences() float64 {
