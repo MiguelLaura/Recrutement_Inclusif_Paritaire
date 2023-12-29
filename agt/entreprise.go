@@ -437,30 +437,33 @@ func (ent *Entreprise) organisationFormation() {
 
 	// 32% des français ont participé à une formation
 	nb_employes_formes := math.Round(constantes.POURCENTAGE_FORMATION * float64(ent.NbEmployes()))
-	ent.logger.LogfType(LOG_EVENEMENT, "%d employé.e(s) ont participé à une formation.", int(nb_employes_formes))
-	// 50% des employés qui se forment sont des femmes
-	nb_femmes_formes := math.Round(nb_employes_formes / 2)
-	nb_hommes_formes := nb_femmes_formes
-	femmes := FiltreFemme(ent.employes)
-	hommes := FiltreHomme(ent.employes)
-	for idx := 0; idx < int(nb_femmes_formes); idx++ {
-		if len(femmes) == 0 {
-			break
+	if nb_employes_formes != 0 {
+		ent.logger.LogfType(LOG_EVENEMENT, "%d employé.e(s) ont participé à une formation.", int(nb_employes_formes))
+		// 50% des employés qui se forment sont des femmes
+		nb_femmes_formes := math.Round(nb_employes_formes / 2)
+		nb_hommes_formes := nb_femmes_formes
+		femmes := FiltreFemme(ent.employes)
+		hommes := FiltreHomme(ent.employes)
+		for idx := 0; idx < int(nb_femmes_formes); idx++ {
+			if len(femmes) == 0 {
+				break
+			}
+			i := rand.Intn(len(femmes))
+			ent.formation = append(ent.formation, femmes[i])
+			// Pour ne pas avoir de doublons
+			femmes = enleverEmploye(femmes, femmes[i])
 		}
-		i := rand.Intn(len(femmes))
-		ent.formation = append(ent.formation, femmes[i])
-		// Pour ne pas avoir de doublons
-		femmes = enleverEmploye(femmes, femmes[i])
-	}
-	for idx := 0; idx < int(nb_hommes_formes); idx++ {
-		if len(hommes) == 0 {
-			break
+		for idx := 0; idx < int(nb_hommes_formes); idx++ {
+			if len(hommes) == 0 {
+				break
+			}
+			i := rand.Intn(len(hommes))
+			ent.formation = append(ent.formation, hommes[i])
+			// Pour ne pas avoir de doublons
+			hommes = enleverEmploye(hommes, hommes[i])
 		}
-		i := rand.Intn(len(hommes))
-		ent.formation = append(ent.formation, hommes[i])
-		// Pour ne pas avoir de doublons
-		hommes = enleverEmploye(hommes, hommes[i])
 	}
+
 }
 
 // ---------------------
