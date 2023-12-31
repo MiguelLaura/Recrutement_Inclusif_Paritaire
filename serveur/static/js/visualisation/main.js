@@ -36,6 +36,8 @@ const leGraph = new Graph(document.getElementById('sim-graph'));
 leGraph.setIncrement(1);
 leGraph.addNewGraph("Bénéfices", [130, 174, 210]);
 leGraph.addNewGraph("Parité", [231, 54, 56]);
+leGraph.addNewGraph("Compétences", [255, 148, 77]);
+leGraph.addNewGraph("Santé mentale", [102, 0, 102]);
 
 leGraph.selectGraphs("Bénéfices");
 
@@ -46,6 +48,16 @@ btnGraphVisuBenefices.addEventListener("click", (evt) => {
 
 btnGraphVisuParite.addEventListener("click", (evt) => {
     leGraph.selectGraphs("Parité");
+    pressBtn(evt.target);
+});
+
+btnGraphVisuCompetences.addEventListener("click", (evt) => {
+    leGraph.selectGraphs("Compétences");
+    pressBtn(evt.target);
+});
+
+btnGraphVisuSanteMentale.addEventListener("click", (evt) => {
+    leGraph.selectGraphs("Santé mentale");
     pressBtn(evt.target);
 });
 
