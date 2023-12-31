@@ -58,17 +58,18 @@ go run cmd/launch-all/launch-all.go
 ## L'interface de simulation
 
 ### Le formulaire
+**A FAIRE mettre une capture ?**
 Nous avons en premier temps un formulaire dans lequel l'utilisateur.ice entre les informations mentionnées ci-dessous. Il y a également des informations sur la simulation qui correspondent à la partie [Le sujet](#le-sujet) et cette partie.
 
 L'utilisateur.ice va pouvoir définir :
 * le nombre d'employé.e.s de l'entreprise,
 * la durée de la simulation (un pas de la simulation correspond à une année dans l'entreprise),
 * le pourcentage initial de femmes dans l'entreprise,
-* s'iel a un objectif de parité (défini sur l'interface comme un pourcentage de femmes à atteindre),
-* le type de recrutement (s'iel a un objectif, il faut choisir un type de recrutement pour quand on est en dessous du pourcentage de femmes voulues, et un type de recrutement pour quand on est au-dessus du pourcentage de femmes voulues).
+* s'iel a un pourcentage de femmes à atteindre,
+* le type de recrutement (s'iel a certaine répartition femmes-hommes à atteindre, il faut choisir un type de recrutement pour quand on est en dessous de ce pourcentage, et un type de recrutement pour quand on est au-dessus du pourcentage).
 
 #### Pourquoi un pourcentage de femmes à atteindre ?
-Les entreprises peuvent vouloir atteindre une certaine parité (pour respecter une loi, favoriser l’innovation, etc.) et mettre en place des stratégies temporaires, notamment au niveau du recrutement. Ainsi, les manières de recruter ne seront pas les mêmes en dessous ou au-dessus du seuil défini.
+Les entreprises peuvent vouloir atteindre une certaine répartition femmes-hommes (pour respecter une loi, favoriser l’innovation, etc.) et mettre en place des stratégies temporaires, notamment au niveau du recrutement. Ainsi, les manières de recruter ne seront pas les mêmes en dessous ou au-dessus du seuil défini.
 
 #### Places réservées ?
 Pour cette stratégie, sur le nombre de personnes à recruter, on choisira de recruter un pourcentage fixe de femmes ou d'hommes (on prendra toujours les plus compétent.e.s dans cette population) puis, pour le reste des candidat.e.s, on recrutera en fonction des compétences seulement. Cette stratégie n'existe pas dans la réalité puisqu'il s'agit d'une discrimination de genre. En effet, on ne peut discriminer à l'embauche sur le genre que pour des cas particuliers, comme pour le cinéma ou mannequinat[<sup>test</sup>](https://analyseur.acompetenceegale.com/comment-eviter-discriminations-a-lembauche-selon-sexe/).
@@ -77,7 +78,17 @@ Pour cette stratégie, sur le nombre de personnes à recruter, on choisira de re
 Pour cette stratégie, on recrute d’abord la personne la plus compétente. Si jamais deux personnes ont des compétences équivalentes, on choisira qui recruter en fonction de ce qui a été demandé par l’utilisateur.ice : iel choisit s'iel donne sa préférence à une femme, à un homme, ou s'iel n'a pas de préférence et prend un.e des candidat.e.s au hasard. C'est un type de recrutement qu'on peut appliquer à la vie réelle, mais uniquement en cas de candidatures comparables, en faveur du genre sous-représenté et en cas de dernier critère de départage[<sup>test</sup>](https://egaliteautravail.com/domaine/recrutement/).
 
 ### La simulation
-**A FAIRE**
+**A FAIRE mettre une capture ?**
+La validation du formulaire nous renvoie sur la page de simulation. Nous pouvons alors la lancer (soit de façon à ce que les pas s'enchaînent sans action de l'utilisateur.ice, soit en avançant pas à pas). On peut également arrêter la simulation, la mettre en pause et revenir au formulaire.
+QUand la simulation est lancée, on peut voir depuis combien d'années l'entreprise tourne sous la simulation, le nombre d'employé.e.s, la parité, les bénéfices. En particulier, on a des graphes nous montrant l'évolution, au cours des années, des bénéfices, de la parité, des compétences des employé.e.s et de la santé mentale des employé.e.s.
+Dans une partie *Tableau de bord*, on peut voir des informations sur ce qu'il se passe au cours des années. Ces informations sont divisées en catégories (on peut sélectionner les catégories qu'on souhaite voir dans le tableau de bord) :
+* Agression : le nombre d'agressions entre employé.e.s et le nombre de signalements faits auprès de l'entreprise ;
+* Départ : le nombre de démissions (spontanées, dûe à une dépression ou après un congé maternité), le nombre de retraites, le nombre de licenciements ;
+* Entreprise : si l'entreprise reçoit des amendes liées à sa parité, ou un bonus de productivité ;
+* Recrutement : le nombre d'embauches et des détails sur le comportement des ressources humaines pendant le processus de recrutement ;
+* Employé : le nombre de naissances d'enfants et de congés parentaux ;
+* Evénements : l'organisation de teambuilding et le nombre d'employé.e.s ayant participé à une formation.
+On a également des popup sur le bénéfice, le recrutement et les catégories pour avoir des explications supplémentaires.
 
 ## La modélisation
 
@@ -129,6 +140,9 @@ Nous prenons en compte les départs après les congés maternités, mais nous n'
 Dans notre modélisation, tous les employé.e.s ont le même salaire.
 Pour être au plus proche de la réalité, il aurait fallu prendre en compte les différents postes, les augmentations et promotions.
 
+### La hiérarchie des postes
+Nous n'avons pas modéliser de hiérarchie de postes. Or, on pourrait supposer qu'une entreprise avec plus de femmes à la direction est plus prompt à engager des femmes. Ou encore que dans le cas de VSS commises par des hauts placées, celles-ci sont moins signalées. C'est donc un point qu'il aurait été intéressant d'étudier.
+
 ### Le secteur
 L'entreprise modélisée n'a pas de secteur dédié : tous les chiffres utilisés sont des chiffres généraux, or, ils varient fortement d'un secteur à l'autre.
 Nous aurions pu laisser le choix à l'utilisateur.ice du secteur souhaité et prendre en compte les chiffres correspondant.
@@ -152,7 +166,7 @@ En plus des ajouts possibles mentionnés dans la partie précédentes, des point
 * Le bénéfice : nous avons pris des chiffres très généraux sur les coûts des salarié.e.s, du recrutement et les bénéfices générés par les employé.e.s ;
 * La montée de productivé liée à la présence d'hommes : nous n'avons pas de chiffres sur l’intérêt d’avoir des hommes sur la bonne ambiance dans l'entreprise et ne l'avons donc pas modélisé ;
 * Les départs après un congé paternité : nous n'avons un chiffre que pour les départs après un congé maternité ;
-* Le teambuilding : on modélise boost positif pour les employé.e.s lors de l'organisation d'un teambuilding, mais nous n'avons pas de chiffre pour appuyer cette modélisation, et toutes les entreprises ne font pas de teambuilding ; 
+* Le teambuilding : on modélise boost positif pour tous les employé.e.s lors de l'organisation d'un teambuilding (ce qui n'est pas forcément le cas dans la réalité), mais nous n'avons pas de chiffre pour appuyer cette modélisation, et toutes les entreprises ne font pas de teambuilding ;
 * Le recrutement : nous engageons chaque année 5% d'employé.e.s supplémentaires, mais c'est un chiffre décidé arbitrairement, de plus, nous considérons que les postes seront toujours pourvus, et nous ne cherchons pas à remplacer les personnes qui ont quitté l'entreprise (le recrutement est fait indépendamment des départs et les embauches représentent toujours une hausse de 5% de l'effectif total) ;
 * L'amende liée à l'absence de femme : il s'agit d'une amende liée à la loi de Rixain qui est prise en compte dans notre modélisation, mais cette loi ne s’appliquera qu’à partir de 2026 ;
 * Les méthodes de recrutement : pour rappel, les places réservées n'existent pas dans la réalité.
