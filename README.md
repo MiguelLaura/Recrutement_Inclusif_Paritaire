@@ -2,8 +2,8 @@
 
 # La parité en entreprise
 
-## Contexte de réalisation du projet
-Ce projet a été réalisé dans le cadre de l'UV IA04 enseignée à l'université de Technologie de Compiègne. Il a été réalisé par :
+## Le contexte de réalisation du projet
+Ce projet a été réalisé dans le cadre de l'UV IA04 enseignée à l'Université de Technologie de Compiègne. Il a été réalisé par :
 * Mathilde Lange
 * Solenn Lenoir
 * Nathan Menny
@@ -21,6 +21,49 @@ Notre principale question est donc : quelles sont les conséquences d’un recru
 go get github.com/gorilla/websocket
 go run cmd/launch-all/launch-all.go
 ```
+
+## La table des matières
+
+* [Le contexte de réalisation du projet](#le-contexte-de-réalisation-du-projet)
+* [Le sujet](#le-sujet)
+* [La problématique](#la-problématique)
+* [Récupérer le projet et le lancer](#récupérer-le-projet-et-le-lancer)
+* [La table des matières](#la-table-des-matières)
+* [L'interface de simulation](#linterface-de-simulation)
+    * [Le formulaire](#le-formulaire)
+        * [Pourquoi un pourcentage de femmes à atteindre ?](#pourquoi-un-pourcentage-de-femmes-à-atteindre)
+        * [Places réservées ?](#places-réservées)
+        * [Compétences égales ?](#compétences-égales)
+    * [La simulation](#la-simulation)
+* [La modélisation](#la-modélisation)
+    * [Ce qui est modélisé et les sources](#ce-qui-est-modélisé-et-les-sources)
+    * [L'exprimer dans le code](#lexprimer-dans-le-code)
+* [Non pris en compte dans notre modélisation](#non-pris-en-compte-dans-notre-modélisationtest)
+    * [La rédaction de l'annonce](#la-rédaction-de-lannonce)
+    * [La présentation de l'entreprise](#la-présentation-de-lentreprise)
+    * [L'anonymisation des candidatures](#lanonymisation-des-candidatures)
+    * [Les entretiens](#les-entretiens)
+    * [Les avantages au sein de l'entreprise](#les-avantages-au-sein-de-lentreprise)
+    * [Les mesures anti-VSS](#les-mesures-anti-vss)
+    * [Les VSS](#les-vss)
+    * [L'intervention du/de la psychologue d'entreprise](#lintervention-dude-la-psychologue-dentreprise)
+    * [Les causes de départs](#les-causes-de-départs)
+    * [Les différences de salaire](#les-différences-de-salaire)
+    * [Le secteur](#le-secteur)
+    * [Pourquoi nous n'avons pas utilisé l'index de l’égalité professionnelle entre les femmes et les hommes ?](#pourquoi-nous-navons-pas-utilisé-lindex-de-légalité-professionnelle-entre-les-femmes-et-les-hommes)
+* [Les points à améliorer sur la simulation actuelle](#les-points-à-améliorer-sur-la-simulation-actuelle)
+    * [Sur l'interface](#sur-linterface)
+    * [Sur la modélisation](#sur-la-modélisation)
+
+
+
+
+
+
+
+
+
+
 
 ## L'interface de simulation
 
