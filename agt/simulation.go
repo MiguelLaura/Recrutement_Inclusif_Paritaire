@@ -310,7 +310,7 @@ func (simu *Simulation) EnvoyerInfosInitiales() {
 	}
 
 	simu.logger.LogType(LOG_INITIAL, InformationsInitiales{
-		simu.PariteInit(), simu.NbEmployeInit(), status, recrut.Objectif(), infoRecrutementAvant, infoRecrutementApres,
+		simu.maxStep, simu.PariteInit(), simu.NbEmployeInit(), status, recrut.Objectif(), infoRecrutementAvant, infoRecrutementApres,
 	})
 }
 
