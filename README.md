@@ -97,11 +97,20 @@ On a également des informations au survol sur le bénéfice, le recrutement et 
 **A FAIRE expliquer les sources et ce qu'on a modélisé**
 
 #### Employé
-Compétences, santé mentale, ancienneté, pourcentage agression
+Les compétences d'un employé sont modélisées par un entier 0 à 10. Elles suivent une loi normale avec mu = 5 et sigma=3. Cela permet d'obtenir une majorité d'individus moyens et assez peu d'individus excellents ou mauvais. L'idée provient de cette source : https://www.ruf.rice.edu/~lane/papers/male_female.pdf
+Pour la santé mentale, nous avons décidé de la modéliser comme un entier de 0 à 100. Lorsqu'il rejoint l'entreprise, il dispose d'une santé mentale pleine de 100. Son expérience au sein de l'entreprise peut augmenter ou réduire sa santé mentale dans le domaine défini.
+Concernant l'ancienneté, il s'agit d'un entier entre 0 et 40. Les employés générés au début de la modélisation ont une ancienneté aléatoire. Les nouveaux employés ont donc une ancienneté de 0. Cette valeur est incrémentée tous les ans. Lorsqu'un employé a une ancienneté de 40, il part à la retraite. 
+**CHANGER VALEUR ANCIENNETE MAX, lire des trucs sur la retraite moyenne**
+
+https://www.harcelement.eu/les-statistiques-choquantes-sur-le-harcelement-sexuel-au-travail-en-france/
+
+
 
 #### Recrutement
 
 #### Agressions, plaintes et licenciement
+Chaque agresseur agresse tous les ans, uniquement une fois, quelqu'un qui n'est pas lui. Un homme agressera une femme et vice versa sauf si ne trouve pas donc agressera même sexe. Si ne trouve personne à agresser à part lieu même 4 fois, il n'agresse pas.
+Une personne agressé 
 
 #### Départs (hors licenciement)
 
