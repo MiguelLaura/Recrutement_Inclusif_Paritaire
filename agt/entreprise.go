@@ -737,8 +737,7 @@ func (ent *Entreprise) AfficherDonneesCompteur() {
 	if ent.NbRetraites() != 0 {
 		ent.logger.LogfType(LOG_DEPART, "Départ(s) à la retraite pour %d employé.e(s).", ent.NbRetraites())
 	}
-	if ent.NbAgressions() != 0 {
-		// Même s'il y a aucun licenciement, on veut le montrer pour illustrer le manque d'action de l'entreprise
+	if ent.NbPlaintes() != 0 {
 		ent.logger.LogfType(LOG_DEPART, "Licenciement pour faute grave appliqué à %d employé.e(s).", ent.NbLicenciements())
 	}
 	if ent.NbDepressions() != 0 {
