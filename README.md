@@ -38,6 +38,7 @@ go run cmd/launch-all/launch-all.go
 * [La modélisation](#la-modélisation)
     * [Ce qui est modélisé et les sources](#ce-qui-est-modélisé-et-les-sources)
     * [L'exprimer dans le code](#lexprimer-dans-le-code)
+* [Les résultats](#les-résultats)
 * [Non pris en compte dans notre modélisation](#non-pris-en-compte-dans-notre-modélisationtest)
     * [La rédaction de l'annonce](#la-rédaction-de-lannonce)
     * [La présentation de l'entreprise](#la-présentation-de-lentreprise)
@@ -98,6 +99,9 @@ On a également des popup sur le bénéfice, le recrutement et les catégories p
 ### L'exprimer dans le code
 **A FAIRE insérer diagramme de classe et séquence**
 
+## Les résultats
+**A FAIRE**
+
 ## Non pris en compte dans notre modélisation[<sup>test</sup>](https://infonet.fr/actualite/focus/parite-femme-homme-en-entreprise-7-pratiques-a-adopter/)
 
 De nombreux éléments entrant en compte dans la parité en entreprise n'ont pas été pris en compte dans cette modélisation et pourraient être ajoutés. Nous ne les avons pas mis en place par manque de temps, mais aussi à cause des difficultés de modélisation et du manque de chiffres sur lesquels nous appuyer.
@@ -141,7 +145,7 @@ Dans notre modélisation, tous les employé.e.s ont le même salaire.
 Pour être au plus proche de la réalité, il aurait fallu prendre en compte les différents postes, les augmentations et promotions.
 
 ### La hiérarchie des postes
-Nous n'avons pas modéliser de hiérarchie de postes. Or, on pourrait supposer qu'une entreprise avec plus de femmes à la direction est plus prompt à engager des femmes. Ou encore que dans le cas de VSS commises par des hauts placées, celles-ci sont moins signalées. C'est donc un point qu'il aurait été intéressant d'étudier.
+Nous n'avons pas modélisé de hiérarchie de postes. Or, on pourrait supposer que si une entreprise a plus de femmes à la direction, et que celles-ci sont intéressées pour embaucher des femmes, elles auraient plus de pouvoirs faviriser leur recrutement. Ou encore que dans le cas de VSS commises par des haut placés, celles-ci sont moins signalées. C'est donc un point qu'il aurait été intéressant d'étudier.
 
 ### Le secteur
 L'entreprise modélisée n'a pas de secteur dédié : tous les chiffres utilisés sont des chiffres généraux, or, ils varient fortement d'un secteur à l'autre.
