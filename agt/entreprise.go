@@ -744,8 +744,8 @@ func (ent *Entreprise) AfficherDonneesCompteur() {
 	if ent.NbDepressions() != 0 {
 		ent.logger.LogfType(LOG_DEPART, "Dépression(s) conduisant à une démission pour %d employé.e(s).", ent.NbDepressions())
 	}
-	ent.logger.LogfType(LOG_EMPLOYE, "Naissance d'un enfant pour %d employé.e(s).", ent.NbEnfants())
 	if ent.NbEnfants() != 0 {
+		ent.logger.LogfType(LOG_EMPLOYE, "Naissance d'un enfant pour %d employé.e(s).", ent.NbEnfants())
 		// S'il n'y a pas d'enfants, il n'y a pas de congés parentaux
 		ent.logger.LogfType(LOG_EMPLOYE, "%d employé(s) en congé paternité et %d employée(s) en congé maternité.", ent.NbCongesPaternite(), ent.NbCongesMaternite())
 	}
