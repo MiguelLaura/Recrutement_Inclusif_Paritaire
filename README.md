@@ -9,20 +9,24 @@ Ce projet a été réalisé dans le cadre de l'UV IA04 enseignée à l'universit
 * Nathan Menny
 * Laura Miguel
 
-## Sujet
+## Le sujet
 Ce projet est une simulation d'une entreprise. On souhaite étudier la parité dans une entreprise. Nous nous sommes en particulier concentré.e.s sur le recrutement : c'est une étape systématique dans une entreprise qui peut influer sur la parité. Le but est donc de laisser l'utilisateur.ice choisir une façon d'effectuer son recrutement, de lancer la simulation et voir l'influence de ce recrutement sur le bénéfice de l'entreprise, le nombre de départs, etc.
 
-## Problématique
+## La problématique
 Notre principale question est donc : quelles sont les conséquences d’un recrutement tenant compte de la parité sur la santé d’une entreprise ?
 
-## Récupérer le projet
-
+## Récupérer le projet et le lancer
+**A FAIRE compléter**
 ```bash
 go get github.com/gorilla/websocket
+go run cmd/launch-all/launch-all.go
 ```
-**A FAIRE**
 
-## Les entrées de l'utilisateur.ice
+## L'interface de simulation
+
+### Le formulaire
+Nous avons en premier temps un formulaire dans lequel l'utilisateur.ice entre les informations mentionnées ci-dessous. Il y a également des informations sur la simulation qui correspondent à la partie [Le sujet](#le-sujet) et cette partie.
+
 L'utilisateur.ice va pouvoir définir :
 * le nombre d'employé.e.s de l'entreprise,
 * la durée de la simulation (un pas de la simulation correspond à une année dans l'entreprise),
@@ -30,22 +34,25 @@ L'utilisateur.ice va pouvoir définir :
 * s'iel a un objectif de parité (défini sur l'interface comme un pourcentage de femmes à atteindre),
 * le type de recrutement (s'iel a un objectif, il faut choisir un type de recrutement pour quand on est en dessous du pourcentage de femmes voulues, et un type de recrutement pour quand on est au-dessus du pourcentage de femmes voulues).
 
-### Pourquoi un pourcentage de femmes à atteindre ?
+#### Pourquoi un pourcentage de femmes à atteindre ?
 Les entreprises peuvent vouloir atteindre une certaine parité (pour respecter une loi, favoriser l’innovation, etc.) et mettre en place des stratégies temporaires, notamment au niveau du recrutement. Ainsi, les manières de recruter ne seront pas les mêmes en dessous ou au-dessus du seuil défini.
 
-### Places réservées ?
+#### Places réservées ?
 Pour cette stratégie, sur le nombre de personnes à recruter, on choisira de recruter un pourcentage fixe de femmes ou d'hommes (on prendra toujours les plus compétent.e.s dans cette population) puis, pour le reste des candidat.e.s, on recrutera en fonction des compétences seulement. Cette stratégie n'existe pas dans la réalité puisqu'il s'agit d'une discrimination de genre. En effet, on ne peut discriminer à l'embauche sur le genre que pour des cas particuliers, comme pour le cinéma ou mannequinat[<sup>test</sup>](https://analyseur.acompetenceegale.com/comment-eviter-discriminations-a-lembauche-selon-sexe/).
 
-### Compétences égales ?
+#### Compétences égales ?
 Pour cette stratégie, on recrute d’abord la personne la plus compétente. Si jamais deux personnes ont des compétences équivalentes, on choisira qui recruter en fonction de ce qui a été demandé par l’utilisateur.ice : iel choisit s'iel donne sa préférence à une femme, à un homme, ou s'iel n'a pas de préférence et prend un.e des candidat.e.s au hasard. C'est un type de recrutement qu'on peut appliquer à la vie réelle, mais uniquement en cas de candidatures comparables, en faveur du genre sous-représenté et en cas de dernier critère de départage[<sup>test</sup>](https://egaliteautravail.com/domaine/recrutement/).
-
-## L'interface de simulation
-
-### Le formulaire
-Nous avons en premier temps un formulaire dans lequel l'utilisateur.ice entre les informations mentionnées dans la partie [Les entrées de l'utilisateur.ice](#les-entrées-de-lutilisateurice). Il y a également des informations sur la simulation qui correspondent aux parties précédentes.
 
 ### La simulation
 **A FAIRE**
+
+## La modélisation
+
+### Ce qui est modélisé et les sources
+**A FAIRE expliquer les sources et ce qu'on a modélisé**
+
+### L'exprimer dans le code
+**A FAIRE insérer diagramme de classe et séquence**
 
 ## Non pris en compte dans notre modélisation[<sup>test</sup>](https://infonet.fr/actualite/focus/parite-femme-homme-en-entreprise-7-pratiques-a-adopter/)
 
@@ -71,7 +78,7 @@ Nous aurions pu modifier qui reçoit une offre d'emploi sur ce critère, ou enco
 L'entreprise peut proposer des avantages comme une crèche au sein de l'entreprise, des horaires flexibles, du télétravail, etc.
 Ce sont des critères pris en compte par les candidats au moment de postuler et d'accepter une offre d'emploi, que nous aurions pu implémenter.
 
-### Des mesures anti-VSS
+### Les mesures anti-VSS
 Les entreprises peuvent prendre des mesures contre les violences sexistes et sexuelles. Cela peut aller de la distribution de prospectus, à des formations sur le sujet et la mise en place de cellules dédiées.
 Nous aurions pu prendre ces éléments en considération sur la façon dont les agressions sont gérées (sanctions différentes, etc.), et éventuellement modifier les probabilités qu'une agression ait lieu (une personne ayant suivi une formation a moins de chance d'agresser, etc.).
 
@@ -102,8 +109,11 @@ Cet index mis en place par le gouvernement, et devant être partagé tous les an
 >   * La parité parmi les 10 plus hautes rémunérations.
 Cet index repose donc principalement sur des salaires et des promotions et augmentations que nous n'avons pas modélisées.
 
-## Points à améliorer sur la simulation actuelle
+## Les points à améliorer sur la simulation actuelle
 En plus des ajouts possibles mentionnés dans la partie précédentes, des points actuelles de la simulation peuvent être améliorés.
+
+### Sur l'interface
+* Les graphes : au départ, nous voulions un graphe avec toutes les données ensemble, mais il a été supprimé à cause d'un problème d'échelle (elle n'était pas la même pour tous les graphes), mais nous pourrions trouver une solution à ce problème.
 
 ### Sur la modélisation
 * Le bénéfice : nous avons pris des chiffres très généraux sur les coûts des salarié.e.s, du recrutement et les bénéfices générés par les employé.e.s ;
@@ -112,7 +122,4 @@ En plus des ajouts possibles mentionnés dans la partie précédentes, des point
 * Le teambuilding : on modélise boost positif pour les employé.e.s lors de l'organisation d'un teambuilding, mais nous n'avons pas de chiffre pour appuyer cette modélisation, et toutes les entreprises ne font pas de teambuilding ; 
 * Le recrutement : nous engageons chaque année 5% d'employé.e.s supplémentaires, mais c'est un chiffre décidé arbitrairement, de plus, nous considérons que les postes seront toujours pourvus, et nous ne cherchons pas à remplacer les personnes qui ont quitté l'entreprise (le recrutement est fait indépendamment des départs et les embauches représentent toujours une hausse de 5% de l'effectif total) ;
 * L'amende liée à l'absence de femme : il s'agit d'une amende liée à la loi de Rixain qui est prise en compte dans notre modélisation, mais cette loi ne s’appliquera qu’à partir de 2026 ;
-* Les méthodes de recrutement : pour rappel, les places réservées n'existent pas dans la réalité ;
-
-### Sur la simulation
-* Les graphes : au départ, nous voulions un graphe avec toutes les données ensemble, mais il a été supprimé à cause d'un problème d'échelle (elle n'était pas la même pour tous les graphes), mais nous pourrions trouver une solution à ce problème.
+* Les méthodes de recrutement : pour rappel, les places réservées n'existent pas dans la réalité.
