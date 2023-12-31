@@ -55,16 +55,6 @@ go run cmd/launch-all/launch-all.go
     * [Sur l'interface](#sur-linterface)
     * [Sur la modélisation](#sur-la-modélisation)
 
-
-
-
-
-
-
-
-
-
-
 ## L'interface de simulation
 
 ### Le formulaire
