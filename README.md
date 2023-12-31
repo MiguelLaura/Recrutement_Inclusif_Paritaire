@@ -81,7 +81,7 @@ Pour cette stratégie, on recrute d’abord la personne la plus compétente. Si 
 ### La simulation
 **A FAIRE mettre une capture ?**
 La validation du formulaire nous renvoie sur la page de simulation. Nous pouvons alors la lancer (soit de façon à ce que les pas s'enchaînent sans action de l'utilisateur.ice, soit en avançant pas à pas). On peut également arrêter la simulation, la mettre en pause et revenir au formulaire.
-QUand la simulation est lancée, on peut voir depuis combien d'années l'entreprise tourne sous la simulation, le nombre d'employé.e.s, la parité, les bénéfices. En particulier, on a des graphes nous montrant l'évolution, au cours des années, des bénéfices, de la parité, des compétences des employé.e.s et de la santé mentale des employé.e.s.
+Quand la simulation est lancée, on peut voir depuis combien d'années l'entreprise tourne sous la simulation, le nombre d'employé.e.s, la parité, les bénéfices. En particulier, on a des graphes nous montrant l'évolution, au cours des années, des bénéfices, de la parité, des compétences des employé.e.s et de la santé mentale des employé.e.s.
 Dans une partie *Tableau de bord*, on peut voir des informations sur ce qu'il se passe au cours des années. Ces informations sont divisées en catégories (on peut sélectionner les catégories qu'on souhaite voir dans le tableau de bord) :
 * Agression : le nombre d'agressions entre employé.e.s et le nombre de signalements faits auprès de l'entreprise ;
 * Départ : le nombre de démissions (spontanées, dûe à une dépression ou après un congé maternité), le nombre de retraites, le nombre de licenciements ;
@@ -89,12 +89,63 @@ Dans une partie *Tableau de bord*, on peut voir des informations sur ce qu'il se
 * Recrutement : le nombre d'embauches et des détails sur le comportement des ressources humaines pendant le processus de recrutement ;
 * Employé : le nombre de naissances d'enfants et de congés parentaux ;
 * Evénements : l'organisation de teambuilding et le nombre d'employé.e.s ayant participé à une formation.
-On a également des popup sur le bénéfice, le recrutement et les catégories pour avoir des explications supplémentaires.
+On a également des informations au survol sur le bénéfice, le recrutement et les catégories pour avoir des explications supplémentaires.
 
 ## La modélisation
 
 ### Ce qui est modélisé et les sources
 **A FAIRE expliquer les sources et ce qu'on a modélisé**
+
+#### Fonctionnement de l'interface
+
+L'interface a été réalisée en HTML/CSS/Javascript. Nous utilisons la bibliothèque Chart.js pour créer les graphes et visualiser les données au cours du temps. Pour envoyer les informations issus du formulaire et créer une nouvelle simulation, nous utilisons une requête POST. Voici les informations envoyées et retournées. 
+
+
+```http
+  POST /localhost:8080/new_simulation
+```
+
+- Requête : `POST`
+- Objet `JSON` envoyé
+
+
+| Paramètres | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `id_simulation` | `string` | **Required**. ID de l'entreprise créée |
+| `nb_employes` | `int` | **Required**. Nombre d'employés total dans l'entreprise |
+| `nb_annees` | `int` | **Required**. Nombre d'années pour la simulation |
+| `pourcentage_femmes` | `float` | **Required**. Pourcentage de femmes au début |
+| `objectif` | `float` | **Required**. Objectif pourcentage min de femmes dans l'entreprise. Peut-être -1 (pas d'objectif) |
+| `strat_avant` | `int` | **Required**. Vide = 0 / PrioHommes = 1 / PrioFemmes = 2 / Hasard = 3 / |
+| `strat_apres` | `int` | **Required**. Vide = 0 / PrioHommes = 1 / PrioFemmes = 2 / Hasard = 3 / |
+| `type_recrutement_avant` | `int` | **Required**.  Vide = 0 / CompetencesEgales = 1 / PlacesReserveesFemme = 2 / PlacesReserveesHomme = 3 |
+| `type_recrutement_apres` | `int` | **Required**. Vide = 0 / CompetencesEgales = 1 / PlacesReservees = 2 / PlacesReserveesHomme = 3 |
+| `pourcentage_places_avant` | `float` | **Required**. Pourcentages de places réservées dans le recrutement. Peut-être -1 (pas de places réservées) |
+| `pourcentage_places_apres` | `float` | **Required**. Pourcentages de places réservées dans le recrutement. Peut-être -1 (pas de places réservées) |
+
+- Code retour
+
+| Code retour | Signification |
+|-------------|---------------|
+| `201`       | simulation créée     |
+| `400`       | mauvaise requête   |
+
+- Objet `JSON` renvoyé (si `201`)
+
+| propriété  | type | exemple de valeurs possibles                                  |
+|------------|-------------|-----------------------------------------------------|
+| `simulation-id`    | `string` | `"id_simulation_1"` |
+
+
+Une fois sur la page de la simulation, toutes les informations sont transférées grâce à des websockets. Les données sont de différents types et envoyées à différents moments. Nous utilisons un Logger qui envoie les données dans les websockets, en même temps de les afficher dans la console. Ce Logger est commun à la simulation et à tous les agents (employé-es, recrutement et entreprise).
+
+D'abord, les informations "initiales" qui concernent la simulation créée (l'id de la simulation, le nombre d'années, le type de recrutement choisi, status de la simulation, ...) sont envoyées à la page HTML dès qu'une connexion websocket est établie. Cela permet à la simulation de n'être pas dépendante d'une page web particulière. Ainsi, on peut toujours retrouver les informations lorsqu'on reload une page web avec l'id de la simulation. Dans le code, ces informations sont regroupés dans "LOG_INITAL".
+
+Nous gérons également des informations sur le status de la simulation, par exemple si elle est terminée, à relancer, en pause, pour afficher ces informations sur l'interface avec des popup temporaires. Ce sont des "LOG_REPONSE". 
+
+Ensuite, pour afficher les informations au fur et à mesure, la simulation envoie chaque année son pas de temps actuel, son nombre d'employé-es, son pourcentage de femmes, son bénéfice, la moyenne des compétences et la moyenne de la santé mentale. Cela correspond aux informations globales, "LOG_GLOBAL". 
+
+Enfin, pour suivre le déroulé de la simulation, chaque agent (que ce soit des employé-es, le recrutement ou l'entreprise) log des informations lorsqu'il agit. Cela permet de garder les informations sur les actions au moment où elles sont réalisées. Ces logs sont catégorisés pour pouvoir être affichés de différentes couleurs dans l'interface et masqués si besoin. L'entreprise peut envoyer les logs suivants : LOG_AGRESSION, LOG_DEPART, LOG_ENTREPRISE, LOG_EVEMENT. Le recrutement envoie les LOG_RECRUTEMENT et les employé-es LOG_EMPLOYE. 
 
 ### L'exprimer dans le code
 **A FAIRE insérer diagramme de classe et séquence**
