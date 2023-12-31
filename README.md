@@ -96,6 +96,25 @@ On a également des informations au survol sur le bénéfice, le recrutement et 
 ### Ce qui est modélisé et les sources
 **A FAIRE expliquer les sources et ce qu'on a modélisé**
 
+#### Employé
+Compétences, santé mentale, ancienneté, pourcentage agression
+
+#### Recrutement
+
+#### Agressions, plaintes et licenciement
+
+#### Départs (hors licenciement)
+
+#### Congés maternité
+
+#### Formation
+
+#### Team-building
+
+#### Bénéfices
+
+
+
 #### Fonctionnement de l'interface
 
 L'interface a été réalisée en HTML/CSS/Javascript. Nous utilisons la bibliothèque Chart.js pour créer les graphes et visualiser les données au cours du temps. Pour envoyer les informations issus du formulaire et créer une nouvelle simulation, nous utilisons une requête POST. Voici les informations envoyées et retournées. 
