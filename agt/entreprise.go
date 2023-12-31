@@ -437,30 +437,33 @@ func (ent *Entreprise) organisationFormation() {
 
 	// 32% des français ont participé à une formation
 	nb_employes_formes := math.Round(constantes.POURCENTAGE_FORMATION * float64(ent.NbEmployes()))
-	ent.logger.LogfType(LOG_EVENEMENT, "%d employé.e(s) ont participé à une formation", int(nb_employes_formes))
-	// 50% des employés qui se forment sont des femmes
-	nb_femmes_formes := math.Round(nb_employes_formes / 2)
-	nb_hommes_formes := nb_femmes_formes
-	femmes := FiltreFemme(ent.employes)
-	hommes := FiltreHomme(ent.employes)
-	for idx := 0; idx < int(nb_femmes_formes); idx++ {
-		if len(femmes) == 0 {
-			break
+	if nb_employes_formes != 0 {
+		ent.logger.LogfType(LOG_EVENEMENT, "%d employé.e(s) ont participé à une formation.", int(nb_employes_formes))
+		// 50% des employés qui se forment sont des femmes
+		nb_femmes_formes := math.Round(nb_employes_formes / 2)
+		nb_hommes_formes := nb_femmes_formes
+		femmes := FiltreFemme(ent.employes)
+		hommes := FiltreHomme(ent.employes)
+		for idx := 0; idx < int(nb_femmes_formes); idx++ {
+			if len(femmes) == 0 {
+				break
+			}
+			i := rand.Intn(len(femmes))
+			ent.formation = append(ent.formation, femmes[i])
+			// Pour ne pas avoir de doublons
+			femmes = enleverEmploye(femmes, femmes[i])
 		}
-		i := rand.Intn(len(femmes))
-		ent.formation = append(ent.formation, femmes[i])
-		// Pour ne pas avoir de doublons
-		femmes = enleverEmploye(femmes, femmes[i])
-	}
-	for idx := 0; idx < int(nb_hommes_formes); idx++ {
-		if len(hommes) == 0 {
-			break
+		for idx := 0; idx < int(nb_hommes_formes); idx++ {
+			if len(hommes) == 0 {
+				break
+			}
+			i := rand.Intn(len(hommes))
+			ent.formation = append(ent.formation, hommes[i])
+			// Pour ne pas avoir de doublons
+			hommes = enleverEmploye(hommes, hommes[i])
 		}
-		i := rand.Intn(len(hommes))
-		ent.formation = append(ent.formation, hommes[i])
-		// Pour ne pas avoir de doublons
-		hommes = enleverEmploye(hommes, hommes[i])
 	}
+
 }
 
 // ---------------------
@@ -551,7 +554,7 @@ func (ent *Entreprise) CalculerBenefice() int {
 	// Bonus de productivité si %femmes supérieur à 35%
 	if ent.PourcentageFemmes() > constantes.SEUIL_IMPACT_FEMME {
 		benef = benef * (1.0 + constantes.BOOST_PRODUCTIVITE_FEMME)
-		ent.logger.LogfType(LOG_ENTREPRISE, "Il y a plus de 35%% de femmes dans l'entreprise, ce qui a permis une ambiance productive : amélioration du bénéfice")
+		ent.logger.LogfType(LOG_ENTREPRISE, "Il y a plus de 35%% de femmes dans l'entreprise, ce qui a permis une ambiance productive : amélioration du bénéfice.")
 	}
 
 	// Coût du recrutement
@@ -571,7 +574,7 @@ func (ent *Entreprise) CalculerBenefice() int {
 	// Modèle 3 le plus réaliste : amende à partir de 2029
 	if ent.PourcentageFemmes() < constantes.SEUIL_AMENDE {
 		amende := benef * constantes.POURCENTAGE_AMENDE
-		ent.logger.LogfType(LOG_ENTREPRISE, "L'entreprise ne respecte pas la loi Rixain sur la parité (40%% de femmes minimum) et doit payer une amende de %d euros", int(math.Round(amende)))
+		ent.logger.LogfType(LOG_ENTREPRISE, "L'entreprise ne respecte pas la loi Rixain sur la parité (40%% de femmes minimum) et doit payer une amende de %d euros.", int(math.Round(amende)))
 		benef -= amende
 	}
 
@@ -628,7 +631,7 @@ func (ent *Entreprise) agir() {
 		ent.fin = true
 		return
 	}
-	ent.logger.LogType(LOG_ENTREPRISE, "Début d'année")
+	ent.logger.LogType(LOG_ENTREPRISE, "Début d'année.")
 	log.Printf("Nb employe %d", ent.NbEmployes())
 	// Déterminer participants aux formations
 	ent.organisationFormation()
@@ -660,7 +663,7 @@ func (ent *Entreprise) finirCycle() {
 	// A faire en dernier pour ne pas compter les nouveaux employés dans le reste ?
 	ent.gestionRecrutements()
 	ent.AfficherDonneesCompteur()
-	ent.logger.LogType(LOG_ENTREPRISE, "Fin d'année")
+	ent.logger.LogType(LOG_ENTREPRISE, "Fin d'année.")
 }
 
 // ---------------------
@@ -724,15 +727,31 @@ func (ent *Entreprise) resetCompteur() {
 
 func (ent *Entreprise) AfficherDonneesCompteur() {
 	// Mettre des if pour que le log ne s'affiche que si valeur > 0 ? Perte d'info
-	ent.logger.LogfType(LOG_RECRUTEMENT, "Recrutement de %d employé.e(s) dont %d femme(s)", ent.NbEmbauches(), ent.NbEmbauchesFemme())
-	ent.logger.LogfType(LOG_AGRESSION, "%d agression(s) sur le lieu de travail dont %d remontée(s) à l'entreprise", ent.NbAgressions(), ent.NbPlaintes())
-	ent.logger.LogfType(LOG_DEPART, "Démission(s) spontanée(s) de %d employé.e(s)", ent.NbDemissions())
-	ent.logger.LogfType(LOG_DEPART, "Départ(s) à la retraite pour %d employé.e(s)", ent.NbRetraites())
-	ent.logger.LogfType(LOG_DEPART, "Licenciement pour faute grave appliqué à %d employé.e(s)", ent.NbLicenciements())
-	ent.logger.LogfType(LOG_DEPART, "Dépression(s) conduisant à une démission pour %d employé.e(s)", ent.NbDepressions())
-	ent.logger.LogfType(LOG_EMPLOYE, "Naissance d'un enfant pour %d employé.e(s)", ent.NbEnfants())
-	ent.logger.LogfType(LOG_EMPLOYE, "%d employé(s) en congé paternité et %d employée(s) en congé maternité", ent.NbCongesPaternite(), ent.NbCongesMaternite())
-	ent.logger.LogfType(LOG_DEPART, "Démission(s) de %d employée(s) après leur congé maternité", ent.NbDemissionsMaternite())
+	ent.logger.LogfType(LOG_RECRUTEMENT, "Recrutement de %d employé.e(s), %d femme(s) et %d homme(s).", ent.NbEmbauches(), ent.NbEmbauchesFemme(), ent.NbEmbauches()-ent.NbEmbauchesFemme())
+	if ent.NbAgressions() != 0 {
+		ent.logger.LogfType(LOG_AGRESSION, "%d agression(s) sur le lieu de travail dont %d remontée(s) à l'entreprise.", ent.NbAgressions(), ent.NbPlaintes())
+	}
+	if ent.NbDemissions() != 0 {
+		ent.logger.LogfType(LOG_DEPART, "Démission(s) spontanée(s) de %d employé.e(s).", ent.NbDemissions())
+	}
+	if ent.NbRetraites() != 0 {
+		ent.logger.LogfType(LOG_DEPART, "Départ(s) à la retraite pour %d employé.e(s).", ent.NbRetraites())
+	}
+	if ent.NbPlaintes() != 0 {
+		ent.logger.LogfType(LOG_DEPART, "Licenciement pour faute grave appliqué à %d employé.e(s).", ent.NbLicenciements())
+	}
+	if ent.NbDepressions() != 0 {
+		ent.logger.LogfType(LOG_DEPART, "Dépression(s) conduisant à une démission pour %d employé.e(s).", ent.NbDepressions())
+	}
+	if ent.NbEnfants() != 0 {
+		ent.logger.LogfType(LOG_EMPLOYE, "Naissance d'un enfant pour %d employé.e(s).", ent.NbEnfants())
+		// S'il n'y a pas d'enfants, il n'y a pas de congés parentaux
+		ent.logger.LogfType(LOG_EMPLOYE, "%d employé(s) en congé paternité et %d employée(s) en congé maternité.", ent.NbCongesPaternite(), ent.NbCongesMaternite())
+	}
+	if ent.NbCongesMaternite() != 0 {
+		// S'il n'y a pas de congé maternité, il n'y a pas de démission après congé maternité
+		ent.logger.LogfType(LOG_DEPART, "Démission(s) de %d employée(s) après leur congé maternité.", ent.NbDemissionsMaternite())
+	}
 }
 
 func (ent *Entreprise) MoyenneCompetences() float64 {

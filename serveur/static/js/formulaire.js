@@ -22,16 +22,27 @@ function afficher(idElemChecked, idAAfficher, idACacher) {
     }
 }
 
-function checkRequired() { //vérifier qu'il n'y a pas d'élements recuiered non affichés
+// pour régler erreur du formulaire
+function checkRequired() {
     const requiredElements = document.querySelectorAll('form [required]');
     requiredElements.forEach(element => {
-        const computedStyle = window.getComputedStyle(element);
-        if (computedStyle.display === 'none') {
-          element.removeAttribute('required');
-          console.log("enlever l'attribut required à ", element)
+        let parent = element.parentElement;
+        let isParentHidden = false;
+        // Vérifie si un parent a un style display: none
+        while (parent) {
+            const computedStyle = window.getComputedStyle(parent);
+            if (computedStyle.display === 'none') {
+                isParentHidden = true;
+                break;
+            }
+            parent = parent.parentElement;
         }
-      });
-
+        const computedStyle = window.getComputedStyle(element);
+        if (computedStyle.display === 'block' && isParentHidden) {
+            element.removeAttribute('required');
+            console.log("Enlever l'attribut required à", element);
+        }
+    });
 }
 
 function sendData(event) {
@@ -62,7 +73,8 @@ function sendData(event) {
             strat_avant = 0; //StratVide dans l'énumération
         }
 
-        if(document.getElementById('placesReservees').checked) { //ON A CHOISI PLACES RESERVEES
+         //ON A CHOISI PLACES RESERVEES
+        if(document.getElementById('placesReserveesFemme').checked || document.getElementById('placesReserveesHomme').checked) {
             pourcentage_places_avant = document.getElementById('pourcentage_places_sans').value;
             pourcentage_places_avant = Number(pourcentage_places_avant)/100
         } else {
@@ -90,7 +102,8 @@ function sendData(event) {
             strat_avant = 0;
         }
 
-        if(document.getElementById('placesReserveesAvant').checked) { //ON A CHOISI PLACES RESERVEES
+         //ON A CHOISI PLACES RESERVEES
+         if(document.getElementById('placesReserveesFemmeAvant').checked || document.getElementById('placesReserveesHommeAvant').checked) {
             pourcentage_places_avant = document.getElementById('pourcentage_places_avant').value;
             pourcentage_places_avant = Number(pourcentage_places_avant)/100
         } else {
@@ -105,7 +118,8 @@ function sendData(event) {
             strat_apres = 0;
         }
 
-        if(document.getElementById('placesReserveesApres').checked) { //ON A CHOISI PLACES RESERVEES
+         //ON A CHOISI PLACES RESERVEES
+         if(document.getElementById('placesReserveesFemmeApres').checked || document.getElementById('placesReserveesHommeApres').checked) {
             pourcentage_places_apres = document.getElementById('pourcentage_places_apres').value;
             pourcentage_places_apres = Number(pourcentage_places_apres)/100
         } else {

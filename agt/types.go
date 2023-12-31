@@ -164,9 +164,10 @@ const (
 type TypeRecrutement int
 
 const (
-	Vide            TypeRecrutement = iota // décrit l'absence de TypeRecrutement = 0
-	Competences                            // = 1
-	PlacesReservees                        // = 2
+	Vide                 TypeRecrutement = iota // décrit l'absence de TypeRecrutement = 0
+	Competences                                 // = 1
+	PlacesReserveesFemme                        // = 2
+	PlacesReserveesHomme                        // = 3
 )
 
 type Recrutement struct {
