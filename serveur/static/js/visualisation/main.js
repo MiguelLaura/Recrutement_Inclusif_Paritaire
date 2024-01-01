@@ -34,7 +34,7 @@ infosLog.addEventListener("mouseleave", () => {
 const TITLE = 0;
 const COLOR = 1;
 
-let titles = {
+let graphData = {
     "Bénéfices" : ["Bénéfices produit par l'entreprise par année", [130, 174, 210]],
     "Parité" : ["Pourcentage de femmes dans l'entreprise", [231, 54, 56]],
     "Compétences" : ["Moyenne des compétences des employé-es (sur 10)", [255, 148, 77]],
@@ -45,11 +45,11 @@ const leGraph = new Graph(document.getElementById('sim-graph'));
 
 leGraph.setIncrement(1);
 
-for(graphName in titles) {
+for(graphName in graphData) {
     leGraph.addNewGraph(
         graphName, 
-        titles[graphName][COLOR], 
-        titles[graphName][TITLE]
+        graphData[graphName][COLOR], 
+        graphData[graphName][TITLE]
     );
 }
 
