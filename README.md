@@ -44,7 +44,7 @@ go run cmd/launch-all/launch-all.go
         * [Départs (hors licenciement)](#départs-hors-licenciement)
         * [Congés maternité](#congés-maternité)
         * [Formation](#formation)
-        * [Teambuilding](#teambuilding)
+        * [Team building](#team-building)
         * [Bénéfices](#bénéfices)
     * [L'exprimer dans le code](#lexprimer-dans-le-code)
 * [Les résultats](#les-résultats)
@@ -97,7 +97,7 @@ Dans une partie *Tableau de bord*, on peut voir des informations sur ce qu'il se
 * Entreprise : si l'entreprise reçoit des amendes liées à sa parité, ou un bonus de productivité ;
 * Recrutement : le nombre d'embauches et des détails sur le comportement des ressources humaines pendant le processus de recrutement ;
 * Employé : le nombre de naissances d'enfants et de congés parentaux ;
-* Evénements : l'organisation de teambuilding et le nombre d'employé.e.s ayant participé à une formation.
+* Evénements : l'organisation de team building et le nombre d'employé.e.s ayant participé à une formation.
 On a également des informations au survol sur le bénéfice, le recrutement et les catégories pour avoir des explications supplémentaires.
 
 ### Fonctionnement de l'interface
@@ -139,12 +139,58 @@ Une personne agressé
 
 #### Formation
 
-#### Teambuilding
+#### Team building
 
 #### Bénéfices
 
 ### L'exprimer dans le code
-**A FAIRE insérer diagramme de classe et séquence**
+**A FAIRE insérer diagramme de classe et séquence, parler des loggers**
+
+#### Simulation
+Cette classe gère la simulation et en particulier le lien entre le front et la back.
+
+**A FAIRE parler en particulier de la gestion de la communication**
+
+#### Entreprise
+L'entreprise est un agent qui assume aussi le rôle de l'environnement puisqu'elle gère les différents agents et c'est elle qui centralise les informations.
+
+Lorsqu'on lance l'entreprise, elle lance les employés et le recrutement, et elle entre dans une boucle. Au début de la boucle, l'entreprise attend un message sur le channel le liant à la simulation. Le message est soit `LIBRE` et ce qui indique à l'entreprise de lancer une année (ce qui revient à lancer la méthode `agir`), soit `FIN` et ce qui lui indique d'arrêter tous les agents qu'elle a lancé. Si le nombre d'employés atteint zéro avant la fin de la simulation, on passe tous les step sans rien faire jusqu'à la fin. Quand l'entreprise sort de la boucle, elle attend un message final de la simulation pour confirmer l'arrêt.
+
+Quand elle lance une année, l'entreprise :
+* organise les formations ;
+* organise un team building ;
+* lance les recrutements en envoyant un message à l'agent recrutement avec le nombre d'employés à recruter (le recrutement a un channel dédié à la communication entreprise->recrutement) ;
+* envoie un message aux employés pour leur dire d'agir (chaque employé a un channel dédié à la communication entreprise->employé).
+L'entreprise attend un message de chacun des employés (entreprise a un channel dédié aux retours des employés) pour lancer la fin d'année. Pour attendre les employés, l'entreprise a une fonction `RecevoirActions` qui prend le nombre d'actions à recevoir en entrée, lance une boucle dans laquelle elle attend un message sur son channel et incrémente un compteur à chaque fois qu'elle reçoit un message. Quand le compteur atteint le nombre d'actions passé en entrée, c'est la fin de la boucle.
+En fin d'année, l'entreprise lance un team building, et lance la fin d'année, elle gère :
+* les plaintes (donc licencie éventuellement des employés) ;
+* les départs ;
+* les recrutements : elle attend un message du recrutement qui l'informe de la fin du processus de recrutement (entreprise a un channel dédié aux retours du recrutement), puis lance les nouveaux employés.
+
+Pour arrêter tous les agents, l'entreprise envoie un message de fin sur les channels des employés et sur le channel du recrutement. Elle doit attendre leurs retours avant de s'arrêter elle-même.
+
+Au cours des actions des employés, ceux-ci peuvent changer les listes des employés démisionaires, la liste des départs, la liste des plaintes, le nombre de dépressions et le nombre de congés parentaux : pour éviter des problèmes d'accès concurents, les fonctions gérant ces changements posent un `Lock` sur l'entreprise.
+
+#### Employé
+Les employés sont des agents lancés par l'entreprise.
+
+Quand ils sont lancés, ils entrent dans une boucle dans laquelle ils effectuent leurs actions jusqu'à ce qu'ils aient été arrêtés par l'entreprise.
+Pour agir, les employés attendent un message de l'entreprise sur un channel dédié. Si l'entreprise leur envoie le message `LIBRE`, ils vont :
+* agresser s'ils sont agresseurs ;
+* se former s'ils sont dans la liste des employés recevant une formation pendant l'année en cours ;
+* vieillir ;
+* potentiellement avoir un enfant et donc potentiellement démissionner après un congé maternité ;
+* partir à la retraite s'ils ont assez d'ancienneté ;
+* potentiellement poser une démission spontannée.
+À chaque action, ils vont modifier des informations centralisées par l'entreprise, donc pour se faire, ils appellent des méthodes de l'entreprise.
+Si le message reçu par l'employé de la part de l'entreprise est `AGRESSION`, cela signifie que l'employé se fait agresser. Il va donc perdre de la santé mentale et potentiellement porter plainte auprès de l'entreprise et partir en depression.
+Si le message est `FIN`, l'employé passe son attribut fin à `true` ce qui lui permettra de sortir de la boucle de vie.
+Enfin, l'employé envoie un message à l'entreprise sur un channel pour l'informer qu'il a fini ses actions.
+
+#### Recrutement
+Le recrutement est un agent crée par la simulation et lancé par l'entreprise.
+
+**A FAIRE**
 
 ## Les résultats
 **A FAIRE**
@@ -217,7 +263,7 @@ En plus des ajouts possibles mentionnés dans la partie précédentes, des point
 * Le bénéfice : nous avons pris des chiffres très généraux sur les coûts des salarié.e.s, du recrutement et les bénéfices générés par les employé.e.s ;
 * La montée de productivé liée à la présence d'hommes : nous n'avons pas de chiffres sur l’intérêt d’avoir des hommes sur la bonne ambiance dans l'entreprise et ne l'avons donc pas modélisé ;
 * Les départs après un congé paternité : nous n'avons un chiffre que pour les départs après un congé maternité ;
-* Le teambuilding : on modélise boost positif pour tous les employé.e.s lors de l'organisation d'un teambuilding (ce qui n'est pas forcément le cas dans la réalité), mais nous n'avons pas de chiffre pour appuyer cette modélisation, et toutes les entreprises ne font pas de teambuilding ;
+* Le team building : on modélise boost positif pour tous les employé.e.s lors de l'organisation d'un team building (ce qui n'est pas forcément le cas dans la réalité), mais nous n'avons pas de chiffre pour appuyer cette modélisation, et toutes les entreprises ne font pas de team building ;
 * Le recrutement : nous engageons chaque année 5% d'employé.e.s supplémentaires, mais c'est un chiffre décidé arbitrairement, de plus, nous considérons que les postes seront toujours pourvus, et nous ne cherchons pas à remplacer les personnes qui ont quitté l'entreprise (le recrutement est fait indépendamment des départs et les embauches représentent toujours une hausse de 5% de l'effectif total) ;
 * L'amende liée à l'absence de femme : il s'agit d'une amende liée à la loi de Rixain qui est prise en compte dans notre modélisation, mais cette loi ne s’appliquera qu’à partir de 2026 ;
 * Les méthodes de recrutement : pour rappel, les places réservées n'existent pas dans la réalité.
