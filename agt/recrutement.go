@@ -161,7 +161,8 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 		return nil
 	}
 	embauches = make([]*Employe, 0)
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s)", nbARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s).", nbARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH cherche à recruter les candidat.es les plus compétent.es.")
 	for len(embauches) < nbARecruter {
 		maxCandidats := EmployeMaxCompetences(candidats)
 		if len(maxCandidats) == 1 {
@@ -186,7 +187,7 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 					embauches = append(embauches, lFemmes[idx])
 					candidats = enleverEmploye(candidats, lFemmes[idx])
 				} else {
-					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es avec des compétences équivalentes ont postulé. On veut privilégier les femmes, mais il n'y en a pas dans le groupe. Un homme est recruté")
+					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es avec des compétences équivalentes ont postulé. On veut privilégier les femmes, mais il n'y en a pas dans le groupe. Un homme est recruté.")
 					// S'il n'y a pas de femmes parmi les candidats les plus compétents, on choisit au hasard
 					idx = rand.Intn(len(maxCandidats))
 					embauches = append(embauches, maxCandidats[idx])
@@ -202,7 +203,7 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 					embauches = append(embauches, lHommes[idx])
 					candidats = enleverEmploye(candidats, lHommes[idx])
 				} else {
-					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es avec des compétences équivalentes ont postulé. On veut privilégier les hommes, mais il n'y en a pas dans le groupe. Une femme est recrutée")
+					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.es avec des compétences équivalentes ont postulé. On veut privilégier les hommes, mais il n'y en a pas dans le groupe. Une femme est recrutée.")
 					// S'il n'y a pas d'hommes parmi les candidats les plus compétents, on choisit au hasard
 					idx = rand.Intn(len(maxCandidats))
 					embauches = append(embauches, maxCandidats[idx])
@@ -220,35 +221,98 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 	return embauches
 }
 
-// Recrutement si TypeRecrutement = PlacesReservees
-// Parmi les candidats à recruter, un certain pourcentage est réservé aux femmes, peu importe leurs compétences
-func (r *Recrutement) RecrutementPlacesReservees(nbARecruter int, candidats []*Employe, pourcentagePlace float64) (embauches []*Employe) {
+// Recrutement si TypeRecrutement = PlacesReserveesFemme
+// Parmi les candidats à recruter, un certain pourcentage est réservé aux femmes, même si leurs compétences sont inférieures à celles des hommes
+func (r *Recrutement) RecrutementPlacesReserveesFemme(nbARecruter int, candidats []*Employe, pourcentagePlace float64) (embauches []*Employe) {
 	if nbARecruter < 0 {
 		return nil
 	}
 	if pourcentagePlace < 0 || pourcentagePlace > 1 {
 		return nil
 	}
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s)", nbARecruter)
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s).", nbARecruter)
 	// Pas d'erreur si len(candidats)=0 car dans ce cas, la fonction renvoie slice vide
 	embauches = make([]*Employe, 0)
 	// Hypothèse : si le résultat ne tombe pas juste, on arrondit le nombre de femmes au supérieur
 	nbFemmesARecruter := int(math.Round(pourcentagePlace * float64(nbARecruter)))
-	candidatsFemmes := FiltreFemme(candidats) // permet d'isoler les femmes parmi les candidat.es
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH veut recruter %d %% de femmes soit %d femme(s)", int(pourcentagePlace*100), nbFemmesARecruter)
-	// 1ere etape : recruter les femmes les plus compétentes pour les places réservées
-	for i := 0; i < nbFemmesARecruter; i++ {
-		if len(candidatsFemmes) == 0 {
-			break
-		}
-		maxCandidates := EmployeMaxCompetences(candidatsFemmes)
-		embauches = append(embauches, maxCandidates[0])
-		candidatsFemmes = enleverEmploye(candidatsFemmes, maxCandidates[0])
-		candidats = enleverEmploye(candidats, maxCandidates[0])
-	}
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH a pu recruter %d femme(s) sur %d femme(s) souhaitées", len(embauches), nbFemmesARecruter)
-	// S'il n'y a pas assez de femmes dans les candidats pour toutes les places réservées, on recrute des hommes
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH veut recruter au minimum %d%% de femmes.", int(pourcentagePlace*100))
 
+	if nbFemmesARecruter != 0 {
+		r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH  réserve des places pour %d femme(s).", nbFemmesARecruter)
+		// 1ere etape : recruter les femmes les plus compétentes pour les places réservées
+		candidatsFemmes := FiltreFemme(candidats) // permet d'isoler les femmes parmi les candidat.es
+		for i := 0; i < nbFemmesARecruter; i++ {
+			if len(candidatsFemmes) == 0 {
+				break
+			}
+			maxCandidates := EmployeMaxCompetences(candidatsFemmes)
+			embauches = append(embauches, maxCandidates[0])
+			candidatsFemmes = enleverEmploye(candidatsFemmes, maxCandidates[0])
+			candidats = enleverEmploye(candidats, maxCandidates[0])
+		}
+		r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH a d'abord recruté les femmes les plus compétentes pour occuper les places réservées : %d femme(s) recrutée(s) dans ce but.", len(embauches))
+	}
+	// S'il n'y a pas assez de femmes dans les candidats pour toutes les places réservées, on recrute des hommes
+	if len(embauches) < nbFemmesARecruter {
+		r.logger.LogfType(LOG_RECRUTEMENT, "Pas assez de femmes ont postulé à l'offre pour remplir les places reservées. Le service RH a donc recruté des hommes pour occuper tous les postes vacants.")
+	} else {
+		if len(embauches) < nbARecruter {
+			r.logger.LogfType(LOG_RECRUTEMENT, "Pour les postes vacants, les candidat.es les plus compétent.es sont recruté.es sans tenir compte de leur genre.")
+		}
+
+	}
+	// Le reste des candidats sont sélectionnés uniquement pour leurs compétences
+	reste := nbARecruter - len(embauches)
+	for i := 0; i < reste; i++ {
+		maxCandidats := EmployeMaxCompetences(candidats)
+		idx := rand.Intn(len(maxCandidats))
+		embauches = append(embauches, maxCandidats[idx])
+		candidats = enleverEmploye(candidats, maxCandidats[idx])
+	}
+
+	return embauches
+}
+
+// Recrutement si TypeRecrutement = PlacesReserveesHomme
+// Parmi les candidats à recruter, un certain pourcentage est réservé aux hommes, même si leurs compétences sont inférieures à celles des femmes
+func (r *Recrutement) RecrutementPlacesReserveesHomme(nbARecruter int, candidats []*Employe, pourcentagePlace float64) (embauches []*Employe) {
+	if nbARecruter < 0 {
+		return nil
+	}
+	if pourcentagePlace < 0 || pourcentagePlace > 1 {
+		return nil
+	}
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s).", nbARecruter)
+	// Pas d'erreur si len(candidats)=0 car dans ce cas, la fonction renvoie slice vide
+	embauches = make([]*Employe, 0)
+	// Hypothèse : si le résultat ne tombe pas juste, on arrondit le nombre d'hommes au supérieur
+	nbHommesARecruter := int(math.Round(pourcentagePlace * float64(nbARecruter)))
+
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH veut recruter au minimum %d%% d'hommes.", int(pourcentagePlace*100))
+	if nbHommesARecruter != 0 {
+		r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH  réserve des places pour %d homme(s).", nbHommesARecruter)
+		// 1ere etape : recruter les hommes les plus compétents pour les places réservées
+		candidatsHommes := FiltreHomme(candidats) // permet d'isoler les hommes parmi les candidat.es
+		for i := 0; i < nbHommesARecruter; i++ {
+			if len(candidatsHommes) == 0 {
+				break
+			}
+			maxCandidats := EmployeMaxCompetences(candidatsHommes)
+			embauches = append(embauches, maxCandidats[0])
+			candidatsHommes = enleverEmploye(candidatsHommes, maxCandidats[0])
+			candidats = enleverEmploye(candidats, maxCandidats[0])
+		}
+		r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH a d'abord recruté les hommes les plus compétents pour occuper les places réservées : %d homme(s) recruté(s) dans ce but.", len(embauches))
+
+	}
+	// S'il n'y a pas assez de femmes dans les candidats pour toutes les places réservées, on recrute des hommes
+	if len(embauches) < nbHommesARecruter {
+		r.logger.LogfType(LOG_RECRUTEMENT, "Pas assez d'hommes ont postulé à l'offre pour remplir les places reservées. Le service RH a donc recruté des femmes pour occuper tous les postes vacants.")
+	} else {
+		if len(embauches) < nbARecruter {
+			r.logger.LogfType(LOG_RECRUTEMENT, "Pour les postes vacants, les candidat.es les plus compétent.es sont recruté.es sans tenir compte de leur genre.")
+		}
+	}
 	// Le reste des candidats sont sélectionnés uniquement pour leurs compétences
 	reste := nbARecruter - len(embauches)
 	for i := 0; i < reste; i++ {
@@ -269,61 +333,46 @@ func (r *Recrutement) Recruter(nbARecruter int) (embauches []*Employe) {
 	}
 
 	// Génération des candidats
-
 	candidats := r.GenererCandidats(constantes.NB_CANDIDATS_PAR_OFFRE * nbARecruter)
 	if candidats == nil {
 		return nil
 	}
+
 	if r.objectif == -1 {
 		// L'utilisateur n'a pas défini un objectif de parité à atteindre
-
-		// Choix de la fonction de recrutement à appeler
-		if r.typeRecrutementAvant == Competences {
-			embauches := r.RecrutementCompetencesEgales(nbARecruter, r.stratAvant, candidats)
-			return embauches
-		} else if r.typeRecrutementAvant == PlacesReservees {
-			if r.pourcentagePlacesAvant < 0 || r.pourcentagePlacesAvant > 1 {
-				return nil
-			}
-			embauches := r.RecrutementPlacesReservees(nbARecruter, candidats, r.pourcentagePlacesAvant)
-			return embauches
-		} else {
-			return nil
-		}
+		return r.ChoixRecrutement(nbARecruter, candidats, r.typeRecrutementAvant, r.stratAvant, r.pourcentagePlacesAvant)
 
 	} else {
 		// L'utilisateur a défini un pourcentage de parité a atteindre
 
-		// Choix de la fonction de recrutement à appeler en fonction de si l'objectif est atteint ou non
 		if r.objectif > r.entreprise.PourcentageFemmes() {
 			// L'objectif n'est pas atteint, on applique TypeRecrutementAvant
-			if r.typeRecrutementAvant == Competences {
-				embauches := r.RecrutementCompetencesEgales(nbARecruter, r.stratAvant, candidats)
-				return embauches
-			} else if r.typeRecrutementAvant == PlacesReservees {
-				if r.pourcentagePlacesAvant < 0 || r.pourcentagePlacesAvant > 1 {
-					return nil
-				}
-				embauches := r.RecrutementPlacesReservees(nbARecruter, candidats, r.pourcentagePlacesAvant)
-				return embauches
-			} else {
-				return nil
-			}
+			return r.ChoixRecrutement(nbARecruter, candidats, r.typeRecrutementAvant, r.stratAvant, r.pourcentagePlacesAvant)
 		} else {
 			// L'objectif est atteint, on applique TypeRecrutementApres
-			if r.typeRecrutementApres == Competences {
-				embauches := r.RecrutementCompetencesEgales(nbARecruter, r.stratApres, candidats)
-				return embauches
-			} else if r.typeRecrutementApres == PlacesReservees {
-				if r.pourcentagePlacesApres < 0 || r.pourcentagePlacesApres > 1 {
-					return nil
-				}
-				embauches := r.RecrutementPlacesReservees(nbARecruter, candidats, r.pourcentagePlacesApres)
-				return embauches
-			} else {
-				return nil
-			}
+			return r.ChoixRecrutement(nbARecruter, candidats, r.typeRecrutementApres, r.stratApres, r.pourcentagePlacesApres)
 		}
+	}
+}
+
+func (r *Recrutement) ChoixRecrutement(nbARecruter int, candidats []*Employe, typeRecrutement TypeRecrutement, strat StratParite, pourcentagePlaces float64) (embauches []*Employe) {
+	if typeRecrutement == Competences {
+		embauches := r.RecrutementCompetencesEgales(nbARecruter, strat, candidats)
+		return embauches
+	} else if typeRecrutement == PlacesReserveesFemme {
+		if pourcentagePlaces < 0 || pourcentagePlaces > 1 {
+			return nil
+		}
+		embauches := r.RecrutementPlacesReserveesFemme(nbARecruter, candidats, pourcentagePlaces)
+		return embauches
+	} else if typeRecrutement == PlacesReserveesHomme {
+		if pourcentagePlaces < 0 || pourcentagePlaces > 1 {
+			return nil
+		}
+		embauches := r.RecrutementPlacesReserveesHomme(nbARecruter, candidats, pourcentagePlaces)
+		return embauches
+	} else {
+		return nil
 	}
 }
 

@@ -1,4 +1,5 @@
 // Les champs avec les informations initiales
+const anneesInit = document.getElementById("annees-init");
 const objectif = document.getElementById("objectif");
 const recrutement = document.getElementById("recrutement");
 const nbEmployesInit = document.getElementById("nb-employes-init");
