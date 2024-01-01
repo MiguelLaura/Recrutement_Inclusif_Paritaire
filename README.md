@@ -154,7 +154,7 @@ Cette classe gère la simulation et en particulier le lien entre le front et la 
 #### Entreprise
 L'entreprise est un agent qui assume aussi le rôle de l'environnement puisqu'elle gère les différents agents et c'est elle qui centralise les informations.
 
-Lorsqu'on lance l'entreprise, elle lance les employés et le recrutement, et elle entre dans une boucle. Au début de la boucle, l'entreprise attend un message sur le channel le liant à la simulation. Le message est soit `LIBRE` et ce qui indique à l'entreprise de lancer une année (ce qui revient à lancer la méthode `agir`), soit `FIN` et ce qui lui indique d'arrêter tous les agents qu'elle a lancé. Si le nombre d'employés atteint zéro avant la fin de la simulation, on passe tous les step sans rien faire jusqu'à la fin. Quand l'entreprise sort de la boucle, elle attend un message final de la simulation pour confirmer l'arrêt.
+Lorsqu'on démarre l'entreprise, elle démarre les employés et le recrutement, et elle entre dans une boucle. Au début de la boucle, l'entreprise attend un message sur le channel le liant à la simulation. Le message est soit `LIBRE` et ce qui indique à l'entreprise de lancer une année (ce qui revient à lancer la méthode `agir`), soit `FIN` et ce qui lui indique d'arrêter tous les agents qu'elle a lancé. Si le nombre d'employés atteint zéro avant la fin de la simulation, on passe tous les step sans rien faire jusqu'à la fin. Quand l'entreprise sort de la boucle, elle attend un message final de la simulation pour confirmer l'arrêt.
 
 Quand elle lance une année, l'entreprise :
 * organise les formations ;
@@ -165,11 +165,11 @@ L'entreprise attend un message de chacun des employés (entreprise a un channel 
 En fin d'année, l'entreprise lance un team building, et lance la fin d'année, elle gère :
 * les plaintes (donc licencie éventuellement des employés) ;
 * les départs ;
-* les recrutements : elle attend un message du recrutement qui l'informe de la fin du processus de recrutement (entreprise a un channel dédié aux retours du recrutement), puis lance les nouveaux employés.
+* les recrutements : elle attend un message du recrutement qui l'informe de la fin du processus de recrutement (entreprise a un channel dédié aux retours du recrutement), puis démarre les nouveaux employés.
 
 Pour arrêter tous les agents, l'entreprise envoie un message de fin sur les channels des employés et sur le channel du recrutement. Elle doit attendre leurs retours avant de s'arrêter elle-même.
 
-Au cours des actions des employés, ceux-ci peuvent changer les listes des employés démisionaires, la liste des départs, la liste des plaintes, le nombre de dépressions et le nombre de congés parentaux : pour éviter des problèmes d'accès concurents, les fonctions gérant ces changements posent un `Lock` sur l'entreprise.
+Au cours des actions des employés, ceux-ci peuvent changer les listes des employés démissionaires, la liste des départs, la liste des plaintes, le nombre de dépressions et le nombre de congés parentaux : pour éviter des problèmes d'accès concurents, les fonctions gérant ces changements posent un `Lock` sur l'entreprise.
 
 #### Employé
 Les employés sont des agents lancés par l'entreprise.
@@ -179,9 +179,9 @@ Pour agir, les employés attendent un message de l'entreprise sur un channel dé
 * agresser s'ils sont agresseurs ;
 * se former s'ils sont dans la liste des employés recevant une formation pendant l'année en cours ;
 * vieillir ;
-* potentiellement avoir un enfant et donc potentiellement démissionner après un congé maternité ;
+* potentiellement avoir un enfant et donc potentiellement partir en congé parternité et potentiellement démissionner après un congé maternité ;
 * partir à la retraite s'ils ont assez d'ancienneté ;
-* potentiellement poser une démission spontannée.
+* potentiellement poser une démission spontanée.
 À chaque action, ils vont modifier des informations centralisées par l'entreprise, donc pour se faire, ils appellent des méthodes de l'entreprise.
 Si le message reçu par l'employé de la part de l'entreprise est `AGRESSION`, cela signifie que l'employé se fait agresser. Il va donc perdre de la santé mentale et potentiellement porter plainte auprès de l'entreprise et partir en depression.
 Si le message est `FIN`, l'employé passe son attribut fin à `true` ce qui lui permettra de sortir de la boucle de vie.
