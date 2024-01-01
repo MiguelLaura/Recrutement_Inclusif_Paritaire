@@ -8,7 +8,15 @@ class Graph {
         this.theGraphs = [];
         this.theLimits = {};
 
+        // Configs
+        this.currTitle = {
+            display: false,
+            text: "",
+            color: "#191"
+        };
         this.renderedLimits = {}
+
+        // Graph
         this.graph = new Chart(parent, {
             type: 'line',
             data: {
@@ -19,6 +27,12 @@ class Graph {
                 plugins: {
                     annotation: {
                         annotations: this.renderedLimits
+                    },
+                    title: this.currTitle
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
             }
@@ -26,7 +40,7 @@ class Graph {
     }
 
     setIncrement(newIncr) {
-        if(newIncr < 1) {
+        if (newIncr < 1) {
             throw new Error("La quantité d'incrémentation du x du graphe ne peut pas être < 1")
         }
         this.xIncr = newIncr;
@@ -35,10 +49,11 @@ class Graph {
     /**
      * Ajoute un nouveau graph
      * @param {string} label - Nom du nouveau graph 
-     * @param {Array} color - couleur du nouveau graph au format rgb : [R, G, B]
+     * @param {Array} color - couleur du nouveau graph au format rgb : [R, G, B] (optionnel)
+     * @param {string} title - titre du graph (optionnel)
      */
-    addNewGraph(label, color = undefined) {
-        if(color === undefined) {
+    addNewGraph(label, color = undefined, title="") {
+        if (color === undefined) {
             color = randomRGBColor()
         }
         const newY = {
@@ -46,6 +61,7 @@ class Graph {
             data: [],
             fill: false,
             borderColor: `rgb(${color[0]}, ${color[1]}, ${color[2]})`,
+            title: title
         }
 
         this.theGraphs.push(newY);
@@ -64,8 +80,8 @@ class Graph {
      *      width - La largeur de la ligne (en px) (defaut: 3)
      *      showLabel - Est-ce que le label est visible ou non (defaut : true)
      */
-    addHorizontalLine(graphLabel, lineLabel, value, { lineColor="black", labelBkgColor="red", width=3, showLabel=true } = {}) {
-        if(Object.keys(this.theLimits).indexOf(graphLabel) === -1) {
+    addHorizontalLine(graphLabel, lineLabel, value, { lineColor = "black", labelBkgColor = "red", width = 3, showLabel = true } = {}) {
+        if (Object.keys(this.theLimits).indexOf(graphLabel) === -1) {
             throw new Error("Ne peut pas ajouter de limites à un graphe qui n'existe pas.");
         }
 
@@ -84,7 +100,7 @@ class Graph {
         };
 
         this.theLimits[graphLabel].push(limit);
-        if(this.isGraphActive(graphLabel)) {
+        if (this.isGraphActive(graphLabel)) {
             this.renderedLimits[`${graphLabel}_${lineLabel}`] = limit;
         }
     }
@@ -94,12 +110,23 @@ class Graph {
      * @param  {...string} graphNames Les labels des graphs que l'on souhaite afficher
      */
     selectGraphs(...graphNames) {
+        // Resets graph
         this.graph.data.datasets = [];
+        this.currTitle.text = "";
+        this.currTitle.display = false;
         emptyObject(this.renderedLimits);
-        for(const graph of this.theGraphs) {
-            if(graphNames.indexOf(graph.label) !== -1) {
+        
+        // Shows new graphs
+        for (const graph of this.theGraphs) {
+            if (graphNames.indexOf(graph.label) !== -1) {
                 this.graph.data.datasets.push(graph);
-                for(const limit of this.theLimits[graph.label]) {
+
+                if(graph.title.trim() != "") {
+                    this.currTitle.text = graph.title.trim();
+                    this.currTitle.display = true;
+                }
+
+                for (const limit of this.theLimits[graph.label]) {
                     this.renderedLimits[`${graph.label}_${limit.lineLabel}`] = limit;
                 }
             }
@@ -111,17 +138,17 @@ class Graph {
      * @param  {...number} allGraphData Les valeurs à attribuer aux graphs, dans le même ordre que lorsque addNewGraph a été appelé
      */
     addData(...allGraphData) {
-        if(this.xs.length === 0) {
+        if (this.xs.length === 0) {
             this.xs.push(1);
         } else {
-            this.xs.push(this.xs[this.xs.length-1] + this.xIncr);
+            this.xs.push(this.xs[this.xs.length - 1] + this.xIncr);
         }
 
-        if(allGraphData.length !== this.theGraphs.length) {
+        if (allGraphData.length !== this.theGraphs.length) {
             throw new Error("Pas autant de données de de graphs")
         }
 
-        for(const graphIdx in this.theGraphs) {
+        for (const graphIdx in this.theGraphs) {
             this.theGraphs[graphIdx].data.push(allGraphData[graphIdx])
         }
 
@@ -138,7 +165,7 @@ class Graph {
 
     reset() {
         this.xs.length = 0;
-        for(const graphIdx in this.theGraphs) {
+        for (const graphIdx in this.theGraphs) {
             this.theGraphs[graphIdx].data.length = 0;
         }
     }
@@ -153,7 +180,7 @@ function randomRGBColor() {
 }
 
 function emptyObject(obj) {
-    for(let keyName in obj) {
+    for (let keyName in obj) {
         delete obj[keyName]
     }
     return obj

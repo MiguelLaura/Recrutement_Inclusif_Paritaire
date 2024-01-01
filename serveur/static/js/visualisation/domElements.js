@@ -14,6 +14,8 @@ const benefice = document.getElementById("benefice") //bénéfice indicateur
 // Les boutons pour selectionner le graphe que l'on souhaite
 const btnGraphVisuBenefices = document.getElementById("visu-benef");
 const btnGraphVisuParite = document.getElementById("visu-parite");
+const btnGraphVisuCompetences = document.getElementById("visu-competences");
+const btnGraphVisuSanteMentale = document.getElementById("visu-sante-mentale");
 
 // Les informations sur la simulation
 const statusSimu = document.getElementById("status-simu");

@@ -98,7 +98,7 @@ function mettreLesChosesAuBonEndroit(data) {
     pariteElt.textContent = (data.parite * 100).toFixed(0) + "% de femmes";
     benefice.textContent = data.benefices.toLocaleString() + "€";
 
-    leGraph.addData(data.benefices.toFixed(0), (data.parite * 100).toFixed(0));
+    leGraph.addData(data.benefices.toFixed(0), (data.parite * 100).toFixed(0), data.competence.toFixed(0), (data["sante-mentale"]).toFixed(0));
 }
 
 function afficherInformationsInitiales(data) {

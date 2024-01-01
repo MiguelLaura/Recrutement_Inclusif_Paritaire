@@ -31,11 +31,27 @@ infosLog.addEventListener("mouseleave", () => {
 
 // Initialise le graphe
 
+const TITLE = 0;
+const COLOR = 1;
+
+let graphData = {
+    "Bénéfices" : ["Bénéfices produit par l'entreprise par année", [130, 174, 210]],
+    "Parité" : ["Pourcentage de femmes dans l'entreprise", [231, 54, 56]],
+    "Compétences" : ["Moyenne des compétences des employé-es (sur 10)", [255, 148, 77]],
+    "Santé mentale" : ["Moyenne de la santé mentale des employé-es (sur 100)", [102, 0, 102]]
+}
+
 const leGraph = new Graph(document.getElementById('sim-graph'));
 
 leGraph.setIncrement(1);
-leGraph.addNewGraph("Bénéfices", [130, 174, 210]);
-leGraph.addNewGraph("Parité", [231, 54, 56]);
+
+for(graphName in graphData) {
+    leGraph.addNewGraph(
+        graphName, 
+        graphData[graphName][COLOR], 
+        graphData[graphName][TITLE]
+    );
+}
 
 leGraph.selectGraphs("Bénéfices");
 
@@ -46,6 +62,16 @@ btnGraphVisuBenefices.addEventListener("click", (evt) => {
 
 btnGraphVisuParite.addEventListener("click", (evt) => {
     leGraph.selectGraphs("Parité");
+    pressBtn(evt.target);
+});
+
+btnGraphVisuCompetences.addEventListener("click", (evt) => {
+    leGraph.selectGraphs("Compétences");
+    pressBtn(evt.target);
+});
+
+btnGraphVisuSanteMentale.addEventListener("click", (evt) => {
+    leGraph.selectGraphs("Santé mentale");
     pressBtn(evt.target);
 });
 
