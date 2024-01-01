@@ -46,7 +46,11 @@ const leGraph = new Graph(document.getElementById('sim-graph'));
 leGraph.setIncrement(1);
 
 for(graphName in titles) {
-    leGraph.addNewGraph(graphName, titles[graphName][COLOR], titles[graphName][TITLE]);
+    leGraph.addNewGraph(
+        graphName, 
+        titles[graphName][COLOR], 
+        titles[graphName][TITLE]
+    );
 }
 
 leGraph.selectGraphs("Bénéfices");

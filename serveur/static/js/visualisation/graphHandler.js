@@ -4,16 +4,19 @@
 class Graph {
     constructor(parent) {
         this.xIncr = 1;
+        this.xs = [];
+        this.theGraphs = [];
+        this.theLimits = {};
+
+        // Configs
         this.currTitle = {
             display: false,
             text: "",
             color: "#191"
         };
-        this.xs = [];
-        this.theGraphs = [];
-        this.theLimits = {};
-
         this.renderedLimits = {}
+
+        // Graph
         this.graph = new Chart(parent, {
             type: 'line',
             data: {
@@ -26,6 +29,11 @@ class Graph {
                         annotations: this.renderedLimits
                     },
                     title: this.currTitle
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
         });
@@ -41,7 +49,8 @@ class Graph {
     /**
      * Ajoute un nouveau graph
      * @param {string} label - Nom du nouveau graph 
-     * @param {Array} color - couleur du nouveau graph au format rgb : [R, G, B]
+     * @param {Array} color - couleur du nouveau graph au format rgb : [R, G, B] (optionnel)
+     * @param {string} title - titre du graph (optionnel)
      */
     addNewGraph(label, color = undefined, title="") {
         if (color === undefined) {
@@ -101,8 +110,13 @@ class Graph {
      * @param  {...string} graphNames Les labels des graphs que l'on souhaite afficher
      */
     selectGraphs(...graphNames) {
+        // Resets graph
         this.graph.data.datasets = [];
+        this.currTitle.text = "";
+        this.currTitle.display = false;
         emptyObject(this.renderedLimits);
+        
+        // Shows new graphs
         for (const graph of this.theGraphs) {
             if (graphNames.indexOf(graph.label) !== -1) {
                 this.graph.data.datasets.push(graph);
