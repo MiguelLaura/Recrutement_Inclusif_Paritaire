@@ -35,8 +35,17 @@ go run cmd/launch-all/launch-all.go
         * [Places réservées ?](#places-réservées)
         * [Compétences égales ?](#compétences-égales)
     * [La simulation](#la-simulation)
+    * [Fonctionnement de l'interface](#fonctionnement-de-linterface)
 * [La modélisation](#la-modélisation)
     * [Ce qui est modélisé et les sources](#ce-qui-est-modélisé-et-les-sources)
+        * [Employé](#employé)
+        * [Recrutement](#recrutement)
+        * [Agressions, plaintes et licenciement](#agressions-plaintes-et-licenciement)
+        * [Départs (hors licenciement)](#départs-hors-licenciement)
+        * [Congés maternité](#congés-maternité)
+        * [Formation](#formation)
+        * [Teambuilding](#teambuilding)
+        * [Bénéfices](#bénéfices)
     * [L'exprimer dans le code](#lexprimer-dans-le-code)
 * [Les résultats](#les-résultats)
 * [Non pris en compte dans notre modélisation](#non-pris-en-compte-dans-notre-modélisationtest)
@@ -52,7 +61,7 @@ go run cmd/launch-all/launch-all.go
     * [Les différences de salaire](#les-différences-de-salaire)
     * [Le secteur](#le-secteur)
     * [Pourquoi nous n'avons pas utilisé l'index de l’égalité professionnelle entre les femmes et les hommes ?](#pourquoi-nous-navons-pas-utilisé-lindex-de-légalité-professionnelle-entre-les-femmes-et-les-hommes)
-* [Les points à améliorer sur la simulation actuelle](#les-points-à-améliorer-sur-la-simulation-actuelle)
+* [Remarques sur la simulation actuelle](#remarques-sur-la-simulation-actuelle)
     * [Sur l'interface](#sur-linterface)
     * [Sur la modélisation](#sur-la-modélisation)
 
@@ -91,20 +100,32 @@ Dans une partie *Tableau de bord*, on peut voir des informations sur ce qu'il se
 * Evénements : l'organisation de teambuilding et le nombre d'employé.e.s ayant participé à une formation.
 On a également des informations au survol sur le bénéfice, le recrutement et les catégories pour avoir des explications supplémentaires.
 
+### Fonctionnement de l'interface
+
+L'interface a été réalisée en HTML/CSS/JavaScript. Nous utilisons la bibliothèque Chart.js pour créer les graphes et visualiser les données au cours du temps. Pour envoyer les informations issues du formulaire et créer une nouvelle simulation, nous utilisons une requête POST. Les informations envoyées et retournées peuvent être consultées dnas le document [API.md](API.md).
+
+Une fois sur la page de la simulation, toutes les informations sont transférées grâce à des websockets. Les données sont de différents types et envoyées à différents moments. Nous utilisons un Logger qui envoie les données dans les websockets, en même temps qu'il les affiche dans la console. Ce Logger est commun à la simulation et à tous les agents (employé-es, recrutement et entreprise).
+
+D'abord, les informations "initiales" qui concernent la simulation créée (l'id de la simulation, le nombre d'années, le type de recrutement choisi, status de la simulation, ...) sont envoyées à la page HTML dès qu'une connexion websocket est établie. Cela permet à la simulation de n'être pas dépendante d'une page web particulière. Ainsi, on peut toujours retrouver les informations lorsqu'on reload une page web avec l'id de la simulation. Dans le code, ces informations sont regroupés dans "LOG_INITAL".
+
+Nous gérons également des informations sur le status de la simulation, par exemple si elle est terminée, à relancer, en pause, pour afficher ces informations sur l'interface avec des popup temporaires. Ce sont des "LOG_REPONSE". 
+
+Ensuite, pour afficher les informations au fur et à mesure, la simulation envoie chaque année son pas de temps actuel, son nombre d'employé-es, son pourcentage de femmes, son bénéfice, la moyenne des compétences et la moyenne de la santé mentale. Cela correspond aux informations globales, "LOG_GLOBAL". 
+
+Enfin, pour suivre le déroulé de la simulation, chaque agent (que ce soit des employé-es, le recrutement ou l'entreprise) log des informations lorsqu'il agit. Cela permet de garder les informations sur les actions au moment où elles sont réalisées. Ces logs sont catégorisés pour pouvoir être affichés de différentes couleurs dans l'interface et masqués si besoin. L'entreprise peut envoyer les logs suivants : LOG_AGRESSION, LOG_DEPART, LOG_ENTREPRISE, LOG_EVEMENT. Le recrutement envoie les LOG_RECRUTEMENT et les employé-es LOG_EMPLOYE.
+
 ## La modélisation
 
 ### Ce qui est modélisé et les sources
 **A FAIRE expliquer les sources et ce qu'on a modélisé**
 
 #### Employé
-Les compétences d'un employé sont modélisées par un entier 0 à 10. Elles suivent une loi normale avec mu = 5 et sigma=3. Cela permet d'obtenir une majorité d'individus moyens et assez peu d'individus excellents ou mauvais. L'idée provient de cette source : https://www.ruf.rice.edu/~lane/papers/male_female.pdf
+Les compétences d'un employé sont modélisées par un entier 0 à 10. Elles suivent une loi normale avec mu=5 et sigma=3. Cela permet d'obtenir une majorité d'individus moyens et assez peu d'individus excellents ou mauvais[<sup>test</sup>](https://www.ruf.rice.edu/~lane/papers/male_female.pdf).
 Pour la santé mentale, nous avons décidé de la modéliser comme un entier de 0 à 100. Lorsqu'il rejoint l'entreprise, il dispose d'une santé mentale pleine de 100. Son expérience au sein de l'entreprise peut augmenter ou réduire sa santé mentale dans le domaine défini.
-Concernant l'ancienneté, il s'agit d'un entier entre 0 et 40. Les employés générés au début de la modélisation ont une ancienneté aléatoire. Les nouveaux employés ont donc une ancienneté de 0. Cette valeur est incrémentée tous les ans. Lorsqu'un employé a une ancienneté de 40, il part à la retraite. 
+Concernant l'ancienneté, il s'agit d'un entier entre 0 et 40. Les employés générés au début de la modélisation ont une ancienneté aléatoire. Les nouveaux employés ont une ancienneté de 0. Cette valeur est incrémentée tous les ans. Lorsqu'un employé a une ancienneté de 40, il part à la retraite.
 **CHANGER VALEUR ANCIENNETE MAX, lire des trucs sur la retraite moyenne**
 
 https://www.harcelement.eu/les-statistiques-choquantes-sur-le-harcelement-sexuel-au-travail-en-france/
-
-
 
 #### Recrutement
 
@@ -118,62 +139,9 @@ Une personne agressé
 
 #### Formation
 
-#### Team-building
+#### Teambuilding
 
 #### Bénéfices
-
-
-
-#### Fonctionnement de l'interface
-
-L'interface a été réalisée en HTML/CSS/Javascript. Nous utilisons la bibliothèque Chart.js pour créer les graphes et visualiser les données au cours du temps. Pour envoyer les informations issus du formulaire et créer une nouvelle simulation, nous utilisons une requête POST. Voici les informations envoyées et retournées. 
-
-
-```http
-  POST /localhost:8080/new_simulation
-```
-
-- Requête : `POST`
-- Objet `JSON` envoyé
-
-
-| Paramètres | Type     | Description                |
-| :-------- | :------- | :------------------------- |
-| `id_simulation` | `string` | **Required**. ID de l'entreprise créée |
-| `nb_employes` | `int` | **Required**. Nombre d'employés total dans l'entreprise |
-| `nb_annees` | `int` | **Required**. Nombre d'années pour la simulation |
-| `pourcentage_femmes` | `float` | **Required**. Pourcentage de femmes au début |
-| `objectif` | `float` | **Required**. Objectif pourcentage min de femmes dans l'entreprise. Peut-être -1 (pas d'objectif) |
-| `strat_avant` | `int` | **Required**. Vide = 0 / PrioHommes = 1 / PrioFemmes = 2 / Hasard = 3 / |
-| `strat_apres` | `int` | **Required**. Vide = 0 / PrioHommes = 1 / PrioFemmes = 2 / Hasard = 3 / |
-| `type_recrutement_avant` | `int` | **Required**.  Vide = 0 / CompetencesEgales = 1 / PlacesReserveesFemme = 2 / PlacesReserveesHomme = 3 |
-| `type_recrutement_apres` | `int` | **Required**. Vide = 0 / CompetencesEgales = 1 / PlacesReservees = 2 / PlacesReserveesHomme = 3 |
-| `pourcentage_places_avant` | `float` | **Required**. Pourcentages de places réservées dans le recrutement. Peut-être -1 (pas de places réservées) |
-| `pourcentage_places_apres` | `float` | **Required**. Pourcentages de places réservées dans le recrutement. Peut-être -1 (pas de places réservées) |
-
-- Code retour
-
-| Code retour | Signification |
-|-------------|---------------|
-| `201`       | simulation créée     |
-| `400`       | mauvaise requête   |
-
-- Objet `JSON` renvoyé (si `201`)
-
-| propriété  | type | exemple de valeurs possibles                                  |
-|------------|-------------|-----------------------------------------------------|
-| `simulation-id`    | `string` | `"id_simulation_1"` |
-
-
-Une fois sur la page de la simulation, toutes les informations sont transférées grâce à des websockets. Les données sont de différents types et envoyées à différents moments. Nous utilisons un Logger qui envoie les données dans les websockets, en même temps de les afficher dans la console. Ce Logger est commun à la simulation et à tous les agents (employé-es, recrutement et entreprise).
-
-D'abord, les informations "initiales" qui concernent la simulation créée (l'id de la simulation, le nombre d'années, le type de recrutement choisi, status de la simulation, ...) sont envoyées à la page HTML dès qu'une connexion websocket est établie. Cela permet à la simulation de n'être pas dépendante d'une page web particulière. Ainsi, on peut toujours retrouver les informations lorsqu'on reload une page web avec l'id de la simulation. Dans le code, ces informations sont regroupés dans "LOG_INITAL".
-
-Nous gérons également des informations sur le status de la simulation, par exemple si elle est terminée, à relancer, en pause, pour afficher ces informations sur l'interface avec des popup temporaires. Ce sont des "LOG_REPONSE". 
-
-Ensuite, pour afficher les informations au fur et à mesure, la simulation envoie chaque année son pas de temps actuel, son nombre d'employé-es, son pourcentage de femmes, son bénéfice, la moyenne des compétences et la moyenne de la santé mentale. Cela correspond aux informations globales, "LOG_GLOBAL". 
-
-Enfin, pour suivre le déroulé de la simulation, chaque agent (que ce soit des employé-es, le recrutement ou l'entreprise) log des informations lorsqu'il agit. Cela permet de garder les informations sur les actions au moment où elles sont réalisées. Ces logs sont catégorisés pour pouvoir être affichés de différentes couleurs dans l'interface et masqués si besoin. L'entreprise peut envoyer les logs suivants : LOG_AGRESSION, LOG_DEPART, LOG_ENTREPRISE, LOG_EVEMENT. Le recrutement envoie les LOG_RECRUTEMENT et les employé-es LOG_EMPLOYE. 
 
 ### L'exprimer dans le code
 **A FAIRE insérer diagramme de classe et séquence**
@@ -214,7 +182,7 @@ Notre modélisation s'appuie sur des chiffres concernant les agressions sexuelle
 
 ### L'intervention du/de la psychologue d'entreprise
 Lors de signalement pour violence sexiste ou sexuelle, le personne ayant déposée le signalement a le droit à un accompagnement par la.e psychologue de l'entreprise.
-Nous aurions pu modéliser à quel point cet accompagnement est utilé avec une hausse de santé mentale.
+Nous aurions pu modéliser à quel point cet accompagnement est utile avec une hausse de santé mentale.
 
 ### Les causes de départs
 Nous prenons en compte les départs après les congés maternités, mais nous n'avons pas de chiffres pour les hommes. Nous ne prenons pas en compte les congés sans solde (la personne est toujours dans l'entreprise, mais ne travaille pas et ne perçoit pas de salaire), ni toutes les causes de départ. En particulier, il aurait été intéressant de prendre en compte les départs des employé.e.s s'occupant de proches malades (on suppose que les femmes partent plus souvent que les hommes dans ce cas).
@@ -239,7 +207,7 @@ Cet index mis en place par le gouvernement, et devant être partagé tous les an
 >   * La parité parmi les 10 plus hautes rémunérations.
 Cet index repose donc principalement sur des salaires et des promotions et augmentations que nous n'avons pas modélisées.
 
-## Les points à améliorer sur la simulation actuelle
+## Remarques sur la simulation actuelle
 En plus des ajouts possibles mentionnés dans la partie précédentes, des points actuelles de la simulation peuvent être améliorés.
 
 ### Sur l'interface
