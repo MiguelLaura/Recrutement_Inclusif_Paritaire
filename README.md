@@ -154,7 +154,7 @@ Cette classe gère la simulation et en particulier le lien entre le front et la 
 #### Entreprise
 L'entreprise est un agent qui assume aussi le rôle de l'environnement puisqu'elle gère les différents agents et c'est elle qui centralise les informations.
 
-Lorsqu'on démarre l'entreprise, elle démarre les employés et le recrutement, et elle entre dans une boucle. Au début de la boucle, l'entreprise attend un message sur le channel le liant à la simulation. Le message est soit `LIBRE` et ce qui indique à l'entreprise de lancer une année (ce qui revient à lancer la méthode `agir`), soit `FIN` et ce qui lui indique d'arrêter tous les agents qu'elle a lancé. Si le nombre d'employés atteint zéro avant la fin de la simulation, on passe tous les step sans rien faire jusqu'à la fin. Quand l'entreprise sort de la boucle, elle attend un message final de la simulation pour confirmer l'arrêt.
+Lorsqu'on démarre l'entreprise, elle démarre les employés et le recrutement, et elle entre dans une boucle dont la durée est déterminée par le nombre de pas de temps de la simulation (et donc le nombre d'années de vie de l'entreprise). Au début de la boucle, l'entreprise attend un message sur le channel le liant à la simulation. Le message est soit `LIBRE` et ce qui indique à l'entreprise de lancer une année (ce qui revient à lancer la méthode `agir`), soit `FIN` et ce qui lui indique d'arrêter tous les agents qu'elle a lancé. Si le nombre d'employés atteint zéro avant la fin de la simulation, on passe tous les pas de temps sans rien faire jusqu'à la fin. Quand l'entreprise sort de la boucle, elle attend un message final de la simulation pour confirmer l'arrêt.
 
 Quand elle lance une année, l'entreprise :
 * organise les formations ;
