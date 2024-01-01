@@ -160,7 +160,7 @@ Pour que les employé.e.s puissent gagner en santé mentale, nous avons décidé
 
 #### Bénéfices
 La valeur de bénéfice affichée par la simulation correspond à l'argent généré par l'entreprise à la fin de l'année. Ainsi, cela correspond au chiffre d'affaire de l'entreprise soustrait à ses dépenses. 
-Nous voulons que le chiffre d'affaire dépend de la santé mentale et des compétences des employé.e.s. D'après une enquête de l'INSEE de 2022, un.e employé.e génère 317 000 euros par an (https://xval.fr/chiffre-affaires-salarie/). Pour calculer ce que rapporte un.e employé.e de l'entreprise modélisé par an, nous utilisons la formule suivante :
+Nous voulons que le chiffre d'affaire dépende de la santé mentale et des compétences des employé.e.s. D'après une enquête de l'INSEE de 2022, un.e employé.e génère 317 000 euros par an (https://xval.fr/chiffre-affaires-salarie/). Pour calculer ce que rapporte un.e employé.e de l'entreprise modélisé par an, nous utilisons la formule suivante :
 apportEmploye = ChiffreAffaireEmploye (317 000) * santeMentaleEmploye/100 * competenceEmploye/5
 La valeur de santé mentale de l'employé.e est divisée par 100 afin que si la santé mentale n'est pas pleine, elle réduit la productivité de l'employé.e. De même, la compétence de l'employé.e est divisée par 5 car un.e employé.e moyen a une compétence de 5.
 Ensuite, on soustrait à cette somme le coût des employé.e.s (en moyenne un.e employé.e coûte 50 850€ par an d'après une étude de l'INSEE de 2008 https://www.legisocial.fr/actualites-sociales/269-savez-vous-combien-coute-un-salarie-en-france.html).
@@ -281,10 +281,11 @@ Cet index mis en place par le gouvernement, et devant être partagé tous les an
 Cet index repose donc principalement sur des salaires et des promotions et augmentations que nous n'avons pas modélisées.
 
 ## Remarques sur la simulation actuelle
-En plus des ajouts possibles mentionnés dans la partie précédentes, des points actuelles de la simulation peuvent être améliorés.
+En plus des ajouts possibles mentionnés dans la partie précédente, des points de la simulation actuelle peuvent être améliorés.
 
 ### Sur l'interface
-* Les graphes : au départ, nous voulions un graphe avec toutes les données ensemble, mais il a été supprimé à cause d'un problème d'échelle (elle n'était pas la même pour tous les graphes), mais nous pourrions trouver une solution à ce problème.
+* Les graphes : nous avons envisagé rassembler les données dans un graphe commun. Cependant, cela était assez peu lisible avec les différentes échelles des données. Nous avons donc décidé de créer un graphe pour chaque donnée à visualiser.
+Un point d'amélioration serait l'ajout d'histogrammes pour montrer l'évolution d'autres valeurs pertinentes comme le nombre de départs, d'embauches, d'agressions au cours des ans. Par exemple, sur l'histogramme des embauches, des couleurs pourraient distinguer les embauches d'hommes et de femmes.
 
 ### Sur la modélisation
 * Le bénéfice : nous avons pris des chiffres très généraux sur les coûts des salarié.e.s, du recrutement et les bénéfices générés par les employé.e.s ;
