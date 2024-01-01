@@ -102,6 +102,7 @@ function mettreLesChosesAuBonEndroit(data) {
 }
 
 function afficherInformationsInitiales(data) {
+    anneesInit.innerText = "(sur "+data.anneesInit+" ans)",
     nbEmployesInit.innerText = "(début : "+data.nbEmployesInit+")";
     pariteInit.innerText = "(début : "+(data.pariteInit * 100).toFixed(0)+"%)";
 
