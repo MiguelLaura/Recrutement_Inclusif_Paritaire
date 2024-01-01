@@ -1,16 +1,14 @@
 // -------------------------
 // Chart
 
-let titles = {
-    "Bénéfices" : "Bénéfices produit par l'entreprise par année",
-    "Parité" : "Pourcentage de femmes dans l'entreprise",
-    "Compétences" : "Moyenne des compétences des employé-es (sur 10)",
-    "Santé mentale" : 'Moyenne de la santé mentale des employé-es (sur 100)'
-}
-
 class Graph {
     constructor(parent) {
         this.xIncr = 1;
+        this.currTitle = {
+            display: false,
+            text: "",
+            color: "#191"
+        };
         this.xs = [];
         this.theGraphs = [];
         this.theLimits = {};
@@ -26,7 +24,8 @@ class Graph {
                 plugins: {
                     annotation: {
                         annotations: this.renderedLimits
-                    }
+                    },
+                    title: this.currTitle
                 }
             }
         });
@@ -44,7 +43,7 @@ class Graph {
      * @param {string} label - Nom du nouveau graph 
      * @param {Array} color - couleur du nouveau graph au format rgb : [R, G, B]
      */
-    addNewGraph(label, color = undefined) {
+    addNewGraph(label, color = undefined, title="") {
         if (color === undefined) {
             color = randomRGBColor()
         }
@@ -53,11 +52,7 @@ class Graph {
             data: [],
             fill: false,
             borderColor: `rgb(${color[0]}, ${color[1]}, ${color[2]})`,
-            title: {
-                display: true,
-                text: titles[label],
-                color: '#191',
-            }
+            title: title
         }
 
         this.theGraphs.push(newY);
@@ -111,6 +106,12 @@ class Graph {
         for (const graph of this.theGraphs) {
             if (graphNames.indexOf(graph.label) !== -1) {
                 this.graph.data.datasets.push(graph);
+
+                if(graph.title.trim() != "") {
+                    this.currTitle.text = graph.title.trim();
+                    this.currTitle.display = true;
+                }
+
                 for (const limit of this.theLimits[graph.label]) {
                     this.renderedLimits[`${graph.label}_${limit.lineLabel}`] = limit;
                 }
