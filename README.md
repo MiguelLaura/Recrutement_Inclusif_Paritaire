@@ -230,9 +230,20 @@ Si le message est `FIN`, l'employé passe son attribut fin à `true` ce qui lui 
 Enfin, l'employé envoie un message à l'entreprise sur un channel pour l'informer qu'il a fini ses actions.
 
 #### Recrutement
-Le recrutement est un agent crée par la simulation et lancé par l'entreprise.
+Le recrutement est un agent unique créé par la simulation et que l'entreprise démarre.
+Il attend un message de l'entreprise qui intervient à chaque pas de temps.
 
-**A FAIRE**
+Si le message est `RECRUTEMENT` alors il peut désormais commencer le recrutement.
+Un message de type `RECRUTEMENT` est accompagné du nombre de postes à pourvoir. 
+Il génère donc un nombre de candidat.e.s correspondant à 18 fois le nombre de postes à pourvoir (voir  [Ce qui est modélisé et les sources](#ce-qui-est-modélisé-et-les-sources)). Puis, il sélectionne les candidat.e.s en fonction des différents choix de l'utilisateur.ice, soit la présence d'une répartion homme-femme souhaité ou non ainsi que la stratégie de recrutement à appliquer avec les paramètres correspondant. 
+
+Pour le recrutement *CompetencesEgales*, il sélectionne le.la candidat.e le.la plus compétent.e. En cas d'égalité, il respecte si possible la priorité précisée par l'utilisateur.rice et choisit au hasard s'il y a encore des égalités (par exemple priorité aux femmes et égalité entre femmes). Dans le cas où il ne peut pas (par exemple priorité aux femmes mais égalité entre hommes), il sélectionne également au hasard.
+
+Pour le recrutement *PlacesReserveesFemme* ou *PlacesReserveesHomme*, le nombre de places à réserver *N* est calculé en fonction du pourcentage renseigné. Puis si possible, les *N*  individus les plus compétents du genre favorisé sont recrutés. Pour le reste des postes à pourvoir (avec potentiellement les places réservées inoccupées par manque de candidat.e.s du genre souhaité), les candidat.e.s les plus compétent.e.s sont recruté.e.s peu importe leur genre et en cas d'égalité, le hasard les départage.
+
+Une fois tous les candidats choisis, il démarre les agents correspondant aux candidat.e.s embauché.e.s. Enfin, l'agent envoie un message `FIN_RECRUTEMENT` à l'entreprise pour l'informer de la fin du recrutement et lui fournir un slice contenant tous les nouveaux employé.e.s. 
+
+Si le message est `FIN_AGENT`, l'agent Recrutement passe son attribut fin à `true` ce qui lui permettra de sortir de la boucle de vie.
 
 ## Les résultats
 **A FAIRE**
