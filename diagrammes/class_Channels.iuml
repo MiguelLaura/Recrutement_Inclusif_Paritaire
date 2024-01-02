@@ -1,0 +1,127 @@
+@startuml Diagramme de classe centré sur la communication
+
+'-----------------
+' Parametrage
+
+title Diagramme de classe centré sur la communication
+
+'-----------------
+' Classes
+
+class Entreprise {
+    # sync.Mutex
+	# employes : []*Employe
+	# plaintes : []][]*Employe
+	# nbActions : int
+	# nbAgresseurs : int
+	# fin : bool
+	# chnl : chan Communicateur
+	# chnlActions : chan Communicateur
+	# chnlRecrutement : chan CommunicateurRecrutement
+	# chnlNotifAction : chan Communicateur
+
+    + GestionRecrutements() 
+    + GestionPlaintes()
+    + RecevoirPlainte(plaignant *Employe, accuse *Employe)
+    + EnvoyerEmploye() : *Employe
+}
+
+class Recrutement {
+	# fin : bool
+}
+
+class Employe {
+	# id : int
+	# santeMentale : int = 100 {>= 0 && <= 100}
+	# agresseur : bool
+	# fin : bool
+
+    + Start()
+    + EtreAgresse(*Employe)
+    + Agresser()
+    + PorterPlainte(*Employe)
+    + GagnerAnciennete()
+}
+
+class Communicateur {
+	# Act : Action
+    # Payload : any
+}
+
+class CommunicateurRecrutement {
+	# Act : ActionRecrutement
+    # Payload : any
+}
+
+interface Logger {
+    + Log(msg any...)
+    + Err(msg any...)
+}
+
+class Loggers {
+    + AjouterLogger(Logger)
+    + Log(msg any...)
+    + Err(msg any...)
+}
+
+
+'-----------------
+' Enumerations
+
+enum Action {
+	LIBRE
+	AGRESSION
+	FIN
+}
+
+enum ActionRecrutement {
+	RECRUTEMENT
+	FIN_RECRUTEMENT
+	FIN_AGENT
+}
+
+'-----------------
+' Relations
+
+Entreprise "1" o-- "*" Employe : # employes []*Employe
+Entreprise "1" o-- "1" Recrutement : # recrutement Recrutement
+
+Entreprise "1" o-- Loggers : # logger *Loggers
+Employe "1" o-- Loggers : # logger *Loggers
+Recrutement "1" o-- Loggers : # logger *Loggers
+
+Entreprise "1" o-- "1" Communicateur : # chnl Communicateur
+Entreprise "1" o-- "1" Communicateur : # chnlActions Communicateur
+Entreprise "1" o-- "1" CommunicateurRecrutement : # chnlRecrutement CommunicateurRecrutement
+Entreprise "1" o-- "1" Communicateur : # chnlNotifAction Communicateur
+
+Recrutement "1" o-- "1" CommunicateurRecrutement : # chnlRecrutement CommunicateurRecrutement
+Employe "1" o-- "1" Communicateur : # chnl Communicateur
+
+Loggers --> "*" Logger : # lesLoggers []Logger
+
+Logger .. ConsoleLogger : <<implements>>
+Logger .. HTTPLogger : <<implements>>
+Logger .. FileLogger : <<implements>>
+@enduml
+
+
+' // ------------ SIMULATION ------------
+
+' type SimulationLocker struct {
+' 	sync.WaitGroup
+' 	sync.Mutex
+' }
+
+' type Simulation struct {
+' 	ent            Entreprise
+' 	pariteInit     float64
+' 	nbEmployesInit int
+' 	maxStep        int
+' 	step           int // Stats
+' 	start          time.Time
+' 	status         Status // created, started, pause, finished
+' 	logger         logger.Loggers
+' 	locker         SimulationLocker
+' 	agentsLances   bool
+' }
