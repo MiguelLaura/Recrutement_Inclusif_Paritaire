@@ -40,14 +40,14 @@ loop Employe.fin == false
             Employes -> Entreprise : RecevoirPlainte(victime, agresseur)
             Entreprise -> Entreprise : Ajoute la plainte à la liste (utilisation de Lock())
         end alt
-        Employes -> Employes : santeMentale -= 1
+        Employes -> Employes : santeMentale -= 20
         ' alt Employes.santeMentale < 0
         '     Employes -> Employes : Employes.partirDepression()
         ' end alt
     else msg.Act == FIN
         Employes -> Employes : fin = true
     end alt
-    Employes -> Entreprise : Envoie un message sur le channel de l'entreprise
+    Employes -> Entreprise : Envoie un message sur le channel de l'entreprise pour dire qu'il a fini son action
     Entreprise -> Entreprise : GestionPlaintes()
 
 end loop
