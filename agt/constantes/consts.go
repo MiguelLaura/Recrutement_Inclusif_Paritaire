@@ -49,6 +49,6 @@ const (
 	COUNT_FORMATION        = 5   // Nombre de formations pour monter en compétences
 
 	// TEAM BUILDING
-	BOOST_TEAM_BUILDING = 5 // Valeur peut-être à ajuster
+	BOOST_TEAM_BUILDING = 1
 	COUT_TB_PAR_EMPLOYE = 100
 )
