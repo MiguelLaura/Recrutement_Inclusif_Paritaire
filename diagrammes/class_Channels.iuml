@@ -16,7 +16,6 @@ class Entreprise {
 	# nbAgresseurs : int
 	# fin : bool
 	# chnl : chan Communicateur
-	# chnlActions : chan Communicateur
 	# chnlRecrutement : chan CommunicateurRecrutement
 	# chnlNotifAction : chan Communicateur
 
@@ -91,7 +90,6 @@ Employe "1" o-- Loggers : # logger *Loggers
 Recrutement "1" o-- Loggers : # logger *Loggers
 
 Entreprise "1" o-- "1" Communicateur : # chnl
-Entreprise "1" o-- "1" Communicateur : # chnlActions
 Entreprise "1" o-- "1" CommunicateurRecrutement : # chnlRecrutement
 Entreprise "1" o-- "1" Communicateur : # chnlNotifAction
 

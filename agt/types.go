@@ -125,7 +125,6 @@ type Entreprise struct {
 	nbAgresseurs    int
 	fin             bool
 	chnl            chan Communicateur
-	chnlActions     chan Communicateur
 	chnlRecrutement chan CommunicateurRecrutement
 	chnlNotifAction chan Communicateur
 	logger          *logger.Loggers
