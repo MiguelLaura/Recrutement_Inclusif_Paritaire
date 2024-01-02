@@ -29,9 +29,9 @@ const (
 	CA_PAR_EMPLOYE_MIC       = 225000 // Source : https://letowski.fr/quelques-grands-indicateurs-par-tranche-de-taille-dentreprise/
 	CA_PAR_EMPLOYE_PME       = 208000
 	CA_PAR_EMPLOYE_ETI       = 338000
-	COUT_EMPLOYE             = 42927 // Source : https://www.legisocial.fr/actualites-sociales/269-savez-vous-combien-coute-un-salarie-en-france.html
+	COUT_EMPLOYE             = 42927 // Source : https://mon-entreprise.urssaf.fr/simulateurs/salaire-brut-net
 	COUT_RECRUTEMENT         = 6500
-	BOOST_PRODUCTIVITE_FEMME = 0.2849 // Source : https://mon-entreprise.urssaf.fr/simulateurs/salaire-brut-net
+	BOOST_PRODUCTIVITE_FEMME = 0.2849 // Source : https://www.cairn.info/revue-travail-genre-et-societes-2010-1-page-181.htm
 	SEUIL_AMENDE             = 0.4
 	POURCENTAGE_AMENDE       = 0.01
 
