@@ -196,7 +196,7 @@ func (e *Employe) partirRetraite() {
 // Peut-être à nuancer si trop de gains de compétences
 func (e *Employe) seFormer() {
 	e.cmptCompetence += 1
-	if e.competence < 10 && e.cmptCompetence == 5 {
+	if e.competence < constantes.COMPETENCE_MAX && e.cmptCompetence == constantes.COUNT_FORMATION {
 		log.Printf("%s a amélioré ses compétences", e.String())
 		// Pas besoin si on affiche la moyenne des compétences
 		e.competence += 1
