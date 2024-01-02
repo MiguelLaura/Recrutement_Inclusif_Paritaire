@@ -84,24 +84,24 @@ enum ActionRecrutement {
 ' Relations
 
 Entreprise "1" o-- "*" Employe : # employes []*Employe
-Entreprise "1" o-- "1" Recrutement : # recrutement Recrutement
+Entreprise "1" o-- "1" Recrutement : # recrutement
 
 Entreprise "1" o-- Loggers : # logger *Loggers
 Employe "1" o-- Loggers : # logger *Loggers
 Recrutement "1" o-- Loggers : # logger *Loggers
 
-Entreprise "1" o-- "1" Communicateur : # chnl Communicateur
-Entreprise "1" o-- "1" Communicateur : # chnlActions Communicateur
-Entreprise "1" o-- "1" CommunicateurRecrutement : # chnlRecrutement CommunicateurRecrutement
-Entreprise "1" o-- "1" Communicateur : # chnlNotifAction Communicateur
+Entreprise "1" o-- "1" Communicateur : # chnl
+Entreprise "1" o-- "1" Communicateur : # chnlActions
+Entreprise "1" o-- "1" CommunicateurRecrutement : # chnlRecrutement
+Entreprise "1" o-- "1" Communicateur : # chnlNotifAction
 
-Recrutement "1" o-- "1" CommunicateurRecrutement : # chnlRecrutement CommunicateurRecrutement
-Employe "1" o-- "1" Communicateur : # chnl Communicateur
+Recrutement "1" o-- "1" CommunicateurRecrutement : # chnlRecrutement
+Employe "1" o-- "1" Communicateur : # chnl
 
 Loggers --> "*" Logger : # lesLoggers []Logger
 
 Logger .. ConsoleLogger : <<implements>>
-Logger .. HTTPLogger : <<implements>>
+Logger .. SocketLogger : <<implements>>
 Logger .. FileLogger : <<implements>>
 @enduml
 
