@@ -416,7 +416,7 @@ func (ent *Entreprise) RecevoirActions(nbActions int) {
 // ---------------------
 
 func (ent *Entreprise) teamBuilding() {
-	ent.logger.LogType(LOG_EVENEMENT, "Un team building est organisé. Les employé.es sont content.es.")
+	ent.logger.LogType(LOG_EVENEMENT, "Un team building est organisé. Les employé.e.s sont content.e.s.")
 	for _, e := range ent.employes {
 		testPresence, _ := TrouverEmploye(ent.departs, func(emp *Employe) bool { return e.Id() == emp.Id() }, 0)
 		// On vérifie que l'employé ne va pas partir
@@ -536,18 +536,44 @@ func (ent *Entreprise) CalculerBenefice() int {
 	// Pour chaque employé, on calcule ce qu'il rapporte à l'entreprise en fonction de sa santé mentale et compétences
 	// Compétences varient entre 0 et 10 par une loi normale d'espérance 5.
 	// CA_PAR_EMPLOYE/5 * competences pour garder la valeur moyenne du CA_PAR_EMPLOYE mais prendre en compte les compétences
+	// CA_PAR_EMPLOYE dépend de la taille de l'entreprise
 	// benef plus faible si santé mentale plus basse
+	if len(ent.employes) < 10 {
+		for _, e := range ent.employes {
+			benef += (constantes.CA_PAR_EMPLOYE_MIC/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE
+		}
+		// Impact conges parental : pas de salaire et pas de productivité pendant une certaine période
+		for _, e := range ent.congeParental {
+			if e.Genre() == Femme {
+				benef -= constantes.PROPORTION_ARRET_F * ((constantes.CA_PAR_EMPLOYE_MIC/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE)
+			} else {
+				benef -= constantes.PROPORTION_ARRET_H * ((constantes.CA_PAR_EMPLOYE_MIC/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE)
+			}
+		}
+	} else if len(ent.employes) >= 10 && len(ent.employes) < 250 {
+		for _, e := range ent.employes {
+			benef += (constantes.CA_PAR_EMPLOYE_PME/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE
+		}
 
-	for _, e := range ent.employes {
-		benef += (constantes.CA_PAR_EMPLOYE/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE
-	}
-
-	// Impact conges parental : pas de salaire et pas de productivité pendant une certaine période
-	for _, e := range ent.congeParental {
-		if e.Genre() == Femme {
-			benef -= constantes.PROPORTION_ARRET_F * ((constantes.CA_PAR_EMPLOYE/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE)
-		} else {
-			benef -= constantes.PROPORTION_ARRET_H * ((constantes.CA_PAR_EMPLOYE/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE)
+		// Impact conges parental : pas de salaire et pas de productivité pendant une certaine période
+		for _, e := range ent.congeParental {
+			if e.Genre() == Femme {
+				benef -= constantes.PROPORTION_ARRET_F * ((constantes.CA_PAR_EMPLOYE_PME/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE)
+			} else {
+				benef -= constantes.PROPORTION_ARRET_H * ((constantes.CA_PAR_EMPLOYE_PME/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE)
+			}
+		}
+	} else {
+		for _, e := range ent.employes {
+			benef += (constantes.CA_PAR_EMPLOYE_ETI/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE
+		}
+		// Impact conges parental : pas de salaire et pas de productivité pendant une certaine période
+		for _, e := range ent.congeParental {
+			if e.Genre() == Femme {
+				benef -= constantes.PROPORTION_ARRET_F * ((constantes.CA_PAR_EMPLOYE_ETI/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE)
+			} else {
+				benef -= constantes.PROPORTION_ARRET_H * ((constantes.CA_PAR_EMPLOYE_ETI/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE)
+			}
 		}
 	}
 
