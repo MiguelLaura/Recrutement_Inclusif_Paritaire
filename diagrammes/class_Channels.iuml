@@ -1,9 +1,9 @@
-@startuml Diagramme de classe centré sur la communication
+@startuml Diagramme de classes centré sur la communication
 
 '-----------------
 ' Parametrage
 
-title Diagramme de classe centré sur la communication
+title Diagramme de classes centré sur la communication
 
 '-----------------
 ' Classes
