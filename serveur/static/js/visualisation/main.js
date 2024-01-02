@@ -37,8 +37,8 @@ const COLOR = 1;
 let graphData = {
     "Bénéfices" : ["Bénéfices produit par l'entreprise par année", [130, 174, 210]],
     "Parité" : ["Pourcentage de femmes dans l'entreprise", [231, 54, 56]],
-    "Compétences" : ["Moyenne des compétences des employé-es (sur 10)", [255, 148, 77]],
-    "Santé mentale" : ["Moyenne de la santé mentale des employé-es (sur 100)", [102, 0, 102]]
+    "Compétences" : ["Moyenne des compétences des employé.e.s (sur 10)", [255, 148, 77]],
+    "Santé mentale" : ["Moyenne de la santé mentale des employé.e.s (sur 100)", [102, 0, 102]]
 }
 
 const leGraph = new Graph(document.getElementById('sim-graph'));
@@ -53,7 +53,7 @@ for(graphName in graphData) {
     );
 }
 
-leGraph.selectGraphs("Bénéfices");
+leGraph.selectGraphs("Parité");
 
 btnGraphVisuBenefices.addEventListener("click", (evt) => {
     leGraph.selectGraphs("Bénéfices");
