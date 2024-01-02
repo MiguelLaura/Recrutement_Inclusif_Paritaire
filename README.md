@@ -166,7 +166,7 @@ Pour augmenter les compétences des employé.e.s, nous avons décidé de modéli
 Pour que les employé.e.s puissent gagner en santé mentale, nous avons décidé de modéliser des team building. L'entreprise en organise 2 par an, tous les employé.e.s y participent et gagnent 5 points en santé mentale (valeur arbitraire).
 
 #### Bénéfices
-** A CHANGER AVEC VALEUR DE LAURA**
+** A CHANGER AVEC VALEUR DE LAURA??**
 La valeur de bénéfice affichée par la simulation correspond à l'argent généré par l'entreprise à la fin de l'année. Ainsi, cela correspond au chiffre d'affaire de l'entreprise soustrait à ses dépenses. 
 Nous voulons que le chiffre d'affaire dépende de la santé mentale et des compétences des employé.e.s. D'après une enquête de l'INSEE de 2022, un.e employé.e génère 317 000 euros par an [<sup>lien</sup>](https://xval.fr/chiffre-affaires-salarie/). Pour calculer ce que rapporte un.e employé.e de l'entreprise modélisé par an, nous utilisons la formule suivante :
 apportEmploye = ChiffreAffaireEmploye (317 000) * santeMentaleEmploye/100 * competenceEmploye/5
