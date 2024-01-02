@@ -27,6 +27,7 @@ class Entreprise {
 
 class Recrutement {
 	# fin : bool
+    # chnl : chan CommunicateurRecrutement
 }
 
 class Employe {
@@ -34,6 +35,7 @@ class Employe {
 	# santeMentale : int = 100 {>= 0 && <= 100}
 	# agresseur : bool
 	# fin : bool
+    # chnl : chan Communicateur
 
     + Start()
     + EtreAgresse(*Employe)
