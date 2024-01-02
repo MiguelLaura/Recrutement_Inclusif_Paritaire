@@ -44,16 +44,6 @@ class Employe {
     + GagnerAnciennete()
 }
 
-class Communicateur {
-	# Act : Action
-    # Payload : any
-}
-
-class CommunicateurRecrutement {
-	# Act : ActionRecrutement
-    # Payload : any
-}
-
 interface Logger {
     + Log(msg any...)
     + Err(msg any...)
@@ -81,6 +71,16 @@ enum ActionRecrutement {
 	FIN_AGENT
 }
 
+struct Communicateur {
+	# Act : Action
+    # Payload : any
+}
+
+struct CommunicateurRecrutement {
+	# Act : ActionRecrutement
+    # Payload : any
+}
+
 '-----------------
 ' Relations
 
@@ -90,13 +90,6 @@ Entreprise "1" o-- "1" Recrutement : # recrutement
 Entreprise "1" o-- Loggers : # logger *Loggers
 Employe "1" o-- Loggers : # logger *Loggers
 Recrutement "1" o-- Loggers : # logger *Loggers
-
-Entreprise "1" o-- "1" Communicateur : # chnl
-Entreprise "1" o-- "1" CommunicateurRecrutement : # chnlRecrutement
-Entreprise "1" o-- "1" Communicateur : # chnlNotifAction
-
-Recrutement "1" o-- "1" CommunicateurRecrutement : # chnlRecrutement
-Employe "1" o-- "1" Communicateur : # chnl
 
 Loggers --> "*" Logger : # lesLoggers []Logger
 
