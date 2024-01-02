@@ -1,6 +1,6 @@
-@startuml Diagramme de séquence du déroulée de la simulation pour les employés et l'entreprise
+@startuml Diagramme de séquence du déroulée de la vie des employés (toutes les actions ne sont pas présentées)
 
-title Diagramme de séquence du déroulée de la simulation pour les employés et l'entreprise
+title Diagramme de séquence du déroulée de la vie des employés (toutes les actions ne sont pas présentées)
 
 collections Employes
 
