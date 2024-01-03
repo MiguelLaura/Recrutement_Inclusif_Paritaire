@@ -1,0 +1,23 @@
+@startuml
+
+title Diagramme de déploiement de notre application
+
+node Navigateur {
+
+}
+
+node Serveur {
+    component Contrôleur {
+        component contrôleurHTTP
+        component contrôleurWebsocket
+    }
+    component Simulation {
+        component Loggers
+    }
+
+    contrôleurWebsocket -- Simulation
+}
+
+Navigateur -- Contrôleur : HTTP, Websocket
+
+@enduml
