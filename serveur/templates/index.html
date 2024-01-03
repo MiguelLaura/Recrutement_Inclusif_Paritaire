@@ -31,7 +31,7 @@
                     <!--- INFOS GENERALES -->
                     <div class="form-row">
                         <div class="input-group">
-                            <label for="nb_employes">Nombre d'employé·es initial :</label>
+                            <label for="nb_employes">Nombre d'employé.e.s initial :</label>
                             <input type="number" id="nb_employes" name="nb_employes" min="1" required>
                         </div>
                         <div class="input-group">
@@ -51,8 +51,7 @@
 
                         <!--- OBJECTIF OUI / NON -->
                         <div class="form-row">
-                            <label for="objectifFemmes">Est-ce que l'entreprise a un pourcentage de femmes parmi ses
-                                employé·es à atteindre ?</label>
+                            <label for="objectifFemmes">Est-ce que l'entreprise a un objectif de répartition femmes-hommes parmi ses employé.e.s à atteindre ?</label>
                             <div class="input-group">
                                 <input type="radio" id="ouiObjectif" name="objectifFemmes" value="Oui" required
                                     onclick="afficher(idElemChecked='ouiObjectif', idAAfficher='RecrutementAvecObjectif', idACacher='RecrutementSansObjectif');">
@@ -107,15 +106,15 @@
                                             <label for="strat_avant">À compétences égales, le recrutement choisit
                                                 :</label>
                                             <div class="input-group">
-                                                <input type="radio" id="homme_avant" name="strat_avant" value=1>
+                                                <input type="radio" id="homme_avant" name="strat_avant" value="1">
                                                 <label for="homme_avant">Un homme</label>
                                             </div>
                                             <div class="input-group">
-                                                <input type="radio" id="femme_avant" name="strat_avant" value=2>
+                                                <input type="radio" id="femme_avant" name="strat_avant" value="2">
                                                 <label for="femme_avant">Une femme</label>
                                             </div>
                                             <div class="input-group">
-                                                <input type="radio" id="hasard_avant" name="strat_avant" value=3>
+                                                <input type="radio" id="hasard_avant" name="strat_avant" value="3">
                                                 <label for="hasard_avant">Au hasard</label>
                                             </div>
                                         </div>
@@ -123,7 +122,7 @@
 
                                     <div id="placesReserveesAvantDiv" style="display: none;">
                                         <div class="form-row">
-                                            <label for="pourcentage_places_avant">Pourcentage de places réservées parmi les recruté·es:</label>
+                                            <label for="pourcentage_places_avant">Pourcentage de places réservées parmi les recruté.e.s:</label>
                                             <input type="range" id="pourcentage_places_avant"
                                                 name="pourcentage_places_avant" min="0" max="100" value=30
                                                 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesAvantValue');">
@@ -140,19 +139,19 @@
                                         recrutement
                                         est mis en place ?</label>
                                     <div class="input-group">
-                                        <input type="radio" id="competencesApres" name="type_recrutement_apres" value=1
+                                        <input type="radio" id="competencesApres" name="type_recrutement_apres" value="1"
                                             onclick="afficher(idElemChecked='competencesApres', idAAfficher='competencesApresDiv', idACacher='placesReserveesApresDiv');">
                                         <label for="competencesApres">Compétences égales</label>
                                     </div>
                                     <div class="input-group">
                                         <input type="radio" id="placesReserveesFemmeApres" name="type_recrutement_apres"
-                                            value=2
+                                            value="2"
                                             onclick="afficher(idElemChecked='placesReserveesFemmeApres', idAAfficher='placesReserveesApresDiv', idACacher='competencesApresDiv');">
                                         <label for="placesReserveesApres">Places réservées aux femmes</label>
                                     </div>
                                     <div class="input-group">
                                         <input type="radio" id="placesReserveesHommeApres" name="type_recrutement_apres"
-                                            value=3
+                                            value="3"
                                             onclick="afficher(idElemChecked='placesReserveesHommeApres', idAAfficher='placesReserveesApresDiv', idACacher='competencesApresDiv');">
                                         <label for="placesReserveesApres">Places réservées aux hommes</label>
                                     </div>
@@ -164,15 +163,15 @@
                                             <label for="strat_apres">À compétences égales, le recrutement choisit
                                                 :</label>
                                             <div class="input-group">
-                                                <input type="radio" id="homme_apres" name="strat_apres" value=1>
+                                                <input type="radio" id="homme_apres" name="strat_apres" value="1">
                                                 <label for="homme_apres">Un homme</label>
                                             </div>
                                             <div class="input-group">
-                                                <input type="radio" id="femme_apres" name="strat_apres" value=2>
+                                                <input type="radio" id="femme_apres" name="strat_apres" value="2">
                                                 <label for="femme_apres">Une femme</label>
                                             </div>
                                             <div class="input-group">
-                                                <input type="radio" id="hasard_apres" name="strat_apres" value=3>
+                                                <input type="radio" id="hasard_apres" name="strat_apres" value="3">
                                                 <label for="hasard_apres">Au hasard</label>
                                             </div>
                                         </div>
@@ -180,7 +179,7 @@
 
                                     <div id="placesReserveesApresDiv" style="display: none;">
                                         <div class="form-row">
-                                            <label for="pourcentage_places_apres">Pourcentage de places réservées parmi les recruté·es :</label>
+                                            <label for="pourcentage_places_apres">Pourcentage de places réservées parmi les recruté.e.s :</label>
                                             <input type="range" id="pourcentage_places_apres"
                                                 name="pourcentage_places_apres" min="0" max="100" value=30
                                                 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesApresValue');">
@@ -238,7 +237,7 @@
 
                                     <div id="placesReserveesDiv" style="display: none;">
                                         <div class="form-row">
-                                            <label for="pourcentage_places_sans">Pourcentage de places réservées parmi les recruté·es :</label>
+                                            <label for="pourcentage_places_sans">Pourcentage de places réservées parmi les recruté.e.s :</label>
                                             <input type="range" id="pourcentage_places_sans"
                                                 name="pourcentage_places_sans" min="0" max="100" value=30
                                                 oninput="updatePourcentage(this.value, 'pourcentagePlacesReserveesValue');">
@@ -266,26 +265,26 @@
             <div id="contexte">
                 <h2>Contexte</h2>
                 <p>Le recrutement est une étape systématique dans une entreprise et peut influer sur la parité.
-                    Dans cette simulation, nous créons une entreprise, avec des employé-es généré-es aléatoirement,
-                    et elle va mettre en place un recrutement selon les stratégies choisies par les utilisateur-rices.
+                    Dans cette simulation, nous créons une entreprise, avec des employé.e.s généré.e.s aléatoirement,
+                    et elle va mettre en place un recrutement selon les stratégies choisies par les utilisateurs et les utilisatrices.
                     Nous étudions ensuite l'évolution de la <b>santé</b> de l'entreprise au fil des années, soit ses bénéfices, 
-                    son pourcentage de femmes parmi son effectif, les compétences et la santé mentale moyennes des employés, ou 
-                    encore le nombre d'agressions et de dénonciations ainsi que le nombre et le motif des départs des employés.</p>
+                    sa répartition femmes-hommes parmi son effectif, les compétences et la santé mentale moyennes des employé.e.s, ou 
+                    encore le nombre d'agressions et de dénonciations ainsi que le nombre et le motif des départs des employé.e.s.</p>
             </div>
 
             <div id="sur-le-recrutement">
                 <h2>Sur le recrutement</h2>
-                <p><b>Pourquoi un pourcentage de femmes ?</b> Les entreprises peuvent vouloir atteindre une certaine 
+                <p><b>Pourquoi une répartition femmes-hommes ?</b> Les entreprises peuvent vouloir atteindre une certaine 
                     parité (pour respecter une loi, favoriser l’innovation, ...) et mettre en place des stratégies 
                     temporaires, notamment au niveau du recrutement. Ainsi, les manières de recruter ne seront pas
                     les mêmes en dessous ou au dessus du seuil défini.
                 </p>
                 <p><b>Compétences égales ?</b> Pour cette stratégie, on recrute d’abord la personne la plus compétente.
                     Si jamais deux personnes sont similaires sur ce point, on choisira qui recruter en fonction de ce
-                    qui a été demandé par l’utilisateur-rice.
+                    qui a été demandé par l’utilisateur.ice.
                 </p>
                 <p><b>Places réservées ?</b> Pour cette stratégie, sur le nombre de personnes à recruter, on choisira de recruter
-                    un pourcentage fixe de femmes ou d'hommes (les plus compétent-es) puis, pour le reste des candidat-es, on recrutera en fonction des compétences
+                    un pourcentage fixe de femmes ou d'hommes (les plus compétent.e.s) puis, pour le reste des candidat.e.s, on recrutera en fonction des compétences
                     seulement. 
                 </p>
             </div>

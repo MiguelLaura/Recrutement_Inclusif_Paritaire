@@ -86,9 +86,51 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 		msg := "erreur : il manque un identifiant"
 		w.Write([]byte(msg))
 		return
+	} else if req.TypeRecrutementAvant == 0 { //impossible de ne pas avoir un type de recrutement avant vide
+		w.WriteHeader(http.StatusBadRequest)
+		msg := "erreur : il manque des informations sur le recrutement"
+		log.Println(msg)
+		w.Write([]byte(msg))
+		return
+	} else if req.TypeRecrutementApres == 0 && req.Objectif != -1 { //cas où objectif mais pas de type de recrut
+		w.WriteHeader(http.StatusBadRequest)
+		msg := "erreur : il manque des informations sur le recrutement"
+		log.Println(msg)
+		w.Write([]byte(msg))
+		return
+	} else if req.TypeRecrutementAvant == 1 && req.StratAvant == 0 { //cas où compétences avant choisi, mais pas de prio
+		w.WriteHeader(http.StatusBadRequest)
+		msg := "erreur : il manque des informations sur le recrutement"
+		log.Println(msg)
+		w.Write([]byte(msg))
+		return
+	} else if req.TypeRecrutementApres == 1 && req.StratApres == 0 { //cas où compétences après choisi, mais pas de prio
+		w.WriteHeader(http.StatusBadRequest)
+		msg := "erreur : il manque des informations sur le recrutement"
+		log.Println(msg)
+		w.Write([]byte(msg))
+		return
+	} else if (req.TypeRecrutementAvant == 2 || req.TypeRecrutementAvant == 3) && req.PourcentagePlacesAvant == -1 { //cas où places réservées avant choisi, mais pas de pourcentage
+		w.WriteHeader(http.StatusBadRequest)
+		msg := "erreur : il manque des informations sur le recrutement"
+		log.Println(msg)
+		w.Write([]byte(msg))
+		return
+	} else if (req.TypeRecrutementApres == 2 || req.TypeRecrutementApres == 3) && req.PourcentagePlacesApres == -1 { //cas où places réservées après choisi, mais pas de pourcentage
+		w.WriteHeader(http.StatusBadRequest)
+		msg := "erreur : il manque des informations sur le recrutement"
+		log.Println(msg)
+		w.Write([]byte(msg))
+		return
 	} else if req.NbEmployes <= 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		msg := "erreur : le nombre d'employés doit être > 0"
+		log.Println(msg)
+		w.Write([]byte(msg))
+		return
+	} else if req.NbAnnees <= 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		msg := "erreur : le nombre d'années doit être > 0"
 		log.Println(msg)
 		w.Write([]byte(msg))
 		return
