@@ -1,5 +1,3 @@
-**ATTENTION REMPLACER LES TEST PAR NUMERO + FAIRE LES A FAIRE**
-
 # La parité en entreprise
 
 ## Le contexte de réalisation du projet
@@ -68,7 +66,6 @@ go run cmd/launch-all/launch-all.go
 ## L'interface de simulation
 
 ### Le formulaire
-**A FAIRE mettre une capture ?**
 Nous avons en premier temps un formulaire dans lequel l'utilisateur·ice entre les informations mentionnées ci-dessous. Il y a également des informations sur la simulation qui correspondent à la partie [Le sujet](#le-sujet) et cette partie.
 
 L'utilisateur·ice va pouvoir définir :
@@ -89,7 +86,6 @@ Pour cette stratégie, on recrute d’abord la personne la plus compétente. Si 
 
 
 ### La simulation
-**A FAIRE mettre une capture ?**
 La validation du formulaire nous renvoie sur la page de simulation. Nous pouvons alors la lancer (soit de façon à ce que les pas s'enchaînent sans action de l'utilisateur·ice, soit en avançant pas à pas). On peut également arrêter la simulation, la mettre en pause et revenir au formulaire.
 Quand la simulation est lancée, on peut voir depuis combien d'années l'entreprise tourne sous la simulation, le nombre d'employé·e·s, la parité, les bénéfices. En particulier, on a des graphes nous montrant l'évolution, au cours des années, des bénéfices, de la parité, des compétences des employé·e·s et de la santé mentale des employé·e·s.
 Dans une partie *Tableau de bord*, on peut voir des informations sur ce qu'il se passe au cours des années. Ces informations sont divisées en catégories (on peut sélectionner les catégories qu'on souhaite voir dans le tableau de bord) :
@@ -118,10 +114,9 @@ Enfin, pour suivre le déroulé de la simulation, chaque agent (que ce soit des 
 ## La modélisation
 
 ### Ce qui est modélisé et les sources
-**A FAIRE expliquer les sources et ce qu'on a modélisé**
 
 #### Employé
-A la création de l'entreprise, le genre des employé·e·s est attribué de façon à respecter la répartition homme-femme sélectionnée par l'utilisateur·ice. Par la suite, les candidat·e·s généré·e·s auront une probabilité égale d'être un homme ou une femme.
+À la création de l'entreprise, le genre des employé·e·s est attribué de façon à respecter la répartition homme-femme sélectionnée par l'utilisateur·ice. Par la suite, les candidat·e·s généré·e·s auront une probabilité égale d'être un homme ou une femme.
 
 Les compétences d'un·e employé·e sont modélisées par un entier entre 0 à 10. Elles suivent une loi normale avec mu=5 et sigma=3. Cela permet d'obtenir une majorité d'individus moyens et assez peu d'individus excellents ou mauvais[<sup>lien</sup>](https://www.ruf.rice.edu/~lane/papers/male_female.pdf).
 
@@ -180,13 +175,12 @@ Pendant la durée de leur congé parental, les employé·e·s concerné·e·s ne
 
 D'après une étude [<sup>lien</sup>](https://www.cairn.info/revue-travail-genre-et-societes-2010-1-page-181.htm), si le pourcentage de femmes au sein d'une entreprise dépasse 35%, le bénéfice généré est supérieur de 28.49%. La valeur calculée du bénéfice prend en compte cela.
 
-A l'inverse, si une entreprise ne respecte pas la loi Rixain sur la parité, elle se voit recevoir une amende d'1% de sa masse salariale [<sup>lien</sup>](https://www.fntp.fr/infodoc/travail-protection-sociale/relations-individuelles-de-travail/execution-du-contrat/loi). La loi Rixain demande 30% de femmes cadres dirigeantes à partir de 2026 et 40% à partir de 2029. Comme nous n'avons pas de différences hiérarchiques entre les employé·e·s, nous décidons d'appliquer une amende si le pourcentage de femmes est inférieure à 40%. De plus, comme nous ne modélisons pas les salaires, l'amende est d'1% du chiffre d'affaire.
+À l'inverse, si une entreprise ne respecte pas la loi Rixain sur la parité, elle se voit recevoir une amende d'1% de sa masse salariale [<sup>lien</sup>](https://www.fntp.fr/infodoc/travail-protection-sociale/relations-individuelles-de-travail/execution-du-contrat/loi). La loi Rixain demande 30% de femmes cadres dirigeantes à partir de 2026 et 40% à partir de 2029. Comme nous n'avons pas de différences hiérarchiques entre les employé·e·s, nous décidons d'appliquer une amende si le pourcentage de femmes est inférieure à 40%. De plus, comme nous ne modélisons pas les salaires, l'amende est d'1% du chiffre d'affaire.
 
 Enfin, nous déduisons du bénéfice le coût de fonctionnement de l'entreprise. Cela inclut le coût du recrutement qu'on estime à 6500 euros par poste [<sup>lien</sup>](https://factorial.fr/blog/vrai-cout-dun-recrutement). Le coût des team building est aussi pris en compte [<sup>lien</sup>](https://blog.funbooker.com/budget-team-building/) ainsi que le coût des formations. Une formation coûte en moyenne 500€ par jour par personne [<sup>lien</sup>](https://www.cnfce.com/faq/formation-professionnelle/prix-formation-professionnelle). Elles sont financées à 45% par les entreprise et qu'elle dure en moyenne 46 heures soit 7 jours si on considère un régime de 35h par semaine [<sup>lien</sup>](https://edusign.com/fr/blog/20-chiffres-cles-sur-la-formation-professionnelle/). Ces données nous permettent de modéliser le coût des formations pour l'entreprise : 
 *nbEmployesFormes x 500 x 7 x 0.45*.
 
 ### L'exprimer dans le code
-**A FAIRE insérer diagramme de classe et séquence, parler des loggers**
 
 #### Simulation
 Cette classe gère la simulation et en particulier le lien entre le front et la back.
@@ -277,7 +271,7 @@ Les entreprises peuvent prendre des mesures contre les violences sexistes et sex
 Nous aurions pu prendre ces éléments en considération sur la façon dont les agressions sont gérées (sanctions différentes, etc.), et éventuellement modifier les probabilités qu'une agression ait lieu (une personne ayant suivi une formation a moins de chance d'agresser, etc.).
 
 ### Les VSS
-Notre modélisation s'appuie sur des chiffres concernant les agressions sexuelles **A FAIRE vérifier ça**. Nous aurions pu prendre en compte toutes les VSS et changer l'impact sur la santé mentale en fonction des différents types de VSS (et aussi changer les sanctions pour l'employé·e qui les a commises).
+Notre modélisation s'appuie sur des chiffres concernant le harcélement sexuel que nous avons assimilé à des agressions sexuelles. Nous aurions pu prendre en compte toutes les VSS et changer l'impact sur la santé mentale en fonction des différents types de VSS (et aussi changer les sanctions pour l'employé·e qui les a commises).
 
 ### L'intervention du/de la psychologue d'entreprise
 Lors de signalement pour violence sexiste ou sexuelle, le personne ayant déposée le signalement a le droit à un accompagnement par la/le psychologue de l'entreprise.
