@@ -55,6 +55,17 @@ class Loggers {
     + Err(msg any...)
 }
 
+class Simulation {
+	# step : int
+	# maxStep : int
+	# status : Status
+	+ Start()
+	+ Pause()
+	+ EnvoyerInfosInitiales()
+	+ obtenirSituationActuelle()
+	- startAgents()
+}
+
 
 '-----------------
 ' Enumerations
@@ -69,6 +80,14 @@ enum ActionRecrutement {
 	RECRUTEMENT
 	FIN_RECRUTEMENT
 	FIN_AGENT
+}
+
+enum Status {
+	CREATED
+	STARTED
+	PAUSED
+	ENDED
+	STEP
 }
 
 struct Communicateur {
@@ -87,9 +106,12 @@ struct CommunicateurRecrutement {
 Entreprise "1" o-- "*" Employe : # employes []*Employe
 Entreprise "1" o-- "1" Recrutement : # recrutement
 
-Entreprise "1" o-- Loggers : # logger *Loggers
-Employe "1" o-- Loggers : # logger *Loggers
-Recrutement "1" o-- Loggers : # logger *Loggers
+Simulation *-- "1" Entreprise : # entreprise
+
+Entreprise o-- "1" Loggers : # logger *Loggers
+Employe o-- "1" Loggers : # logger *Loggers
+Recrutement o-- "1" Loggers : # logger *Loggers
+Simulation *-- "1" Loggers : # logger
 
 Loggers --> "*" Logger : # lesLoggers []Logger
 
