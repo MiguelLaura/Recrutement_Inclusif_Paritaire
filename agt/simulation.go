@@ -235,7 +235,7 @@ func (simu *Simulation) terminerSimulation() {
 	// Permet d'attendre la fin effective de l'entreprise
 	EnvoyerMessageEntreprise(&simu.ent, FIN, nil)
 
-	log.Printf("Fin de la simulation [step: %d, nb employé fin : %d, début parité : %.2f, fin parité : %.2f]", simu.step, len(simu.ent.Employes()), simu.pariteInit, pariteFin)
+	log.Printf("Fin de la simulation [step: %d, nb employé·e·s fin : %d, début parité : %.2f, fin parité : %.2f]", simu.step, len(simu.ent.Employes()), simu.pariteInit, pariteFin)
 }
 
 func (simu *Simulation) mettreAJourStatus(nouveauStatus Status) {
