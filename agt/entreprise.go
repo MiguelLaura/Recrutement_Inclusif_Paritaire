@@ -21,10 +21,6 @@ func EnvoyerNotifActions(dest *Entreprise, act Action, payload any) {
 	dest.chnlNotifAction <- Communicateur{act, payload}
 }
 
-func CollecterActions(dest *Entreprise, act Action, payload any) {
-	dest.chnlActions <- Communicateur{act, payload}
-}
-
 func EnvoyerMessageRecrutement(dest *Recrutement, act ActionRecrutement, payload any) {
 	dest.chnl <- CommunicateurRecrutement{act, payload}
 }
@@ -85,7 +81,6 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64, logger *logger.Logger
 	ent.nbActions = 0
 	ent.fin = false
 	ent.chnl = make(chan Communicateur)
-	ent.chnlActions = make(chan Communicateur)
 	ent.chnlRecrutement = make(chan CommunicateurRecrutement)
 	ent.chnlNotifAction = make(chan Communicateur)
 	ent.logger = logger
@@ -190,10 +185,6 @@ func (ent *Entreprise) Fin() bool {
 
 func (ent *Entreprise) Chnl() chan Communicateur {
 	return ent.chnl
-}
-
-func (ent *Entreprise) ChnlActions() chan Communicateur {
-	return ent.chnlActions
 }
 
 func (ent *Entreprise) ChnlRecrutement() chan CommunicateurRecrutement {
@@ -302,10 +293,6 @@ func (ent *Entreprise) SetFin(fin bool) {
 
 func (ent *Entreprise) SetChnl(chnl chan Communicateur) {
 	ent.chnl = chnl
-}
-
-func (ent *Entreprise) SetChnlActions(chnlActions chan Communicateur) {
-	ent.chnlActions = chnlActions
 }
 
 func (ent *Entreprise) SetChnlRecrutement(chnlRecrutement chan CommunicateurRecrutement) {
