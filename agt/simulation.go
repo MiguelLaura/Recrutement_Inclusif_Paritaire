@@ -342,7 +342,7 @@ func (simu *Simulation) startAgents() {
 	simu.step = 0
 	simu.start = time.Now()
 
-	go simu.ent.Start()
+	simu.ent.Start()
 
 	simu.locker.Add(1)
 

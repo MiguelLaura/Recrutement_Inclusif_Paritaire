@@ -381,26 +381,26 @@ func (r *Recrutement) ChoixRecrutement(nbARecruter int, candidats []*Employe, ty
 // ---------------------
 
 func (r *Recrutement) Start() {
-	log.Printf("Le service de recrutement est opérationnel")
+	go func() {
+		log.Printf("Le service de recrutement est opérationnel")
 
-	// Boucle de vie
-	for !r.fin {
-		// Attend un message pour agir
-		msg := <-r.chnl
-		switch msg.Act {
-		case RECRUTEMENT:
-			embauches := r.Recruter(msg.Payload.(int))
-			for _, emp := range embauches {
-				go func(emp *Employe) {
+		// Boucle de vie
+		for !r.fin {
+			// Attend un message pour agir
+			msg := <-r.chnl
+			switch msg.Act {
+			case RECRUTEMENT:
+				embauches := r.Recruter(msg.Payload.(int))
+				for _, emp := range embauches {
 					emp.Start()
-				}(emp)
+				}
+
+				r.chnl <- CommunicateurRecrutement{FIN_RECRUTEMENT, embauches}
+
+			case FIN_AGENT:
+				r.fin = true
 			}
-
-			r.chnl <- CommunicateurRecrutement{FIN_RECRUTEMENT, embauches}
-
-		case FIN_AGENT:
-			r.fin = true
 		}
-	}
-	log.Printf("Fin du recrutement")
+		log.Printf("Fin du recrutement")
+	}()
 }
