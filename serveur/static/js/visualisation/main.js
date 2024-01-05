@@ -31,29 +31,43 @@ infosLog.addEventListener("mouseleave", () => {
 
 // Initialise le graphe
 
-const TITLE = 0;
-const COLOR = 1;
-
-let graphData = {
-    "Bénéfices" : ["Bénéfices produit par l'entreprise par année", [130, 174, 210]],
-    "Parité" : ["Pourcentage de femmes dans l'entreprise", [231, 54, 56]],
-    "Compétences" : ["Moyenne des compétences des employé.e.s (sur 10)", [255, 148, 77]],
-    "Santé mentale" : ["Moyenne de la santé mentale des employé.e.s (sur 100)", [102, 0, 102]]
-}
-
 const leGraph = new Graph(document.getElementById('sim-graph'));
 
 leGraph.setIncrement(1);
 
-for(graphName in graphData) {
-    leGraph.addNewGraph(
-        graphName, 
-        graphData[graphName][COLOR], 
-        graphData[graphName][TITLE]
-    );
-}
+leGraph.addNewGraph("Bénéfices", {
+    color: [130, 174, 210], 
+    title: "Bénéfices produit par l'entreprise par année",
+    beginAtZero: true
+});
 
-leGraph.selectGraphs("Parité");
+leGraph.addNewGraph("Parité", {
+    color: [231, 54, 56], 
+    title: "Pourcentage de femmes dans l'entreprise",
+    beginAtZero: true,
+    max: 100
+});
+
+leGraph.addNewGraph("Compétences", {
+    color: [255, 148, 77], 
+    title: "Moyenne des compétences des employé.e.s (sur 10)",
+    beginAtZero: true,
+    max: 10
+});
+
+leGraph.addNewGraph("Santé mentale", {
+    color: [102, 0, 102], 
+    title: "Moyenne de la santé mentale des employé.e.s (sur 100)",
+    beginAtZero: true,
+    max: 100
+});
+
+leGraph.selectGraphs("Bénéfices", "Parité", "Compétences", "Santé mentale");
+
+btnGraphVisuTout.addEventListener("click", (evt) => {
+    leGraph.selectGraphs("Bénéfices", "Parité", "Compétences", "Santé mentale");
+    pressBtn(evt.target);
+});
 
 btnGraphVisuBenefices.addEventListener("click", (evt) => {
     leGraph.selectGraphs("Bénéfices");
