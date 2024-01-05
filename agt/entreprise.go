@@ -156,6 +156,8 @@ func (ent *Entreprise) NbDeparts() int {
 }
 
 func (ent *Entreprise) NbEnfants() int {
+	ent.RLock()
+	defer ent.RUnlock()
 	return ent.Cmpt().nbEnfants
 }
 
@@ -264,6 +266,8 @@ func (ent *Entreprise) SetNbDepressions(nbDepressions int) {
 }
 
 func (ent *Entreprise) SetNbEnfants(nbEnfants int) {
+	ent.Lock()
+	defer ent.Unlock()
 	ent.cmpt.nbEnfants = nbEnfants
 }
 

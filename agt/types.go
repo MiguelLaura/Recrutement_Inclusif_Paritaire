@@ -113,7 +113,7 @@ const (
 // ------------ ENTREPRISE ------------
 
 type Entreprise struct {
-	sync.Mutex
+	sync.RWMutex
 	employes        []*Employe
 	departs         []*Employe
 	formation       []*Employe
