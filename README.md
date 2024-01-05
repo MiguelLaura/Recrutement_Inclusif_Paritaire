@@ -14,11 +14,25 @@ Ce projet est une simulation d'une entreprise. On souhaite étudier la parité d
 Notre principale question est donc : quelles sont les conséquences d’un recrutement tenant compte de la parité sur la santé d’une entreprise ?
 
 ## Récupérer le projet et le lancer
-**A FAIRE compléter**
+
+Le projet peut être récupéré avec la commande suivante : 
 ```bash
-go get github.com/gorilla/websocket
-go run cmd/launch-all/launch-all.go
+git clone https://gitlab.utc.fr/mennynat/ia04-project.git
 ```
+
+Ensuite, il faut récupérer toutes les dépendances du projet avec l'instruction :
+
+```bash
+go mod download
+```
+
+Enfin, le projet peut être lancé avec :
+
+```bash
+go run ./cmd/launch-all/launch-all.go
+```
+
+Ceci va lancer un serveur web sur le port `8080` de le machine. Il suffit après d'accéder à l'adresse `localhost:8080` pour arriver sur le formulaire de création d'entreprise.
 
 ## La table des matières
 
