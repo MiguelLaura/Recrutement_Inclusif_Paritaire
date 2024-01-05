@@ -161,7 +161,7 @@ Le remplacement de l'employé.e en congé parental n'a pas été modélisé.
 Pour augmenter les compétences des employé.e.s, nous avons décidé de modéliser des formations annuelles auxquelles participent 32% des employé.e.s choisi.e.s aléatoirement mais de façon à ce que 50% des participant.e.s soient des femmes [<sup>lien</sup>](https://modelesdebusinessplan.com/blogs/infos/marche-formation-professionnelle). Nous avons considéré arbitrairement qu'au bout de 5 formations suivies, un.e employé.e gagne un point de compétence.
 
 #### Team building
-Pour que les employé.e.s puissent gagner en santé mentale, nous avons décidé de modéliser des team building. L'entreprise en organise 2 par an, tous les employé.e.s y participent et gagnent 5 points en santé mentale (valeur arbitraire).
+Pour que les employé.e.s puissent gagner en santé mentale, nous avons décidé de modéliser des team building. L'entreprise en organise 2 par an, tous les employé.e.s y participent et gagnent 1 point en santé mentale (valeur arbitraire).
 
 #### Bénéfices
 La valeur de bénéfice affichée par la simulation correspond à l'argent généré par l'entreprise à la fin de l'année. Ainsi, cela correspond au chiffre d'affaire de l'entreprise soustrait à ses dépenses. 
