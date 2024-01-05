@@ -157,12 +157,15 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 	if nbARecruter < 0 {
 		return nil
 	}
+
 	if strat != PrioFemme && strat != PrioHomme && strat != Hasard {
 		return nil
 	}
+
 	embauches = make([]*Employe, 0)
 	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s).", nbARecruter)
 	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH cherche à recruter les candidat.e.s les plus compétent.e.s.")
+
 	for len(embauches) < nbARecruter {
 		maxCandidats := EmployeMaxCompetences(candidats)
 		if len(maxCandidats) == 1 {
@@ -178,6 +181,7 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 				idx = rand.Intn(len(maxCandidats))
 				embauches = append(embauches, maxCandidats[idx])
 				candidats = enleverEmploye(candidats, maxCandidats[idx])
+
 			case PrioFemme:
 				// Une femme au hasard parmi les candidat.es est recrutée
 				lFemmes := FiltreFemme(maxCandidats) // permet d'isoler les femmes parmi les candidat.es
