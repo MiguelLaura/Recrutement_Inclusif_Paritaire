@@ -114,12 +114,12 @@ Dans une partie *Tableau de bord*, on peut voir des informations sur ce qu'il se
 * Entreprise : si l'entreprise reçoit des amendes liées à sa parité, ou un bonus de productivité ;
 * Recrutement : le nombre d'embauches et des détails sur le comportement des ressources humaines pendant le processus de recrutement ;
 * Employé : le nombre de naissances d'enfants et de congés parentaux ;
-* Evénements : l'organisation de team building et le nombre d'employé·e·s ayant participé à une formation.
+* Événements : l'organisation de team building et le nombre d'employé·e·s ayant participé à une formation.
 On a également des informations au survol sur le bénéfice, le recrutement et les catégories pour avoir des explications supplémentaires.
 
 ### Fonctionnement de l'interface
 
-L'interface a été réalisée en HTML/CSS/JavaScript. Nous utilisons la bibliothèque Chart.js pour créer les graphes et visualiser les données au cours du temps. Pour envoyer les informations issues du formulaire et créer une nouvelle simulation, nous utilisons une requête POST. Les informations envoyées et retournées peuvent être consultées dnas le document [API.md](API.md).
+L'interface a été réalisée en HTML/CSS/JavaScript. Nous utilisons la bibliothèque Chart.js pour créer les graphes et visualiser les données au cours du temps. Pour envoyer les informations issues du formulaire et créer une nouvelle simulation, nous utilisons une requête POST. Les informations envoyées et retournées peuvent être consultées dans le document [API.md](API.md).
 
 Une fois sur la page de la simulation, toutes les informations sont transférées grâce à des websockets. Les données sont de différents types et envoyées à différents moments. Nous utilisons un Logger qui envoie les données dans les websockets, en même temps qu'il les affiche dans la console. Ce Logger est commun à la simulation et à tous les agents (employé·e·s, recrutement et entreprise). Nous avons séparé les différents types de log avec des constantes dans le code pour pouvoir les différencier les uns des autres.
 
@@ -142,9 +142,9 @@ Les compétences d'un·e employé·e sont modélisées par un entier entre 0 à 
 
 Pour la santé mentale, nous avons décidé de la modéliser comme un entier de 0 à 100. Au moment de rejoindre l'entreprise, iel dispose d'une santé mentale pleine, soit de 100. Son expérience au sein de l'entreprise peut augmenter ou réduire sa santé mentale dans le domaine défini.
 
-Concernant l'ancienneté, il s'agit d'un entier entre 0 et 43. Les employé·e·s généré·e·s au début de la modélisation ont une ancienneté aléatoire. Les nouveaux·elles employé·e·s ont une ancienneté de 0 (on considère qu'uniquement des jeunes diplomé·e·s sont recruté.e.s). Cette valeur est incrémentée tous les ans. Lorsqu'un·e employé·e a une ancienneté de 43 (nombre de trimestres nécessaires pour avoir une retraite à taux plein[<sup>4</sup>](https://www.service-public.fr/particuliers/vosdroits/F35063)), iel part à la retraite.
+Concernant l'ancienneté, il s'agit d'un entier entre 0 et 43. Les employé·e·s généré·e·s au début de la modélisation ont une ancienneté aléatoire. Les nouveaux·elles employé·e·s ont une ancienneté de 0 (on considère qu'uniquement des jeunes diplômé·e·s sont recruté.e.s). Cette valeur est incrémentée tous les ans. Lorsqu'un·e employé·e a une ancienneté de 43 (nombre de trimestres nécessaires pour avoir une retraite à taux plein[<sup>4</sup>](https://www.service-public.fr/particuliers/vosdroits/F35063)), iel part à la retraite.
 
-Enfin, pour modéliser les agressions sexuelles au travail, il était nécessaire de déterminer les employé·e·s susceptibles d'agresser leurs collègues. Or, il n'existe pas de statistiques fournissant le pourcentage d'agresseur·euse·s parmi la population. Pour représenter cela, nous avons utilisé les statistiques suivantes : 12% des femmes et 2% des hommes sont victimes de harcèlement sexuel par an d'après une étude de l'INED en 2018 (https://www.harcelement.eu/les-statistiques-choquantes-sur-le-harcelement-sexuel-au-travail-en-france/). Nous avons réalisé des hypothèses très réductrices. Nous utilisons ces statistiques sur le harcèlement sexuel comme des statistiques sur les agressions sexuelles. Il s'agit d'une simplication car le harcèlement sexuel correspond à des agressions sexuelles repétées sur la même personne. Nous supposons ensuite que les femmes sont agressées uniquement par des hommes, tous différents et inversement pour les hommes. Or, la proportion homme-femme dans la population est équivalente. Par conséquent, on considère que 12% des hommes et 2% des femmes sont des agresseur·euse·s. Nous avons conscience qu'en réalité les agressions sont souvent réalisées par les mêmes individus et que ces chiffres sont surévalués. Nous les avons conservé par faute de trouver d'autres sources plus pertinentes.
+Enfin, pour modéliser les agressions sexuelles au travail, il était nécessaire de déterminer les employé·e·s susceptibles d'agresser leurs collègues. Or, il n'existe pas de statistiques fournissant le pourcentage d'agresseur·euse·s parmi la population. Pour représenter cela, nous avons utilisé les statistiques suivantes : 12% des femmes et 2% des hommes sont victimes de harcèlement sexuel par an d'après une étude de l'INED en 2018 (https://www.harcelement.eu/les-statistiques-choquantes-sur-le-harcelement-sexuel-au-travail-en-france/). Nous avons réalisé des hypothèses très réductrices. Nous utilisons ces statistiques sur le harcèlement sexuel comme des statistiques sur les agressions sexuelles. Il s'agit d'une simplification car le harcèlement sexuel correspond à des agressions sexuelles répétées sur la même personne. Nous supposons ensuite que les femmes sont agressées uniquement par des hommes, tous différents et inversement pour les hommes. Or, la proportion homme-femme dans la population est équivalente. Par conséquent, on considère que 12% des hommes et 2% des femmes sont des agresseur·euse·s. Nous avons conscience qu'en réalité les agressions sont souvent réalisées par les mêmes individus et que ces chiffres sont surévalués. Nous les avons conservé par faute de trouver d'autres sources plus pertinentes.
 
 #### Recrutement
 Pour le recrutement, nous avons considéré que l'entreprise cherche à s'étendre tous les ans. Elle veut s'agrandir de 5% de son effectif. Cette valeur a été choisie pour s'assurer d'un recrutement assez conséquent afin d'étudier la question du projet. 
@@ -156,8 +156,8 @@ Les personnes agressées voient leur santé mentale diminuer de 20 (sur 100 lors
 
 #### Départs (hors licenciement)
 En dehors du licenciement, les employé·e·s peuvent quitter l'entreprise pour plusieurs raisons :
-- Dépression (si santeMentale = 0)
-- Retraite (si anciennete = 43)
+- Dépression (si santéMentale = 0)
+- Retraite (si ancienneté = 43)
 - Démission spontanée
 
 Un·e employé·e a 2.7% de chance de démissionner de l'entreprise (source : *Dares*, 1er trimestre 2022 [<sup>7</sup>](https://dares.travail-emploi.gouv.fr/publication/la-france-vit-elle-une-grande-demission)).
@@ -169,7 +169,7 @@ Cependant, la présence de femmes au sein d'une entreprise a tendance à augment
 #### Congés maternité
 Aucune source fournissant le nombre de naissances par an au sein d'une entreprise n'a été trouvée. Par conséquent, nous avons utilisé l'indice de natalité français [<sup>11</sup>](https://data.worldbank.org/indicator/SP.DYN.TFRT.IN?end=2021&start=2021&view=bar) indiquant qu'en moyenne un individu a 1.83 enfant en France. Puis, nous avons considéré qu'une femme a un enfant entre 20 et 60 ans donc qu'elle dispose de 40 ans pour avoir 1.83 enfant. Ainsi, nous considérons qu'un·e employé·e a une probabilité de 0.04575 d'avoir un enfant au sein de son foyer par an. Nous n'avons pas placé de limites sur le nombre d'enfants qu'un·e employé·e peut avoir.
 Le congé de maternité est obligatoire [<sup>12</sup>](https://www.service-public.fr/particuliers/vosdroits/F2265/personnalisation/resultat?lang=&quest0=0&quest1=0&quest=) donc toutes les femmes ayant un enfant partent en congé maternité. Les hommes ont 71% de chance de partir en congé maternité (chiffre issu d'une étude de la *Drees* en 2021 [<sup>13</sup>](https://www.lefigaro.fr/social/de-plus-en-plus-de-peres-prennent-leur-conge-paternite-mais-des-inegalites-demeurent-20230720).
-Pour simplifier la modélisation, nous considérons que toute personne partant en congé maternité part pendant la durée maximale du congé maternité (ce qui s'éloigne de la réalite). Un congé maternité peut durer jusqu'à 4 mois et un congé paternité jusqu'à 1 mois [<sup>14</sup>](https://www.capital.fr/votre-carriere/conge-parental-1323770). 
+Pour simplifier la modélisation, nous considérons que toute personne partant en congé maternité part pendant la durée maximale du congé maternité (ce qui s'éloigne de la réalité). Un congé maternité peut durer jusqu'à 4 mois et un congé paternité jusqu'à 1 mois [<sup>14</sup>](https://www.capital.fr/votre-carriere/conge-parental-1323770). 
 Le remplacement de l'employé·e en congé parental n'a pas été modélisé.
 
 #### Formation
@@ -183,7 +183,7 @@ La valeur de bénéfice affichée par la simulation correspond à l'argent gén�
 
 Nous voulons que le chiffre d'affaire dépende de la santé mentale et des compétences des employé·e·s. Pour calculer ce que rapporte un·e employé·e de l'entreprise modélisé par an, nous utilisons la formule suivante :
 
-*apportEmploye = ChiffreAffaireEmploye x santeMentaleEmploye/100 x competenceEmploye/5 - coutEmploye*
+*apportEmployé = ChiffreAffaireEmployé x santéMentaleEmployé/100 x compétenceEmployé/5 - coûtEmployé*
 
 La valeur de santé mentale de l'employé·e est divisée par 100 afin que si la santé mentale n'est pas pleine, elle réduit la productivité de l'employé·e. De même, la compétence de l'employé·e est divisée par 5 car un·e employé·e moyen a une compétence de 5.
 
@@ -225,7 +225,7 @@ En fin d'année, l'entreprise lance un team building, et lance la fin d'année, 
 
 Pour arrêter tous les agents, l'entreprise envoie un message de fin sur les channels des employés et sur le channel du recrutement. Elle doit attendre leurs retours avant de s'arrêter elle-même.
 
-Au cours des actions des employés, ceux-ci peuvent changer les listes des employés démissionaires, la liste des départs, la liste des plaintes, le nombre de dépressions et le nombre de congés parentaux : pour éviter des problèmes d'accès concurents, les fonctions gérant ces changements posent un `Lock` sur l'entreprise.
+Au cours des actions des employés, ceux-ci peuvent changer les listes des employés démissionnaires, la liste des départs, la liste des plaintes, le nombre de dépressions et le nombre de congés parentaux : pour éviter des problèmes d'accès concurrents, les fonctions gérant ces changements posent un `Lock` sur l'entreprise.
 
 #### Employé
 Les employés sont des agents lancés par l'entreprise.
@@ -235,11 +235,11 @@ Pour agir, les employés attendent un message de l'entreprise sur un channel dé
 * agresser s'ils sont agresseurs ;
 * se former s'ils sont dans la liste des employés recevant une formation pendant l'année en cours ;
 * vieillir ;
-* potentiellement avoir un enfant et donc potentiellement partir en congé parternité et potentiellement démissionner après un congé maternité ;
+* potentiellement avoir un enfant et donc potentiellement partir en congé paternité et potentiellement démissionner après un congé maternité ;
 * partir à la retraite s'ils ont assez d'ancienneté ;
 * potentiellement poser une démission spontanée.
 À chaque action, ils vont modifier des informations centralisées par l'entreprise, donc pour se faire, ils appellent des méthodes de l'entreprise.
-Si le message reçu par l'employé de la part de l'entreprise est `AGRESSION`, cela signifie que l'employé se fait agresser. Il va donc perdre de la santé mentale et potentiellement porter plainte auprès de l'entreprise et partir en depression.
+Si le message reçu par l'employé de la part de l'entreprise est `AGRESSION`, cela signifie que l'employé se fait agresser. Il va donc perdre de la santé mentale et potentiellement porter plainte auprès de l'entreprise et partir en dépression.
 Si le message est `FIN`, l'employé passe son attribut fin à `true` ce qui lui permettra de sortir de la boucle de vie.
 Enfin, l'employé envoie un message à l'entreprise sur un channel pour l'informer qu'il a fini ses actions.
 
@@ -249,11 +249,11 @@ Il attend un message de l'entreprise qui intervient à chaque pas de temps.
 
 Si le message est `RECRUTEMENT` alors il peut désormais commencer le recrutement.
 Un message de type `RECRUTEMENT` est accompagné du nombre de postes à pourvoir. 
-Il génère donc un nombre de candidat·e·s correspondant à 18 fois le nombre de postes à pourvoir (voir  [Ce qui est modélisé et les sources](#ce-qui-est-modélisé-et-les-sources)). Puis, il sélectionne les candidat·e·s en fonction des différents choix de l'utilisateur·ice, soit la présence d'une répartion homme-femme souhaité ou non ainsi que la stratégie de recrutement à appliquer avec les paramètres correspondant. 
+Il génère donc un nombre de candidat·e·s correspondant à 18 fois le nombre de postes à pourvoir (voir  [Ce qui est modélisé et les sources](#ce-qui-est-modélisé-et-les-sources)). Puis, il sélectionne les candidat·e·s en fonction des différents choix de l'utilisateur·ice, soit la présence d'une répartition homme-femme souhaité ou non ainsi que la stratégie de recrutement à appliquer avec les paramètres correspondant. 
 
-Pour le recrutement *CompetencesEgales*, il sélectionne le/la candidat·e le/la plus compétent·e. En cas d'égalité, il respecte si possible la priorité précisée par l'utilisateur·rice et choisit au hasard s'il y a encore des égalités (par exemple priorité aux femmes et égalité entre femmes). Dans le cas où il ne peut pas (par exemple priorité aux femmes mais égalité entre hommes), il sélectionne également au hasard.
+Pour le recrutement *CompétencesÉgales*, il sélectionne le/la candidat·e le/la plus compétent·e. En cas d'égalité, il respecte si possible la priorité précisée par l'utilisateur·ice et choisit au hasard s'il y a encore des égalités (par exemple priorité aux femmes et égalité entre femmes). Dans le cas où il ne peut pas (par exemple priorité aux femmes mais égalité entre hommes), il sélectionne également au hasard.
 
-Pour le recrutement *PlacesReserveesFemme* ou *PlacesReserveesHomme*, le nombre de places à réserver *N* est calculé en fonction du pourcentage renseigné. Puis si possible, les *N*  individus les plus compétents du genre favorisé sont recrutés. Pour le reste des postes à pourvoir (avec potentiellement les places réservées inoccupées par manque de candidat·e·s du genre souhaité), les candidat·e·s les plus compétent·e·s sont recruté·e·s peu importe leur genre et en cas d'égalité, le hasard les départage.
+Pour le recrutement *PlacesRéservéesFemme* ou *PlacesRéservéesHomme*, le nombre de places à réserver *N* est calculé en fonction du pourcentage renseigné. Puis si possible, les *N*  individus les plus compétents du genre favorisé sont recrutés. Pour le reste des postes à pourvoir (avec potentiellement les places réservées inoccupées par manque de candidat·e·s du genre souhaité), les candidat·e·s les plus compétent·e·s sont recruté·e·s peu importe leur genre et en cas d'égalité, le hasard les départage.
 
 Une fois tous les candidats choisis, il démarre les agents correspondant aux candidat·e·s embauché·e·s. Enfin, l'agent envoie un message `FIN_RECRUTEMENT` à l'entreprise pour l'informer de la fin du recrutement et lui fournir un slice contenant tous les nouveaux employé·e·s. 
 
@@ -291,7 +291,7 @@ Les entreprises peuvent prendre des mesures contre les violences sexistes et sex
 Nous aurions pu prendre ces éléments en considération sur la façon dont les agressions sont gérées (sanctions différentes, etc.), et éventuellement modifier les probabilités qu'une agression ait lieu (une personne ayant suivi une formation a moins de chance d'agresser, etc.).
 
 ### Les VSS
-Notre modélisation s'appuie sur des chiffres concernant le harcélement sexuel que nous avons assimilé à des agressions sexuelles. Nous aurions pu prendre en compte toutes les VSS et changer l'impact sur la santé mentale en fonction des différents types de VSS (et aussi changer les sanctions pour l'employé·e qui les a commises).
+Notre modélisation s'appuie sur des chiffres concernant le harcèlement sexuel que nous avons assimilé à des agressions sexuelles. Nous aurions pu prendre en compte toutes les VSS et changer l'impact sur la santé mentale en fonction des différents types de VSS (et aussi changer les sanctions pour l'employé·e qui les a commises).
 
 ### L'intervention du/de la psychologue d'entreprise
 Lors de signalement pour violence sexiste ou sexuelle, le personne ayant déposée le signalement a le droit à un accompagnement par la/le psychologue de l'entreprise.
@@ -305,7 +305,7 @@ Dans notre modélisation, tous les employé·e·s ont le même salaire.
 Pour être au plus proche de la réalité, il aurait fallu prendre en compte les différents postes, les augmentations et promotions.
 
 ### La hiérarchie des postes
-Nous n'avons pas modélisé de hiérarchie de postes. Or, on pourrait supposer que si une entreprise a plus de femmes à la direction, et que celles-ci sont intéressées pour embaucher des femmes, elles auraient plus de pouvoirs faviriser leur recrutement. Ou encore que dans le cas de VSS commises par des haut placés, celles-ci sont moins signalées. C'est donc un point qu'il aurait été intéressant d'étudier.
+Nous n'avons pas modélisé de hiérarchie de postes. Or, on pourrait supposer que si une entreprise a plus de femmes à la direction, et que celles-ci sont intéressées pour embaucher des femmes, elles auraient plus de pouvoirs favoriser leur recrutement. Ou encore que dans le cas de VSS commises par des haut placés, celles-ci sont moins signalées. C'est donc un point qu'il aurait été intéressant d'étudier.
 
 ### Le secteur
 L'entreprise modélisée n'a pas de secteur dédié : tous les chiffres utilisés sont des chiffres généraux, or, ils varient fortement d'un secteur à l'autre.
@@ -329,7 +329,7 @@ Un point d'amélioration serait l'ajout d'histogrammes pour montrer l'évolution
 
 ### Sur la modélisation
 * Le bénéfice : nous avons pris des chiffres très généraux sur les coûts des salarié·e·s, du recrutement et les bénéfices générés par les employé·e·s ;
-* La montée de productivé liée à la présence d'hommes : nous n'avons pas de chiffres sur l’intérêt d’avoir des hommes sur la bonne ambiance dans l'entreprise et ne l'avons donc pas modélisé ;
+* La montée de productivité liée à la présence d'hommes : nous n'avons pas de chiffres sur l’intérêt d’avoir des hommes sur la bonne ambiance dans l'entreprise et ne l'avons donc pas modélisé ;
 * Les départs après un congé paternité : nous n'avons un chiffre que pour les départs après un congé maternité ;
 * Le team building : on modélise boost positif pour tous les employé·e·s lors de l'organisation d'un team building (ce qui n'est pas forcément le cas dans la réalité), mais nous n'avons pas de chiffre pour appuyer cette modélisation, et toutes les entreprises ne font pas de team building ;
 * Le recrutement : nous engageons chaque année 5% d'employé·e·s supplémentaires, mais c'est un chiffre décidé arbitrairement, de plus, nous considérons que les postes seront toujours pourvus, et nous ne cherchons pas à remplacer les personnes qui ont quitté l'entreprise (le recrutement est fait indépendamment des départs et les embauches représentent toujours une hausse de 5% de l'effectif total) ;
