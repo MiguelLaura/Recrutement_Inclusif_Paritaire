@@ -274,12 +274,12 @@ func (agresseur *Employe) agresser() {
 func (e *Employe) Start() {
 	// Initialisation
 	go func() {
-		log.Printf("Démarrage de l'employé %s", e.id)
+		log.Printf("Démarrage de l'employé·e %s", e.id)
 		// Boucle de vie
 		for !e.fin {
 			e.agir()
 		}
-		log.Printf("Fin de l'employé %s", e.Id())
+		log.Printf("Fin de l'employé·e %s", e.Id())
 	}()
 }
 
