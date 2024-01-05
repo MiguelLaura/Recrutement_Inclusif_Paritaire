@@ -21,10 +21,6 @@ func EnvoyerNotifActions(dest *Entreprise, act Action, payload any) {
 	dest.chnlNotifAction <- Communicateur{act, payload}
 }
 
-func CollecterActions(dest *Entreprise, act Action, payload any) {
-	dest.chnlActions <- Communicateur{act, payload}
-}
-
 func EnvoyerMessageRecrutement(dest *Recrutement, act ActionRecrutement, payload any) {
 	dest.Chnl() <- CommunicateurRecrutement{act, payload}
 }
@@ -85,7 +81,6 @@ func NewEntreprise(nbEmployesInit int, pariteInit float64, logger *logger.Logger
 	ent.nbActions = 0
 	ent.fin = false
 	ent.chnl = make(chan Communicateur)
-	ent.chnlActions = make(chan Communicateur)
 	ent.chnlRecrutement = make(chan CommunicateurRecrutement)
 	ent.chnlNotifAction = make(chan Communicateur)
 	ent.logger = logger
@@ -190,10 +185,6 @@ func (ent *Entreprise) Fin() bool {
 
 func (ent *Entreprise) Chnl() chan Communicateur {
 	return ent.chnl
-}
-
-func (ent *Entreprise) ChnlActions() chan Communicateur {
-	return ent.chnlActions
 }
 
 func (ent *Entreprise) ChnlRecrutement() chan CommunicateurRecrutement {
@@ -304,10 +295,6 @@ func (ent *Entreprise) SetChnl(chnl chan Communicateur) {
 	ent.chnl = chnl
 }
 
-func (ent *Entreprise) SetChnlActions(chnlActions chan Communicateur) {
-	ent.chnlActions = chnlActions
-}
-
 func (ent *Entreprise) SetChnlRecrutement(chnlRecrutement chan CommunicateurRecrutement) {
 	ent.chnlRecrutement = chnlRecrutement
 }
@@ -416,7 +403,7 @@ func (ent *Entreprise) RecevoirActions(nbActions int) {
 // ---------------------
 
 func (ent *Entreprise) teamBuilding() {
-	ent.logger.LogType(LOG_EVENEMENT, "Un team building est organisé. Les employé.e.s sont content.e.s.")
+	ent.logger.LogType(LOG_EVENEMENT, "Un team building est organisé. Les employé·e·s sont content·e·s.")
 	for _, e := range ent.employes {
 		testPresence, _ := TrouverEmploye(ent.departs, func(emp *Employe) bool { return e.Id() == emp.Id() }, 0)
 		// On vérifie que l'employé ne va pas partir
@@ -438,7 +425,7 @@ func (ent *Entreprise) organisationFormation() {
 	// 32% des français ont participé à une formation
 	nb_employes_formes := math.Round(constantes.POURCENTAGE_FORMATION * float64(ent.NbEmployes()))
 	if nb_employes_formes != 0 {
-		ent.logger.LogfType(LOG_EVENEMENT, "%d employé.e(s) ont participé à une formation.", int(nb_employes_formes))
+		ent.logger.LogfType(LOG_EVENEMENT, "%d employé·e(s) ont participé à une formation.", int(nb_employes_formes))
 		// 50% des employés qui se forment sont des femmes
 		nb_femmes_formes := math.Round(nb_employes_formes / 2)
 		nb_hommes_formes := nb_femmes_formes
@@ -482,7 +469,7 @@ func (ent *Entreprise) gestionPlaintes() {
 			if i < 0 {
 				ent.SetNbLicenciements(ent.NbLicenciements() + 1)
 				ent.departs = append(ent.departs, accuse)
-				log.Printf("%s est licencié pour faute grave", accuse.String())
+				log.Printf("%s est licencié·e pour faute grave", accuse.String())
 			}
 		}
 	}
@@ -516,7 +503,7 @@ func (ent *Entreprise) gestionRecrutements() {
 				ent.SetNbEmbauchesFemme(ent.NbEmbauchesFemme() + 1)
 			}
 			ent.employes = append(ent.employes, emp)
-			log.Printf("%s est embauché.e", emp.String())
+			log.Printf("%s est embauché·e", emp.String())
 			if emp.Agresseur() {
 				ent.nbAgresseurs += 1
 			}
@@ -658,7 +645,7 @@ func (ent *Entreprise) agir() {
 		return
 	}
 	ent.logger.LogType(LOG_ENTREPRISE, "Début d'année.")
-	log.Printf("Nb employe %d", ent.NbEmployes())
+	log.Printf("Nb employé·e·s %d", ent.NbEmployes())
 	// Déterminer participants aux formations
 	ent.organisationFormation()
 	ent.teamBuilding()
@@ -749,24 +736,24 @@ func (ent *Entreprise) resetCompteur() {
 
 func (ent *Entreprise) AfficherDonneesCompteur() {
 	// Mettre des if pour que le log ne s'affiche que si valeur > 0 ? Perte d'info
-	ent.logger.LogfType(LOG_RECRUTEMENT, "Recrutement de %d employé.e(s), %d femme(s) et %d homme(s).", ent.NbEmbauches(), ent.NbEmbauchesFemme(), ent.NbEmbauches()-ent.NbEmbauchesFemme())
+	ent.logger.LogfType(LOG_RECRUTEMENT, "Recrutement de %d employé·e(s), %d femme(s) et %d homme(s).", ent.NbEmbauches(), ent.NbEmbauchesFemme(), ent.NbEmbauches()-ent.NbEmbauchesFemme())
 	if ent.NbAgressions() != 0 {
 		ent.logger.LogfType(LOG_AGRESSION, "%d agression(s) sur le lieu de travail dont %d remontée(s) à l'entreprise.", ent.NbAgressions(), ent.NbPlaintes())
 	}
 	if ent.NbDemissions() != 0 {
-		ent.logger.LogfType(LOG_DEPART, "Démission(s) spontanée(s) de %d employé.e(s).", ent.NbDemissions())
+		ent.logger.LogfType(LOG_DEPART, "Démission(s) spontanée(s) de %d employé·e(s).", ent.NbDemissions())
 	}
 	if ent.NbRetraites() != 0 {
-		ent.logger.LogfType(LOG_DEPART, "Départ(s) à la retraite pour %d employé.e(s).", ent.NbRetraites())
+		ent.logger.LogfType(LOG_DEPART, "Départ(s) à la retraite pour %d employé·e(s).", ent.NbRetraites())
 	}
 	if ent.NbPlaintes() != 0 {
-		ent.logger.LogfType(LOG_DEPART, "Licenciement pour faute grave appliqué à %d employé.e(s).", ent.NbLicenciements())
+		ent.logger.LogfType(LOG_DEPART, "Licenciement pour faute grave appliqué à %d employé·e(s).", ent.NbLicenciements())
 	}
 	if ent.NbDepressions() != 0 {
-		ent.logger.LogfType(LOG_DEPART, "Dépression(s) conduisant à une démission pour %d employé.e(s).", ent.NbDepressions())
+		ent.logger.LogfType(LOG_DEPART, "Dépression(s) conduisant à une démission pour %d employé·e(s).", ent.NbDepressions())
 	}
 	if ent.NbEnfants() != 0 {
-		ent.logger.LogfType(LOG_EMPLOYE, "Naissance d'un enfant pour %d employé.e(s).", ent.NbEnfants())
+		ent.logger.LogfType(LOG_EMPLOYE, "Naissance d'un enfant pour %d employé·e(s).", ent.NbEnfants())
 		// S'il n'y a pas d'enfants, il n'y a pas de congés parentaux
 		ent.logger.LogfType(LOG_EMPLOYE, "%d employé(s) en congé paternité et %d employée(s) en congé maternité.", ent.NbCongesPaternite(), ent.NbCongesMaternite())
 	}
