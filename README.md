@@ -1,5 +1,3 @@
-**ATTENTION REMPLACER LES TEST PAR NUMERO + FAIRE LES A FAIRE**
-
 # La parité en entreprise
 
 ## Le contexte de réalisation du projet
@@ -10,17 +8,31 @@ Ce projet a été réalisé dans le cadre de l'UV IA04 enseignée à l'Universit
 * Laura Miguel
 
 ## Le sujet
-Ce projet est une simulation d'une entreprise. On souhaite étudier la parité dans une entreprise. Nous nous sommes en particulier concentré.e.s sur le recrutement : c'est une étape systématique dans une entreprise qui peut influer sur la parité. Le but est donc de laisser l'utilisateur.ice choisir une façon d'effectuer son recrutement, de lancer la simulation et voir l'influence de ce recrutement sur le bénéfice de l'entreprise, le nombre de départs, etc.
+Ce projet est une simulation d'une entreprise. On souhaite étudier la parité dans une entreprise. Nous nous sommes en particulier concentré·e·s sur le recrutement : c'est une étape systématique dans une entreprise qui peut influer sur la parité. Le but est donc de laisser l'utilisateur·ice choisir une façon d'effectuer son recrutement, de lancer la simulation et voir l'influence de ce recrutement sur le bénéfice de l'entreprise, le nombre de départs, etc.
 
 ## La problématique
 Notre principale question est donc : quelles sont les conséquences d’un recrutement tenant compte de la parité sur la santé d’une entreprise ?
 
 ## Récupérer le projet et le lancer
-**A FAIRE compléter**
+
+Le projet peut être récupéré avec la commande suivante : 
 ```bash
-go get github.com/gorilla/websocket
-go run cmd/launch-all/launch-all.go
+git clone https://gitlab.utc.fr/mennynat/ia04-project.git
 ```
+
+Ensuite, il faut récupérer toutes les dépendances du projet avec l'instruction :
+
+```bash
+go mod download
+```
+
+Enfin, le projet peut être lancé avec :
+
+```bash
+go run ./cmd/launch-all/launch-all.go
+```
+
+Ceci va lancer un serveur web sur le port `8080` de le machine. Il suffit après d'accéder à l'adresse `localhost:8080` pour arriver sur le formulaire de création d'entreprise.
 
 ## La table des matières
 
@@ -68,11 +80,13 @@ go run cmd/launch-all/launch-all.go
 ## L'interface de simulation
 
 ### Le formulaire
-**A FAIRE mettre une capture ?**
-Nous avons en premier temps un formulaire dans lequel l'utilisateur.ice entre les informations mentionnées ci-dessous. Il y a également des informations sur la simulation qui correspondent à la partie [Le sujet](#le-sujet) et cette partie.
 
-L'utilisateur.ice va pouvoir définir :
-* le nombre d'employé.e.s de l'entreprise,
+<img src="img/capture_interface_formulaire.png" alt="capture du formulaire de création d'entreprise" width="1000px"/>
+
+Nous avons en premier temps un formulaire dans lequel l'utilisateur·ice entre les informations mentionnées ci-dessous. Il y a également des informations sur la simulation qui correspondent à la partie [Le sujet](#le-sujet) et cette partie.
+
+L'utilisateur·ice va pouvoir définir :
+* le nombre d'employé·e·s de l'entreprise,
 * la durée de la simulation (un pas de la simulation correspond à une année dans l'entreprise),
 * le pourcentage initial de femmes dans l'entreprise,
 * s'iel a un pourcentage de femmes à atteindre,
@@ -82,111 +96,111 @@ L'utilisateur.ice va pouvoir définir :
 Les entreprises peuvent vouloir atteindre une certaine répartition femmes-hommes (pour respecter une loi, favoriser l’innovation, etc.) et mettre en place des stratégies temporaires, notamment au niveau du recrutement. Ainsi, les manières de recruter ne seront pas les mêmes en dessous ou au-dessus du seuil défini.
 
 #### Places réservées ?
-Pour cette stratégie, sur le nombre de personnes à recruter, on choisira de recruter un pourcentage fixe de femmes ou d'hommes (on prendra toujours les plus compétent.e.s dans cette population) puis, pour le reste des candidat.e.s, on recrutera en fonction des compétences seulement. Cette stratégie n'existe pas dans la réalité puisqu'il s'agit d'une discrimination de genre. En effet, on ne peut discriminer à l'embauche sur le genre que pour des cas particuliers, comme pour le cinéma ou mannequinat[<sup>lien</sup>](https://analyseur.acompetenceegale.com/comment-eviter-discriminations-a-lembauche-selon-sexe/).
+Pour cette stratégie, sur le nombre de personnes à recruter, on choisira de recruter un pourcentage fixe de femmes ou d'hommes (on prendra toujours les plus compétent·e·s dans cette population) puis, pour le reste des candidat·e·s, on recrutera en fonction des compétences seulement. Cette stratégie n'existe pas dans la réalité puisqu'il s'agit d'une discrimination de genre. En effet, on ne peut discriminer à l'embauche sur le genre que pour des cas particuliers, comme pour le cinéma ou mannequinat[<sup>1</sup>](https://analyseur.acompetenceegale.com/comment-eviter-discriminations-a-lembauche-selon-sexe/).
 
 #### Compétences égales ?
-Pour cette stratégie, on recrute d’abord la personne la plus compétente. Si jamais deux personnes ont des compétences équivalentes, on choisira qui recruter en fonction de ce qui a été demandé par l’utilisateur.ice : iel choisit s'iel donne sa préférence à une femme, à un homme, ou s'iel n'a pas de préférence et prend un.e des candidat.e.s au hasard. C'est un type de recrutement qu'on peut appliquer à la vie réelle, mais uniquement en cas de candidatures comparables, en faveur du genre sous-représenté et en cas de dernier critère de départage[<sup>lien</sup>](https://egaliteautravail.com/domaine/recrutement/).
+Pour cette stratégie, on recrute d’abord la personne la plus compétente. Si jamais deux personnes ont des compétences équivalentes, on choisira qui recruter en fonction de ce qui a été demandé par l’utilisateur·ice : iel choisit s'iel donne sa préférence à une femme, à un homme, ou s'iel n'a pas de préférence et prend un·e des candidat·e·s au hasard. C'est un type de recrutement qu'on peut appliquer à la vie réelle, mais uniquement en cas de candidatures comparables, en faveur du genre sous-représenté et en cas de dernier critère de départage[<sup>2</sup>](https://egaliteautravail.com/domaine/recrutement/).
 
 
 ### La simulation
-**A FAIRE mettre une capture ?**
-La validation du formulaire nous renvoie sur la page de simulation. Nous pouvons alors la lancer (soit de façon à ce que les pas s'enchaînent sans action de l'utilisateur.ice, soit en avançant pas à pas). On peut également arrêter la simulation, la mettre en pause et revenir au formulaire.
-Quand la simulation est lancée, on peut voir depuis combien d'années l'entreprise tourne sous la simulation, le nombre d'employé.e.s, la parité, les bénéfices. En particulier, on a des graphes nous montrant l'évolution, au cours des années, des bénéfices, de la parité, des compétences des employé.e.s et de la santé mentale des employé.e.s.
+
+<img src="img/capture_interface_visualisation.png" alt="capture de l'interface de visualisation" width="1000px"/>
+
+La validation du formulaire nous renvoie sur la page de simulation. Nous pouvons alors la lancer (soit de façon à ce que les pas s'enchaînent sans action de l'utilisateur·ice, soit en avançant pas à pas). On peut également arrêter la simulation, la mettre en pause et revenir au formulaire.
+Quand la simulation est lancée, on peut voir depuis combien d'années l'entreprise tourne sous la simulation, le nombre d'employé·e·s, la parité, les bénéfices. En particulier, on a des graphes nous montrant l'évolution, au cours des années, des bénéfices, de la parité, des compétences des employé·e·s et de la santé mentale des employé·e·s.
 Dans une partie *Tableau de bord*, on peut voir des informations sur ce qu'il se passe au cours des années. Ces informations sont divisées en catégories (on peut sélectionner les catégories qu'on souhaite voir dans le tableau de bord) :
-* Agression : le nombre d'agressions entre employé.e.s et le nombre de signalements faits auprès de l'entreprise ;
+* Agression : le nombre d'agressions entre employé·e·s et le nombre de signalements faits auprès de l'entreprise ;
 * Départ : le nombre de démissions (spontanées, dûe à une dépression ou après un congé maternité), le nombre de retraites, le nombre de licenciements ;
 * Entreprise : si l'entreprise reçoit des amendes liées à sa parité, ou un bonus de productivité ;
 * Recrutement : le nombre d'embauches et des détails sur le comportement des ressources humaines pendant le processus de recrutement ;
 * Employé : le nombre de naissances d'enfants et de congés parentaux ;
-* Evénements : l'organisation de team building et le nombre d'employé.e.s ayant participé à une formation.
+* Evénements : l'organisation de team building et le nombre d'employé·e·s ayant participé à une formation.
 On a également des informations au survol sur le bénéfice, le recrutement et les catégories pour avoir des explications supplémentaires.
 
 ### Fonctionnement de l'interface
 
 L'interface a été réalisée en HTML/CSS/JavaScript. Nous utilisons la bibliothèque Chart.js pour créer les graphes et visualiser les données au cours du temps. Pour envoyer les informations issues du formulaire et créer une nouvelle simulation, nous utilisons une requête POST. Les informations envoyées et retournées peuvent être consultées dnas le document [API.md](API.md).
 
-Une fois sur la page de la simulation, toutes les informations sont transférées grâce à des websockets. Les données sont de différents types et envoyées à différents moments. Nous utilisons un Logger qui envoie les données dans les websockets, en même temps qu'il les affiche dans la console. Ce Logger est commun à la simulation et à tous les agents (employé.e.s, recrutement et entreprise). Nous avons séparé les différents types de log avec des constantes dans le code pour pouvoir les différencier les uns des autres.
+Une fois sur la page de la simulation, toutes les informations sont transférées grâce à des websockets. Les données sont de différents types et envoyées à différents moments. Nous utilisons un Logger qui envoie les données dans les websockets, en même temps qu'il les affiche dans la console. Ce Logger est commun à la simulation et à tous les agents (employé·e·s, recrutement et entreprise). Nous avons séparé les différents types de log avec des constantes dans le code pour pouvoir les différencier les uns des autres.
 
-D'abord, les informations "initiales" qui concernent la simulation créée (l'id de la simulation, le nombre d'années, le type de recrutement choisi, status de la simulation, ...) sont envoyées à la page HTML dès qu'une connexion websocket est établie. Cela permet à la simulation de n'être pas dépendante d'une page web particulière. Ainsi, on peut toujours retrouver les informations lorsqu'on reload une page web avec l'id de la simulation. Dans le code, ces informations sont regroupés sous la constante "LOG_INITIAL".
+D'abord, les informations "initiales" qui concernent la simulation créée (l'id de la simulation, le nombre d'années, le type de recrutement choisi, status de la simulation...) sont envoyées à la page HTML dès qu'une connexion websocket est établie. Cela permet à la simulation de n'être pas dépendante d'une page web particulière. Ainsi, on peut toujours retrouver les informations lorsqu'on reload une page web avec l'id de la simulation. Dans le code, ces informations sont regroupés sous la constante "LOG_INITIAL".
 
 Nous gérons également des informations sur le status de la simulation, par exemple si elle est terminée, à relancer, en pause, pour afficher ces informations sur l'interface avec des popup temporaires. Ce sont des "LOG_REPONSE". 
 
-Ensuite, pour afficher les informations au fur et à mesure, la simulation envoie chaque année son pas de temps actuel, son nombre d'employé.e.s, son pourcentage de femmes, son bénéfice, la moyenne des compétences et la moyenne de la santé mentale. Cela correspond aux informations globales, "LOG_GLOBAL". 
+Ensuite, pour afficher les informations au fur et à mesure, la simulation envoie chaque année son pas de temps actuel, son nombre d'employé·e·s, son pourcentage de femmes, son bénéfice, la moyenne des compétences et la moyenne de la santé mentale. Cela correspond aux informations globales, "LOG_GLOBAL". 
 
-Enfin, pour suivre le déroulé de la simulation, chaque agent (que ce soit des employé.e.s, le recrutement ou l'entreprise) transmet les informations à l'interface lorsqu'il agit. Cela permet de garder les informations sur les actions au moment où elles sont réalisées. Ces logs sont catégorisés pour pouvoir être affichés de différentes couleurs dans l'interface et masqués si besoin. L'entreprise peut envoyer les logs suivants : LOG_AGRESSION, LOG_DEPART, LOG_ENTREPRISE, LOG_EVENEMENT. Le recrutement envoie les LOG_RECRUTEMENT et les employé.e.s LOG_EMPLOYE.
+Enfin, pour suivre le déroulé de la simulation, chaque agent (que ce soit des employé·e·s, le recrutement ou l'entreprise) transmet les informations à l'interface lorsqu'il agit. Cela permet de garder les informations sur les actions au moment où elles sont réalisées. Ces logs sont catégorisés pour pouvoir être affichés de différentes couleurs dans l'interface et masqués si besoin. L'entreprise peut envoyer les logs suivants : LOG_AGRESSION, LOG_DEPART, LOG_ENTREPRISE, LOG_EVENEMENT. Le recrutement envoie les LOG_RECRUTEMENT et les employé·e·s LOG_EMPLOYE.
 
 ## La modélisation
 
 ### Ce qui est modélisé et les sources
-**A FAIRE expliquer les sources et ce qu'on a modélisé**
 
 #### Employé
-A la création de l'entreprise, le genre des employé.e.s est attribué de façon à respecter la répartition homme-femme sélectionnée par l'utilisateur.ice. Par la suite, les candidat.e.s généré.e.s auront une probabilité égale d'être un homme ou une femme.
+À la création de l'entreprise, le genre des employé·e·s est attribué de façon à respecter la répartition homme-femme sélectionnée par l'utilisateur·ice. Par la suite, les candidat·e·s généré·e·s auront une probabilité égale d'être un homme ou une femme.
 
-Les compétences d'un.e employé.e sont modélisées par un entier entre 0 à 10. Elles suivent une loi normale avec mu=5 et sigma=3. Cela permet d'obtenir une majorité d'individus moyens et assez peu d'individus excellents ou mauvais[<sup>lien</sup>](https://www.ruf.rice.edu/~lane/papers/male_female.pdf).
+Les compétences d'un·e employé·e sont modélisées par un entier entre 0 à 10. Elles suivent une loi normale avec mu=5 et sigma=3. Cela permet d'obtenir une majorité d'individus moyens et assez peu d'individus excellents ou mauvais[<sup>3</sup>](https://www.ruf.rice.edu/~lane/papers/male_female.pdf).
 
 Pour la santé mentale, nous avons décidé de la modéliser comme un entier de 0 à 100. Au moment de rejoindre l'entreprise, iel dispose d'une santé mentale pleine, soit de 100. Son expérience au sein de l'entreprise peut augmenter ou réduire sa santé mentale dans le domaine défini.
 
-Concernant l'ancienneté, il s'agit d'un entier entre 0 et 43. Les employé.e.s généré.e.s au début de la modélisation ont une ancienneté aléatoire. Les nouveaux.elles employé.e.s ont une ancienneté de 0 (on considère qu'uniquement des jeunes diplomé.e.s sont recruté.e.s). Cette valeur est incrémentée tous les ans. Lorsqu'un.e employé.e a une ancienneté de 43 (nombre de trimestres nécessaires pour avoir une retraite à taux plein[<sup>lien</sup>](https://www.service-public.fr/particuliers/vosdroits/F35063)), iel part à la retraite.
+Concernant l'ancienneté, il s'agit d'un entier entre 0 et 43. Les employé·e·s généré·e·s au début de la modélisation ont une ancienneté aléatoire. Les nouveaux·elles employé·e·s ont une ancienneté de 0 (on considère qu'uniquement des jeunes diplomé·e·s sont recruté.e.s). Cette valeur est incrémentée tous les ans. Lorsqu'un·e employé·e a une ancienneté de 43 (nombre de trimestres nécessaires pour avoir une retraite à taux plein[<sup>4</sup>](https://www.service-public.fr/particuliers/vosdroits/F35063)), iel part à la retraite.
 
-Enfin, pour modéliser les agressions sexuelles au travail, il était nécessaire de déterminer les employé.e.s susceptibles d'agresser leurs collègues. Or, il n'existe pas de statistiques fournissant le pourcentage d'agresseur.euse.s parmi la population. Pour représenter cela, nous avons utilisé les statistiques suivantes : 12% des femmes et 2% des hommes sont victimes de harcèlement sexuel par an d'après une étude de l'INED en 2018 (https://www.harcelement.eu/les-statistiques-choquantes-sur-le-harcelement-sexuel-au-travail-en-france/). Nous avons réalisé des hypothèses très réductrices. Nous utilisons ces statistiques sur le harcèlement sexuel comme des statistiques sur les agressions sexuelles. Il s'agit d'une simplication car le harcèlement sexuel correspond à des agressions sexuelles repétées sur la même personne. Nous supposons ensuite que les femmes sont agressées uniquement par des hommes, tous différents et inversement pour les hommes. Or, la proportion homme-femme dans la population est équivalente. Par conséquent, on considère que 12% des hommes et 2% des femmes sont des agresseur.euse.s. Nous avons conscience qu'en réalité les agressions sont souvent réalisées par les mêmes individus et que ces chiffres sont surévalués. Nous les avons conservé par faute de trouver d'autres sources plus pertinentes.
+Enfin, pour modéliser les agressions sexuelles au travail, il était nécessaire de déterminer les employé·e·s susceptibles d'agresser leurs collègues. Or, il n'existe pas de statistiques fournissant le pourcentage d'agresseur·euse·s parmi la population. Pour représenter cela, nous avons utilisé les statistiques suivantes : 12% des femmes et 2% des hommes sont victimes de harcèlement sexuel par an d'après une étude de l'INED en 2018 (https://www.harcelement.eu/les-statistiques-choquantes-sur-le-harcelement-sexuel-au-travail-en-france/). Nous avons réalisé des hypothèses très réductrices. Nous utilisons ces statistiques sur le harcèlement sexuel comme des statistiques sur les agressions sexuelles. Il s'agit d'une simplication car le harcèlement sexuel correspond à des agressions sexuelles repétées sur la même personne. Nous supposons ensuite que les femmes sont agressées uniquement par des hommes, tous différents et inversement pour les hommes. Or, la proportion homme-femme dans la population est équivalente. Par conséquent, on considère que 12% des hommes et 2% des femmes sont des agresseur·euse·s. Nous avons conscience qu'en réalité les agressions sont souvent réalisées par les mêmes individus et que ces chiffres sont surévalués. Nous les avons conservé par faute de trouver d'autres sources plus pertinentes.
 
 #### Recrutement
 Pour le recrutement, nous avons considéré que l'entreprise cherche à s'étendre tous les ans. Elle veut s'agrandir de 5% de son effectif. Cette valeur a été choisie pour s'assurer d'un recrutement assez conséquent afin d'étudier la question du projet. 
-Pour chaque poste ouvert, 18 candidat.e.s postulent d'après les chiffres d'automne 2022 de notre source [<sup>lien</sup>](https://blog.flatchr.io/barometre-des-entreprises-qui-recrutent-deuxieme-semestre-2022). Les détails du recrutement seront décrits dans la partie suivante [L'exprimer dans le code](#lexprimer-dans-le-code).
+Pour chaque poste ouvert, 18 candidat·e·s postulent d'après les chiffres d'automne 2022 de notre source [<sup>5</sup>](https://blog.flatchr.io/barometre-des-entreprises-qui-recrutent-deuxieme-semestre-2022). Les détails du recrutement seront décrits dans la partie suivante [L'exprimer dans le code](#lexprimer-dans-le-code).
 
 #### Agressions, plaintes et licenciement
-Chaque employé.e identifié.e comme un.e agresseur.euse agresse tous les ans une fois. Iel agresse quelqu'un du genre opposé sauf si l'entreprise ne contient que des employé.e.s de même genre. Iel ne s'agresse pas lui-même. Par sécurité, nous avons déterminé que si l'agresseur.euse ne parvient pas à trouver une personne à agresser après 4 essais, alors iel n'agresse pas. 
-Les personnes agressées voient leur santé mentale diminuer de 20 (sur 100 lorsqu'elle est au maximum). Cette valeur a été déterminée arbitrairement car l'impact d'une agression sexuelle n'est pas quantifiable. Une victime informe l'entreprise de l'agression dans 30% des cas [<sup>lien</sup>](https://juridique.defenseurdesdroits.fr/doc_num.php?explnum_id=20252). Cette source explique aussi que 35% des signalements se sont conclus "au détriment de l'auteur" mais que "celui-ci n'a pas finalement pas été sanctionné" dans la moitié de ces cas. Nous faisons donc l'hypothèse qu'en cas de licenciement, un.e agresseur.euse est licencié.e dans 17.5% des cas (35/2).
+Chaque employé·e identifié·e comme un·e agresseur·euse agresse tous les ans une fois. Iel agresse quelqu'un du genre opposé sauf si l'entreprise ne contient que des employé·e·s de même genre. Iel ne s'agresse pas lui-même. Par sécurité, nous avons déterminé que si l'agresseur.euse ne parvient pas à trouver une personne à agresser après 4 essais, alors iel n'agresse pas. 
+Les personnes agressées voient leur santé mentale diminuer de 20 (sur 100 lorsqu'elle est au maximum). Cette valeur a été déterminée arbitrairement car l'impact d'une agression sexuelle n'est pas quantifiable. Une victime informe l'entreprise de l'agression dans 30% des cas [<sup>6</sup>](https://juridique.defenseurdesdroits.fr/doc_num.php?explnum_id=20252). Cette source explique aussi que 35% des signalements se sont conclus "au détriment de l'auteur" mais que "celui-ci n'a pas finalement pas été sanctionné" dans la moitié de ces cas. Nous faisons donc l'hypothèse qu'en cas de licenciement, un·e agresseur·euse est licencié·e dans 17.5% des cas (35/2).
 
 #### Départs (hors licenciement)
-En dehors du licenciement, les employé.e.s peuvent quitter l'entreprise pour plusieurs raisons :
+En dehors du licenciement, les employé·e·s peuvent quitter l'entreprise pour plusieurs raisons :
 - Dépression (si santeMentale = 0)
 - Retraite (si anciennete = 43)
 - Démission spontanée
 
-Un.e employé.e a 2.7% de chance de démissionner de l'entreprise (source : *Dares*, 1er trimestre 2022 [<sup>lien</sup>](https://dares.travail-emploi.gouv.fr/publication/la-france-vit-elle-une-grande-demission)).
-Cependant, la présence de femmes au sein d'une entreprise a tendance à augmenter la rétention des employé.e.s. D'après *Catalyst* [<sup>lien</sup>](https://effet-a.com/dossier-equite/5-bonnes-raisons-dengager-plus-de-femmes/), 20% de l'intérêt des employé.e.s à rester dans une entreprise correspond à un sentiment d'inclusion . Par conséquent, nous faisons l'hypothèse qu'en présence d'un nombre de femmes suffisants, les employé.e.s ont 20% moins de chance de démissionner. Pour déterminer ce pourcentage de femmes seuil, nous nous sommes appuyé sur les travaux de Rosabeth Kanter décrits dans une étude [<sup>lien</sup>](https://www.cairn.info/revue-travail-genre-et-societes-2010-1-page-181.htm). Elle considère qu'il faut qu'une minorité représente au moins 35% de l'effectif d'une organisation pour qu'elle ait un impact sur cette dernière. Ainsi, nous réduisons de 20% le pourcentage de chance de démission si les femmes représentent au moins 35% de l'effectif de l'entreprise.
+Un·e employé·e a 2.7% de chance de démissionner de l'entreprise (source : *Dares*, 1er trimestre 2022 [<sup>7</sup>](https://dares.travail-emploi.gouv.fr/publication/la-france-vit-elle-une-grande-demission)).
+Cependant, la présence de femmes au sein d'une entreprise a tendance à augmenter la rétention des employé·e·s. D'après *Catalyst* [<sup>8</sup>](https://effet-a.com/dossier-equite/5-bonnes-raisons-dengager-plus-de-femmes/), 20% de l'intérêt des employé·e·s à rester dans une entreprise correspond à un sentiment d'inclusion. Par conséquent, nous faisons l'hypothèse qu'en présence d'un nombre de femmes suffisants, les employé·e·s ont 20% moins de chance de démissionner. Pour déterminer ce pourcentage de femmes seuil, nous nous sommes appuyé sur les travaux de Rosabeth Kanter décrits dans une étude [<sup>9</sup>](https://www.cairn.info/revue-travail-genre-et-societes-2010-1-page-181.htm). Elle considère qu'il faut qu'une minorité représente au moins 35% de l'effectif d'une organisation pour qu'elle ait un impact sur cette dernière. Ainsi, nous réduisons de 20% le pourcentage de chance de démission si les femmes représentent au moins 35% de l'effectif de l'entreprise.
 - Démission après congé maternité 
 
-3 femmes sur 10 changent d'employeur après un congé maternité [<sup>lien</sup>](https://www.gereso.com/actualites/2022/12/22/apres-conge-maternite-risque-demission/). Nous modélisons donc que 30% des femmes posent leur démission après leur congé maternité. Nous n'avons pas trouvé de chiffres équivalents pour les hommes donc nous considérons qu'ils ne démissionnent pas après leurs congés paternité.
+3 femmes sur 10 changent d'employeur après un congé maternité [<sup>10</sup>](https://www.gereso.com/actualites/2022/12/22/apres-conge-maternite-risque-demission/). Nous modélisons donc que 30% des femmes posent leur démission après leur congé maternité. Nous n'avons pas trouvé de chiffres équivalents pour les hommes donc nous considérons qu'ils ne démissionnent pas après leurs congés paternité.
 
 #### Congés maternité
-Aucune source fournissant le nombre de naissances par an au sein d'une entreprise n'a été trouvée. Par conséquent, nous avons utilisé l'indice de natalité français [<sup>lien</sup>](https://data.worldbank.org/indicator/SP.DYN.TFRT.IN?end=2021&start=2021&view=bar) indiquant qu'en moyenne un individu a 1.83 enfant en France. Puis, nous avons considéré qu'une femme a un enfant entre 20 et 60 ans donc qu'elle dispose de 40 ans pour avoir 1.83 enfant. Ainsi, nous considérons qu'un.e employé.e a une probabilité de .04575 d'avoir un enfant au sein de son foyer par an. Nous n'avons pas placé de limites sur le nombre d'enfants qu'un.e employé.e peut avoir.
-Le congé de maternité est obligatoire [<sup>lien</sup>](https://www.service-public.fr/particuliers/vosdroits/F2265/personnalisation/resultat?lang=&quest0=0&quest1=0&quest=) donc toutes les femmes ayant un enfant partent en congé maternité. Les hommes ont 71% de chance de partir en congé maternité (chiffre issu d'une étude de la *Drees* en 2021 [<sup>lien</sup>](https://www.lefigaro.fr/social/de-plus-en-plus-de-peres-prennent-leur-conge-paternite-mais-des-inegalites-demeurent-20230720)).
-Pour simplifier la modélisation, nous considérons que toute personne partant en congé maternité part pendant la durée maximale du congé maternité (ce qui s'éloigne de la réalite). Un congé maternité peut durer jusqu'à 4 mois et un congé paternité jusqu'à 1 mois [<sup>lien</sup>](https://www.capital.fr/votre-carriere/conge-parental-1323770). 
-Le remplacement de l'employé.e en congé parental n'a pas été modélisé.
+Aucune source fournissant le nombre de naissances par an au sein d'une entreprise n'a été trouvée. Par conséquent, nous avons utilisé l'indice de natalité français [<sup>11</sup>](https://data.worldbank.org/indicator/SP.DYN.TFRT.IN?end=2021&start=2021&view=bar) indiquant qu'en moyenne un individu a 1.83 enfant en France. Puis, nous avons considéré qu'une femme a un enfant entre 20 et 60 ans donc qu'elle dispose de 40 ans pour avoir 1.83 enfant. Ainsi, nous considérons qu'un·e employé·e a une probabilité de 0.04575 d'avoir un enfant au sein de son foyer par an. Nous n'avons pas placé de limites sur le nombre d'enfants qu'un·e employé·e peut avoir.
+Le congé de maternité est obligatoire [<sup>12</sup>](https://www.service-public.fr/particuliers/vosdroits/F2265/personnalisation/resultat?lang=&quest0=0&quest1=0&quest=) donc toutes les femmes ayant un enfant partent en congé maternité. Les hommes ont 71% de chance de partir en congé maternité (chiffre issu d'une étude de la *Drees* en 2021 [<sup>13</sup>](https://www.lefigaro.fr/social/de-plus-en-plus-de-peres-prennent-leur-conge-paternite-mais-des-inegalites-demeurent-20230720).
+Pour simplifier la modélisation, nous considérons que toute personne partant en congé maternité part pendant la durée maximale du congé maternité (ce qui s'éloigne de la réalite). Un congé maternité peut durer jusqu'à 4 mois et un congé paternité jusqu'à 1 mois [<sup>14</sup>](https://www.capital.fr/votre-carriere/conge-parental-1323770). 
+Le remplacement de l'employé·e en congé parental n'a pas été modélisé.
 
 #### Formation
-Pour augmenter les compétences des employé.e.s, nous avons décidé de modéliser des formations annuelles auxquelles participent 32% des employé.e.s choisi.e.s aléatoirement mais de façon à ce que 50% des participant.e.s soient des femmes [<sup>lien</sup>](https://modelesdebusinessplan.com/blogs/infos/marche-formation-professionnelle). Nous avons considéré arbitrairement qu'au bout de 5 formations suivies, un.e employé.e gagne un point de compétence.
+Pour augmenter les compétences des employé·e·s, nous avons décidé de modéliser des formations annuelles auxquelles participent 32% des employé·e·s choisi·e·s aléatoirement mais de façon à ce que 50% des participant·e·s soient des femmes [<sup>15</sup>](https://modelesdebusinessplan.com/blogs/infos/marche-formation-professionnelle). Nous avons considéré arbitrairement qu'au bout de 5 formations suivies, un·e employé·e gagne un point de compétence.
 
 #### Team building
-Pour que les employé.e.s puissent gagner en santé mentale, nous avons décidé de modéliser des team building. L'entreprise en organise 2 par an, tous les employé.e.s y participent et gagnent 1 point en santé mentale (valeur arbitraire).
+Pour que les employé·e·s puissent gagner en santé mentale, nous avons décidé de modéliser des team building. L'entreprise en organise 2 par an, tous les employé·e·s y participent et gagnent 1 point en santé mentale (valeur arbitraire).
 
 #### Bénéfices
 La valeur de bénéfice affichée par la simulation correspond à l'argent généré par l'entreprise à la fin de l'année. Ainsi, cela correspond au chiffre d'affaire de l'entreprise soustrait à ses dépenses. 
 
-Nous voulons que le chiffre d'affaire dépende de la santé mentale et des compétences des employé.e.s. Pour calculer ce que rapporte un.e employé.e de l'entreprise modélisé par an, nous utilisons la formule suivante :
+Nous voulons que le chiffre d'affaire dépende de la santé mentale et des compétences des employé·e·s. Pour calculer ce que rapporte un·e employé·e de l'entreprise modélisé par an, nous utilisons la formule suivante :
 
 *apportEmploye = ChiffreAffaireEmploye x santeMentaleEmploye/100 x competenceEmploye/5 - coutEmploye*
 
-La valeur de santé mentale de l'employé.e est divisée par 100 afin que si la santé mentale n'est pas pleine, elle réduit la productivité de l'employé.e. De même, la compétence de l'employé.e est divisée par 5 car un.e employé.e moyen a une compétence de 5.
+La valeur de santé mentale de l'employé·e est divisée par 100 afin que si la santé mentale n'est pas pleine, elle réduit la productivité de l'employé·e. De même, la compétence de l'employé·e est divisée par 5 car un·e employé·e moyen a une compétence de 5.
 
-Le chiffre d'affaire par salarié.e dépend de plusieurs facteurs, comme la taille de l'entreprise ou son secteur. Nous avons modélisé une entreprise très générale, sans définir de secteur spécifique donc nous ne prenons pas cela en compte. Nous pouvons toutefois nuancer la valeur du chiffre d'affaire par employé.e en fonction de la taille de l'entreprise [<sup>lien</sup>](https://letowski.fr/quelques-grands-indicateurs-par-tranche-de-taille-dentreprise/).
+Le chiffre d'affaire par salarié·e dépend de plusieurs facteurs, comme la taille de l'entreprise ou son secteur. Nous avons modélisé une entreprise très générale, sans définir de secteur spécifique donc nous ne prenons pas cela en compte. Nous pouvons toutefois nuancer la valeur du chiffre d'affaire par employé·e en fonction de la taille de l'entreprise [<sup>16</sup>](https://letowski.fr/quelques-grands-indicateurs-par-tranche-de-taille-dentreprise/).
 
-Pour déterminer le coût d'un employé.e, nous avons utilisé le simulateur de l'Urssaf[<sup>lien</sup>](https://mon-entreprise.urssaf.fr/simulateurs/salaire-brut-net) à partir du salaire médian en France (2100€ net par mois [<sup>lien</sup>](https://www.lavoixdunord.fr/1385688/article/2023-10-16/quel-est-le-salaire-median-des-francais-en-2023)).
+Pour déterminer le coût d'un employé·e, nous avons utilisé le simulateur de l'Urssaf[<sup>17</sup>](https://mon-entreprise.urssaf.fr/simulateurs/salaire-brut-net) à partir du salaire médian en France (2100€ net par mois [<sup>18</sup>](https://www.lavoixdunord.fr/1385688/article/2023-10-16/quel-est-le-salaire-median-des-francais-en-2023)).
 
-Pendant la durée de leur congé parental, les employé.e.s concerné.e.s ne rapportent rien à l'entreprise mais ne leur coûte aussi rien car c'est la sécurité sociale qui prend en charge leur salaire.
+Pendant la durée de leur congé parental, les employé·e·s concerné·e·s ne rapportent rien à l'entreprise mais ne leur coûte aussi rien car c'est la sécurité sociale qui prend en charge leur salaire.
 
-D'après une étude [<sup>lien</sup>](https://www.cairn.info/revue-travail-genre-et-societes-2010-1-page-181.htm), si le pourcentage de femmes au sein d'une entreprise dépasse 35%, le bénéfice généré est supérieur de 28.49%. La valeur calculée du bénéfice prend en compte cela.
+D'après une étude [<sup>19</sup>](https://www.cairn.info/revue-travail-genre-et-societes-2010-1-page-181.htm), si le pourcentage de femmes au sein d'une entreprise dépasse 35%, le bénéfice généré est supérieur de 28.49%. La valeur calculée du bénéfice prend en compte cela.
 
-A l'inverse, si une entreprise ne respecte pas la loi Rixain sur la parité, elle se voit recevoir une amende d'1% de sa masse salariale [<sup>lien</sup>](https://www.fntp.fr/infodoc/travail-protection-sociale/relations-individuelles-de-travail/execution-du-contrat/loi). La loi Rixain demande 30% de femmes cadres dirigeantes à partir de 2026 et 40% à partir de 2029. Comme nous n'avons pas de différences hiérarchiques entre les employé.e.s, nous décidons d'appliquer une amende si le pourcentage de femmes est inférieure à 40%. De plus, comme nous ne modélisons pas les salaires, l'amende est d'1% du chiffre d'affaire.
+À l'inverse, si une entreprise ne respecte pas la loi Rixain sur la parité, elle se voit recevoir une amende d'1% de sa masse salariale [<sup>20</sup>](https://www.fntp.fr/infodoc/travail-protection-sociale/relations-individuelles-de-travail/execution-du-contrat/loi). La loi Rixain demande 30% de femmes cadres dirigeantes à partir de 2026 et 40% à partir de 2029. Comme nous n'avons pas de différences hiérarchiques entre les employé·e·s, nous décidons d'appliquer une amende si le pourcentage de femmes est inférieure à 40%. De plus, comme nous ne modélisons pas les salaires, l'amende est d'1% du chiffre d'affaire.
 
-Enfin, nous déduisons du bénéfice le coût de fonctionnement de l'entreprise. Cela inclut le coût du recrutement qu'on estime à 6500 euros par poste [<sup>lien</sup>](https://factorial.fr/blog/vrai-cout-dun-recrutement). Le coût des team building est aussi pris en compte [<sup>lien</sup>](https://blog.funbooker.com/budget-team-building/) ainsi que le coût des formations. Une formation coûte en moyenne 500€ par jour par personne [<sup>lien</sup>](https://www.cnfce.com/faq/formation-professionnelle/prix-formation-professionnelle). Elles sont financées à 45% par les entreprise et qu'elle dure en moyenne 46 heures soit 7 jours si on considère un régime de 35h par semaine [<sup>lien</sup>](https://edusign.com/fr/blog/20-chiffres-cles-sur-la-formation-professionnelle/). Ces données nous permettent de modéliser le coût des formations pour l'entreprise : 
+Enfin, nous déduisons du bénéfice le coût de fonctionnement de l'entreprise. Cela inclut le coût du recrutement qu'on estime à 6500 euros par poste [<sup>21</sup>](https://factorial.fr/blog/vrai-cout-dun-recrutement). Le coût des team building est aussi pris en compte [<sup>22</sup>](https://blog.funbooker.com/budget-team-building/) ainsi que le coût des formations. Une formation coûte en moyenne 500€ par jour par personne [<sup>23</sup>](https://www.cnfce.com/faq/formation-professionnelle/prix-formation-professionnelle). Elles sont financées à 45% par les entreprise et qu'elle dure en moyenne 46 heures soit 7 jours si on considère un régime de 35h par semaine [<sup>24</sup>](https://edusign.com/fr/blog/20-chiffres-cles-sur-la-formation-professionnelle/). Ces données nous permettent de modéliser le coût des formations pour l'entreprise : 
 *nbEmployesFormes x 500 x 7 x 0.45*.
 
 ### L'exprimer dans le code
-**A FAIRE insérer diagramme de classe et séquence, parler des loggers**
 
 #### Simulation
 Cette classe gère la simulation et en particulier le lien entre le front et la back.
@@ -235,38 +249,38 @@ Il attend un message de l'entreprise qui intervient à chaque pas de temps.
 
 Si le message est `RECRUTEMENT` alors il peut désormais commencer le recrutement.
 Un message de type `RECRUTEMENT` est accompagné du nombre de postes à pourvoir. 
-Il génère donc un nombre de candidat.e.s correspondant à 18 fois le nombre de postes à pourvoir (voir  [Ce qui est modélisé et les sources](#ce-qui-est-modélisé-et-les-sources)). Puis, il sélectionne les candidat.e.s en fonction des différents choix de l'utilisateur.ice, soit la présence d'une répartion homme-femme souhaité ou non ainsi que la stratégie de recrutement à appliquer avec les paramètres correspondant. 
+Il génère donc un nombre de candidat·e·s correspondant à 18 fois le nombre de postes à pourvoir (voir  [Ce qui est modélisé et les sources](#ce-qui-est-modélisé-et-les-sources)). Puis, il sélectionne les candidat·e·s en fonction des différents choix de l'utilisateur·ice, soit la présence d'une répartion homme-femme souhaité ou non ainsi que la stratégie de recrutement à appliquer avec les paramètres correspondant. 
 
-Pour le recrutement *CompetencesEgales*, il sélectionne le.la candidat.e le.la plus compétent.e. En cas d'égalité, il respecte si possible la priorité précisée par l'utilisateur.rice et choisit au hasard s'il y a encore des égalités (par exemple priorité aux femmes et égalité entre femmes). Dans le cas où il ne peut pas (par exemple priorité aux femmes mais égalité entre hommes), il sélectionne également au hasard.
+Pour le recrutement *CompetencesEgales*, il sélectionne le/la candidat·e le/la plus compétent·e. En cas d'égalité, il respecte si possible la priorité précisée par l'utilisateur·rice et choisit au hasard s'il y a encore des égalités (par exemple priorité aux femmes et égalité entre femmes). Dans le cas où il ne peut pas (par exemple priorité aux femmes mais égalité entre hommes), il sélectionne également au hasard.
 
-Pour le recrutement *PlacesReserveesFemme* ou *PlacesReserveesHomme*, le nombre de places à réserver *N* est calculé en fonction du pourcentage renseigné. Puis si possible, les *N*  individus les plus compétents du genre favorisé sont recrutés. Pour le reste des postes à pourvoir (avec potentiellement les places réservées inoccupées par manque de candidat.e.s du genre souhaité), les candidat.e.s les plus compétent.e.s sont recruté.e.s peu importe leur genre et en cas d'égalité, le hasard les départage.
+Pour le recrutement *PlacesReserveesFemme* ou *PlacesReserveesHomme*, le nombre de places à réserver *N* est calculé en fonction du pourcentage renseigné. Puis si possible, les *N*  individus les plus compétents du genre favorisé sont recrutés. Pour le reste des postes à pourvoir (avec potentiellement les places réservées inoccupées par manque de candidat·e·s du genre souhaité), les candidat·e·s les plus compétent·e·s sont recruté·e·s peu importe leur genre et en cas d'égalité, le hasard les départage.
 
-Une fois tous les candidats choisis, il démarre les agents correspondant aux candidat.e.s embauché.e.s. Enfin, l'agent envoie un message `FIN_RECRUTEMENT` à l'entreprise pour l'informer de la fin du recrutement et lui fournir un slice contenant tous les nouveaux employé.e.s. 
+Une fois tous les candidats choisis, il démarre les agents correspondant aux candidat·e·s embauché·e·s. Enfin, l'agent envoie un message `FIN_RECRUTEMENT` à l'entreprise pour l'informer de la fin du recrutement et lui fournir un slice contenant tous les nouveaux employé·e·s. 
 
 Si le message est `FIN_AGENT`, l'agent Recrutement passe son attribut fin à `true` ce qui lui permettra de sortir de la boucle de vie.
 
 ## Les résultats
 **A FAIRE**
 
-## Non pris en compte dans notre modélisation[<sup>lien</sup>](https://infonet.fr/actualite/focus/parite-femme-homme-en-entreprise-7-pratiques-a-adopter/)
+## Non pris en compte dans notre modélisation[<sup>25</sup>](https://infonet.fr/actualite/focus/parite-femme-homme-en-entreprise-7-pratiques-a-adopter/)
 
 De nombreux éléments entrant en compte dans la parité en entreprise n'ont pas été pris en compte dans cette modélisation et pourraient être ajoutés. Nous ne les avons pas mis en place par manque de temps, mais aussi à cause des difficultés de modélisation et du manque de chiffres sur lesquels nous appuyer.
 
 ### La rédaction de l'annonce
-Les annonces doivent être rédigées de façon neutre : pas de masculin par défaut, éviter les adjectifs associés à des clichés de genre, etc. La loi impose notamment la mention "F-H ou H-F" dans les offres d'emploi[<sup>lien</sup>](https://analyseur.acompetenceegale.com/comment-eviter-discriminations-a-lembauche-selon-sexe/).
+Les annonces doivent être rédigées de façon neutre : pas de masculin par défaut, éviter les adjectifs associés à des clichés de genre, etc. La loi impose notamment la mention "F-H ou H-F" dans les offres d'emploi[<sup>26</sup>](https://analyseur.acompetenceegale.com/comment-eviter-discriminations-a-lembauche-selon-sexe/).
 Nous aurions pu modifier la proportion de femmes ou d'hommes postulant pour une offre en fonction de la formulation de l'annonce.
 
 ### La présentation de l'entreprise
 Une entreprise devrait mettre autant en avant des employés hommes que des employées femmes sur les sites de présentation de l'entreprise, et ceux dans tous les domaines d'activité (c'est-à-dire, ne pas représenter des femmes que pour les postes en ressources humaines, ou que des hommes pour les postes considérés comme plus techniques).
-Nous aurions pu modifier la proportion de femmes ou d'hommes postulant pour une offre d'emploi en fonction de la proportion de femmes et d'hommes représenté.e.s sur le site de l'entreprise.
+Nous aurions pu modifier la proportion de femmes ou d'hommes postulant pour une offre d'emploi en fonction de la proportion de femmes et d'hommes représenté·e·s sur le site de l'entreprise.
 
 ### L'anonymisation des candidatures
 Dans un premier temps du processus de recrutement de l'entreprise, il est conseillé d'anonymiser les candidatures.
-Nous aurions pu modifier la proportion de femmes ou d'hommes convoqué.e.s en entretien en fonction de si l'entreprise l'anonymise les candidatures.
+Nous aurions pu modifier la proportion de femmes ou d'hommes convoquée en entretien en fonction de si l'entreprise l'anonymise les candidatures.
 
 ### Les entretiens
-Avoir une équipe avec autant de femmes que d'hommes, à la fois pour limiter les biais lors du choix de recrutement, mais aussi pour montrer une plus grande diversité aux candidat.e.s participant au processus de recrutement. De plus, on peut penser à prendre en entretien autant de femmes que d'hommes.
-Nous aurions pu modifier qui reçoit une offre d'emploi sur ce critère, ou encore, modifier la réponse du/de la candidat.e sélectionné.e.
+Avoir une équipe avec autant de femmes que d'hommes, à la fois pour limiter les biais lors du choix de recrutement, mais aussi pour montrer une plus grande diversité aux candidat·e·s participant au processus de recrutement. De plus, on peut penser à prendre en entretien autant de femmes que d'hommes.
+Nous aurions pu modifier qui reçoit une offre d'emploi sur ce critère, ou encore, modifier la réponse du/de la candidat·e sélectionné·e.
 
 ### Les avantages au sein de l'entreprise
 L'entreprise peut proposer des avantages comme une crèche au sein de l'entreprise, des horaires flexibles, du télétravail, etc.
@@ -277,17 +291,17 @@ Les entreprises peuvent prendre des mesures contre les violences sexistes et sex
 Nous aurions pu prendre ces éléments en considération sur la façon dont les agressions sont gérées (sanctions différentes, etc.), et éventuellement modifier les probabilités qu'une agression ait lieu (une personne ayant suivi une formation a moins de chance d'agresser, etc.).
 
 ### Les VSS
-Notre modélisation s'appuie sur des chiffres concernant les agressions sexuelles **A FAIRE vérifier ça**. Nous aurions pu prendre en compte toutes les VSS et changer l'impact sur la santé mentale en fonction des différents types de VSS (et aussi changer les sanctions pour l'employé.e qui les a commises).
+Notre modélisation s'appuie sur des chiffres concernant le harcélement sexuel que nous avons assimilé à des agressions sexuelles. Nous aurions pu prendre en compte toutes les VSS et changer l'impact sur la santé mentale en fonction des différents types de VSS (et aussi changer les sanctions pour l'employé·e qui les a commises).
 
 ### L'intervention du/de la psychologue d'entreprise
-Lors de signalement pour violence sexiste ou sexuelle, le personne ayant déposée le signalement a le droit à un accompagnement par la.e psychologue de l'entreprise.
+Lors de signalement pour violence sexiste ou sexuelle, le personne ayant déposée le signalement a le droit à un accompagnement par la/le psychologue de l'entreprise.
 Nous aurions pu modéliser à quel point cet accompagnement est utile avec une hausse de santé mentale.
 
 ### Les causes de départs
-Nous prenons en compte les départs après les congés maternités, mais nous n'avons pas de chiffres pour les hommes. Nous ne prenons pas en compte les congés sans solde (la personne est toujours dans l'entreprise, mais ne travaille pas et ne perçoit pas de salaire), ni toutes les causes de départ. En particulier, il aurait été intéressant de prendre en compte les départs des employé.e.s s'occupant de proches malades (on suppose que les femmes partent plus souvent que les hommes dans ce cas).
+Nous prenons en compte les départs après les congés maternités, mais nous n'avons pas de chiffres pour les hommes. Nous ne prenons pas en compte les congés sans solde (la personne est toujours dans l'entreprise, mais ne travaille pas et ne perçoit pas de salaire), ni toutes les causes de départ. En particulier, il aurait été intéressant de prendre en compte les départs des employé·e·s s'occupant de proches malades (on suppose que les femmes partent plus souvent que les hommes dans ce cas).
 
 ### Les différences de salaire
-Dans notre modélisation, tous les employé.e.s ont le même salaire.
+Dans notre modélisation, tous les employé·e·s ont le même salaire.
 Pour être au plus proche de la réalité, il aurait fallu prendre en compte les différents postes, les augmentations et promotions.
 
 ### La hiérarchie des postes
@@ -298,7 +312,7 @@ L'entreprise modélisée n'a pas de secteur dédié : tous les chiffres utilisé
 Nous aurions pu laisser le choix à l'utilisateur.ice du secteur souhaité et prendre en compte les chiffres correspondant.
 
 ### Pourquoi nous n'avons pas utilisé l'index de l’égalité professionnelle entre les femmes et les hommes ?
-Cet index mis en place par le gouvernement, et devant être partagé tous les ans par les entreprises de plus de 50 salarié.e.s, permet de calculer l'égalité professionnelle entre les femmes et les hommes dans une entreprise. Il repose sur cinq indicateurs[<sup>lien</sup>](https://travail-emploi.gouv.fr/droit-du-travail/egalite-professionnelle-discrimination-et-harcelement/indexegapro) :
+Cet index mis en place par le gouvernement, et devant être partagé tous les ans par les entreprises de plus de 50 salarié·e·s, permet de calculer l'égalité professionnelle entre les femmes et les hommes dans une entreprise. Il repose sur cinq indicateurs[<sup>27</sup>](https://travail-emploi.gouv.fr/droit-du-travail/egalite-professionnelle-discrimination-et-harcelement/indexegapro) :
 >   * L’écart de rémunération femmes-hommes,
 >   * L’écart de répartition des augmentations individuelles,
 >   * L’écart de répartition des promotions (uniquement dans les entreprises de plus de 250 salariés),
@@ -314,10 +328,10 @@ En plus des ajouts possibles mentionnés dans la partie précédente, des points
 Un point d'amélioration serait l'ajout d'histogrammes pour montrer l'évolution d'autres valeurs pertinentes comme le nombre de départs, d'embauches, d'agressions au cours des ans. Par exemple, sur l'histogramme des embauches, des couleurs pourraient distinguer les embauches d'hommes et de femmes.
 
 ### Sur la modélisation
-* Le bénéfice : nous avons pris des chiffres très généraux sur les coûts des salarié.e.s, du recrutement et les bénéfices générés par les employé.e.s ;
+* Le bénéfice : nous avons pris des chiffres très généraux sur les coûts des salarié·e·s, du recrutement et les bénéfices générés par les employé·e·s ;
 * La montée de productivé liée à la présence d'hommes : nous n'avons pas de chiffres sur l’intérêt d’avoir des hommes sur la bonne ambiance dans l'entreprise et ne l'avons donc pas modélisé ;
 * Les départs après un congé paternité : nous n'avons un chiffre que pour les départs après un congé maternité ;
-* Le team building : on modélise boost positif pour tous les employé.e.s lors de l'organisation d'un team building (ce qui n'est pas forcément le cas dans la réalité), mais nous n'avons pas de chiffre pour appuyer cette modélisation, et toutes les entreprises ne font pas de team building ;
-* Le recrutement : nous engageons chaque année 5% d'employé.e.s supplémentaires, mais c'est un chiffre décidé arbitrairement, de plus, nous considérons que les postes seront toujours pourvus, et nous ne cherchons pas à remplacer les personnes qui ont quitté l'entreprise (le recrutement est fait indépendamment des départs et les embauches représentent toujours une hausse de 5% de l'effectif total) ;
+* Le team building : on modélise boost positif pour tous les employé·e·s lors de l'organisation d'un team building (ce qui n'est pas forcément le cas dans la réalité), mais nous n'avons pas de chiffre pour appuyer cette modélisation, et toutes les entreprises ne font pas de team building ;
+* Le recrutement : nous engageons chaque année 5% d'employé·e·s supplémentaires, mais c'est un chiffre décidé arbitrairement, de plus, nous considérons que les postes seront toujours pourvus, et nous ne cherchons pas à remplacer les personnes qui ont quitté l'entreprise (le recrutement est fait indépendamment des départs et les embauches représentent toujours une hausse de 5% de l'effectif total) ;
 * L'amende liée à l'absence de femme : il s'agit d'une amende liée à la loi de Rixain qui est prise en compte dans notre modélisation, mais cette loi ne s’appliquera qu’à partir de 2026 ;
 * Les méthodes de recrutement : pour rappel, les places réservées n'existent pas dans la réalité.

@@ -1,4 +1,5 @@
 // Les champs avec les informations initiales
+const anneesInit = document.getElementById("annees-init");
 const objectif = document.getElementById("objectif");
 const recrutement = document.getElementById("recrutement");
 const nbEmployesInit = document.getElementById("nb-employes-init");
@@ -13,6 +14,8 @@ const benefice = document.getElementById("benefice") //bénéfice indicateur
 // Les boutons pour selectionner le graphe que l'on souhaite
 const btnGraphVisuBenefices = document.getElementById("visu-benef");
 const btnGraphVisuParite = document.getElementById("visu-parite");
+const btnGraphVisuCompetences = document.getElementById("visu-competences");
+const btnGraphVisuSanteMentale = document.getElementById("visu-sante-mentale");
 
 // Les informations sur la simulation
 const statusSimu = document.getElementById("status-simu");

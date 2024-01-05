@@ -1,0 +1,57 @@
+@startuml Diagramme de séquence du déroulée de la vie des employés (toutes les actions ne sont pas présentées)
+
+title Diagramme de séquence du déroulée de la vie des employés (toutes les actions ne sont pas présentées)
+
+collections Employes
+
+activate Entreprise
+
+Entreprise -> Employes : Démarre
+
+activate Employes
+
+loop Employe.fin == false
+    Entreprise -> Employes : Envoie une action sur le channel de l'employé
+    alt msg.Act == LIBRE
+        Employes -> Employes : GagnerAnciennete()
+        alt Employes.Agresseur() == true
+            Employes -> Entreprise : EnvoyerEmploye()
+            Entreprise -> Entreprise : Tire un employé
+            Entreprise --> Employes : Victime
+            Employes -> Employes : L'agresseur envoie le message AGRESSION sur le channel de la victime
+        end alt
+        ' alt Employes dans Entreprise.formation
+        '     Employes -> Employes : Employes.seFormer()
+        ' end alt
+        ' alt Sous une certaine probabilité
+        '     Employes -> Employes : Employes.avoirEnfant()
+        ' end alt
+        ' alt A eu un enfant et est une femme et sous une certaine probabilité
+        '     Employes -> Employes : Employes.poserDemissionMaternite()
+        ' end alt
+        ' alt Employes.ancienneté > 43
+        '     Employes -> Employes : Employes.partirRetraite()
+        ' end alt
+        ' alt Sous une certaine probabilité
+        '     Employes -> Employes : Employes.poserDemission()
+        ' end alt
+    else msg.Act == AGRESSION
+        alt Sous une certaine probabilité
+            Employes -> Entreprise : RecevoirPlainte(victime, agresseur)
+            Entreprise -> Entreprise : Ajoute la plainte à la liste (utilisation de Lock())
+        end alt
+        Employes -> Employes : santeMentale -= 20
+        ' alt Employes.santeMentale < 0
+        '     Employes -> Employes : Employes.partirDepression()
+        ' end alt
+    else msg.Act == FIN
+        Employes -> Employes : fin = true
+    end alt
+    Employes -> Entreprise : Envoie un message sur le channel de l'entreprise pour dire qu'il a fini son action
+    Entreprise -> Entreprise : GestionPlaintes()
+
+end loop
+
+deactivate Employes
+
+@enduml
