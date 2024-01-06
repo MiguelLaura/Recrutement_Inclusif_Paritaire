@@ -580,9 +580,7 @@ func (ent *Entreprise) CalculerBenefice() int {
 	benef -= float64(constantes.PRIX_FORMATION * constantes.NB_JOURS_FORMATION * nbFormas)
 
 	// Amende si non parité
-	// Modèle le plus simple : si %Femmes ne respectent pas la loi (<40%), amende d'1% des bénéfices
-	// Modèle 2 plus proche de la réalité : amende si non respect pendant 3 ans consécutifs
-	// Modèle 3 le plus réaliste : amende à partir de 2029
+	// si %Femmes ne respectent pas la loi (<40%), amende d'1% des bénéfices
 	if ent.PourcentageFemmes() < constantes.SEUIL_AMENDE {
 		amende := benef * constantes.POURCENTAGE_AMENDE
 		ent.logger.LogfType(LOG_ENTREPRISE, "L'entreprise ne respecte pas la loi Rixain sur la parité (40%% de femmes minimum) et doit payer une amende de %d euros.", int(math.Round(amende)))
