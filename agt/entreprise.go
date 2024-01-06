@@ -158,7 +158,7 @@ func (ent *Entreprise) NbDeparts() int {
 func (ent *Entreprise) NbEnfants() int {
 	ent.RLock()
 	defer ent.RUnlock()
-	return ent.Cmpt().nbEnfants
+	return ent.cmpt.nbEnfants
 }
 
 func (ent *Entreprise) NbCongesMaternite() int {
