@@ -152,9 +152,6 @@ func (ent *Entreprise) NbDeparts() int {
 }
 
 func (ent *Entreprise) NbEnfants() int {
-	ent.RLock()
-	defer ent.RUnlock()
-
 	return ent.cmpt.nbEnfants
 }
 
@@ -263,9 +260,6 @@ func (ent *Entreprise) SetNbDepressions(nbDepressions int) {
 }
 
 func (ent *Entreprise) SetNbEnfants(nbEnfants int) {
-	ent.Lock()
-	defer ent.Unlock()
-
 	ent.cmpt.nbEnfants = nbEnfants
 }
 
@@ -695,6 +689,13 @@ func (ent *Entreprise) PourcentageFemmes() float64 {
 	femmes := FiltreFemme(ent.employes)
 	parite := float64(len(femmes)) / float64(ent.NbEmployes())
 	return math.Round(parite*100) / 100
+}
+
+func (ent *Entreprise) IncrementeNbEnfants() {
+	ent.Lock()
+	defer ent.Unlock()
+	nbEnfants := ent.NbEnfants() + 1
+	ent.SetNbEnfants(nbEnfants)
 }
 
 func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
