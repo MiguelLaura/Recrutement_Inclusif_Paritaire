@@ -118,7 +118,7 @@ function sendData(event) {
     console.log(formData)
 
     // Envoi des données au serveur en utilisant la méthode fetch avec la méthode POST
-    fetch('http://localhost:8080/new_simulation', {
+    fetch(`${window.location.protocol}//${window.location.host}/new_simulation`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json",

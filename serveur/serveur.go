@@ -242,6 +242,6 @@ func (rsa *RestServerAgent) Start() {
 	rsa.simulations = make(map[string]*agt.Simulation)
 
 	// lancement du serveur
-	log.Println("Listening on", rsa.addr)
+	fmt.Println("Listening on", rsa.addr)
 	go log.Fatal(s.ListenAndServe())
 }
