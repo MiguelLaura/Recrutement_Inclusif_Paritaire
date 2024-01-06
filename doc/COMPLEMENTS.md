@@ -40,7 +40,7 @@ Dans ce document se trouvent des informations supplémentaires sur le projet : c
     * [Les différences de salaire](#les-différences-de-salaire)
     * [La hiérarchie des postes](#la-hiérarchie-des-postes)
     * [Le secteur](#le-secteur)
-    * [Pourquoi nous n'avons pas utilisé l'index de l’égalité professionnelle entre les femmes et les hommes ?](#pourquoi-nous-navons-pas-utilisé-lindex-de-légalité-professionnelle-entre-les-femmes-et-les-hommes)
+    * [Pourquoi nous n'avons pas utilisé l'index de l’égalité professionnelle entre les femmes et les hommes ?](#pourquoi-nous-navons-pas-utilisé-lindex-de-légalité-professionnelle-entre-les-femmes-et-les-hommes-)
 * [Remarques sur la simulation actuelle](#remarques-sur-la-simulation-actuelle)
     * [Sur l'interface](#sur-linterface)
     * [Sur la modélisation](#sur-la-modélisation)
