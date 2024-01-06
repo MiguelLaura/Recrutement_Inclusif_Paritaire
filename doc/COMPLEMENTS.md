@@ -74,6 +74,8 @@ Pour cette stratégie, on recrute d’abord la personne la plus compétente. Si 
 
 <img src="capture_interface_visualisation.png" alt="capture de l'interface de visualisation" width="1000px"/>
 
+<img src="capture_simu_10000_emp.png" alt="capture d'une simulation avec 10 000 Employés" width="1000px"/>
+
 La validation du formulaire nous renvoie sur la page de simulation. Nous pouvons alors la lancer (soit de façon à ce que les pas s'enchaînent sans action de l'utilisateur·ice, soit en avançant pas à pas). On peut également arrêter la simulation, la mettre en pause et revenir au formulaire.
 Quand la simulation est lancée, on peut voir depuis combien d'années l'entreprise tourne sous la simulation, le nombre d'employé·e·s, la parité, les bénéfices. En particulier, on a des graphes nous montrant l'évolution, au cours des années, des bénéfices, de la parité, des compétences des employé·e·s et de la santé mentale des employé·e·s.
 Dans une partie *Tableau de bord*, on peut voir des informations sur ce qu'il se passe au cours des années. Ces informations sont divisées en catégories (on peut sélectionner les catégories qu'on souhaite voir dans le tableau de bord) :
