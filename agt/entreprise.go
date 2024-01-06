@@ -694,6 +694,7 @@ func (ent *Entreprise) PourcentageFemmes() float64 {
 func (ent *Entreprise) IncrementeNbEnfants() {
 	ent.Lock()
 	defer ent.Unlock()
+
 	nbEnfants := ent.NbEnfants() + 1
 	ent.SetNbEnfants(nbEnfants)
 }
