@@ -316,8 +316,8 @@ En plus des ajouts possibles mentionnés dans la partie précédente, des points
 
 ### Diagramme de classe
 
-<img src="Diagramme de classes centre sur la communication.png" alt="diagramme de classe réduit de la solution" width="700px"/>
+<img src="diag_classe_communication.png" alt="diagramme de classe réduit de la solution" width="700px"/>
 
 ### Diagramme de séquence de la vie des _Employés_
 
-<img src="Diagramme de séquence vie employe.png" alt="diagramme de séquence réduit de la vie des _Employés_" width="700px"/>
+<img src="diag_seq_vie_employe.png" alt="diagramme de séquence réduit de la vie des _Employés_" width="700px"/>

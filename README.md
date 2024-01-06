@@ -18,9 +18,11 @@ Notre principale question est donc : quelles sont les conséquences d’un recru
 
 ## Récupérer le projet et le lancer
 
-Le projet peut être récupéré avec la commande suivante : 
+Le projet peut être récupéré avec l'une des commandes suivantes : 
 ```bash
 git clone https://gitlab.utc.fr/mennynat/ia04-project.git
+ou
+go get gitlab.utc.fr/mennynat/ia04-project.git
 ```
 
 Ensuite, il faut récupérer toutes les dépendances du projet avec l'instruction :
