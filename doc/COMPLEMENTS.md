@@ -365,6 +365,7 @@ Cet index mis en place par le gouvernement, et devant être partagé tous les an
 >   * L’écart de répartition des promotions (uniquement dans les entreprises de plus de 250 salariés),
 >   * Le nombre de salariées augmentées à leur retour de congé de maternité,
 >   * La parité parmi les 10 plus hautes rémunérations.
+
 Cet index repose donc principalement sur des salaires et des promotions et augmentations que nous n'avons pas modélisées.
 
 ## Remarques sur la simulation actuelle
