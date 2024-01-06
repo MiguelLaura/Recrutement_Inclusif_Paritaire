@@ -16,7 +16,7 @@ import (
 // Permet d'envoyer un certain message à un Employe. Ce message contient une action qu'il va effectuer
 // ainsi qu'un payload optionnel permettant de transmettre des informations en plus à l'agent.
 func EnvoyerMessage(dest *Employe, act Action, payload any) {
-	dest.chnl <- Communicateur{act, payload}
+	dest.Chnl() <- Communicateur{act, payload}
 }
 
 // ---------------------
@@ -208,7 +208,7 @@ func (e *Employe) avoirEnfant() {
 	log.Printf("%s a un enfant", e.String())
 	nvEnfant := e.entreprise.NbEnfants() + 1
 	e.entreprise.SetNbEnfants(nvEnfant)
-	if e.Genre() == Femme {
+	if e.genre == Femme {
 		if rand.Float64() < constantes.PROBA_CONGE_F {
 			e.entreprise.RecevoirCongeParental(e)
 		}
@@ -280,7 +280,7 @@ func (e *Employe) Start() {
 		for !e.fin {
 			e.agir()
 		}
-		log.Printf("Fin de l'employé·e %s", e.Id())
+		log.Printf("Fin de l'employé·e %s", e.id)
 	}()
 }
 

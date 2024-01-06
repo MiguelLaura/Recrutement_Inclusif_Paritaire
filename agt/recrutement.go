@@ -10,6 +10,14 @@ import (
 )
 
 // ---------------------
+//        Général
+// ---------------------
+
+func EnvoyerMessageRecrutement(dest *Recrutement, act ActionRecrutement, payload any) {
+	dest.Chnl() <- CommunicateurRecrutement{act, payload}
+}
+
+// ---------------------
 //     Constructeurs
 // ---------------------
 
