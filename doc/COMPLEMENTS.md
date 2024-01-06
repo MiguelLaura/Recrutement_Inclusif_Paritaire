@@ -175,11 +175,11 @@ Enfin, nous déduisons du bénéfice le coût de fonctionnement de l'entreprise.
 [Voir la partie Annexes pour le diagramme de classe](#diagramme-de-classe)
 
 #### Simulation
-La simulation est la structure qui, à partir des informations choisies par l'utilisateur·ice, va créer l'entreprise et le recrutement associé. Elle possède aussi toutes les informations initiales, comme la réparition femmes-hommes du début mais aussi le nombre d'année maximum pendant laquelle la simulation doit tourner. La status de la simulation déterminera si on avance le pas de temps, si on met en pause les agents, etc. Ce status peut être modifié en interne, par exemple quand celle-ci est créée ou terminée, mais aussi par l'action de l'utilisateur·ice.
+La simulation est la structure qui, à partir des informations choisies par l'utilisateur·ice, va créer l'entreprise et le recrutement associé. Elle possède aussi toutes les informations initiales, comme la réparition femmes-hommes du début mais aussi le nombre d'années maximum pendant laquelle la simulation doit tourner. Le status de la simulation déterminera si on avance le pas de temps, si on met en pause les agents, etc. Ce status peut être modifié en interne, par exemple quand celle-ci est créée ou terminée, mais aussi par l'action de l'utilisateur·ice.
 
 Dans la boucle de la simulation, elle envoie un message à l'entreprise sur ce qu'elle doit faire et incrémente le pas de temps. Le message envoyé dependra du status de la simulation : si l'entreprise peut faire son cycle normalement, elle enverra `LIBRE`. Si jamais la simulation est en pause, alors elle n'enverra rien à l'entreprise. Enfin, si elle doit être arrêtée, alors le message sera `FIN`. 
 
-Comme les autres agents, la simulation possède un logger websocket sur lequel elle peut envoyer des informations. Ainsi, à la création d'une connexion websocket, lorsqu'il faut afficher les informations initiales de l'entreprise créée, la simulation va envoyer ces informations par log. La simulation prévient également l'interface de son status grâce à travers le log.
+Comme les autres agents, la simulation possède un logger websocket sur lequel elle peut envoyer des informations. Ainsi, à la création d'une connexion websocket, lorsqu'il faut afficher les informations initiales de l'entreprise créée, la simulation va envoyer ces informations par log. La simulation prévient également l'interface de son status à travers le log.
 
 
 #### _Entreprise_
@@ -227,11 +227,11 @@ Il attend un message de l'_Entreprise_ qui intervient à chaque pas de temps.
 
 Si le message est `RECRUTEMENT` alors il peut désormais commencer le _Recrutement_.
 Un message de type `RECRUTEMENT` est accompagné du nombre de postes à pourvoir. 
-Il génère donc un nombre de candidat·e·s correspondant à 18 fois le nombre de postes à pourvoir (voir  [Ce qui est modélisé et les sources](#ce-qui-est-modélisé-et-les-sources)). Puis, il sélectionne les candidat·e·s en fonction des différents choix de l'utilisateur·ice, soit la présence d'une répartition homme-femme souhaité ou non ainsi que la stratégie de _Recrutement_ à appliquer avec les paramètres correspondant. 
+Il génère donc un nombre de candidat·e·s correspondant à 18 fois le nombre de postes à pourvoir (voir [Ce qui est modélisé et les sources](#ce-qui-est-modélisé-et-les-sources)). Puis, il sélectionne les candidat·e·s en fonction des différents choix de l'utilisateur·ice, soit la présence d'une répartition homme-femme souhaité ou non ainsi que la stratégie de _Recrutement_ à appliquer avec les paramètres correspondant. 
 
 Pour le _Recrutement_ *CompétencesÉgales*, il sélectionne le/la candidat·e le/la plus compétent·e. En cas d'égalité, il respecte si possible la priorité précisée par l'utilisateur·ice et choisit au hasard s'il y a encore des égalités (par exemple priorité aux femmes et égalité entre femmes). Dans le cas où il ne peut pas (par exemple priorité aux femmes mais égalité entre hommes), il sélectionne également au hasard.
 
-Pour le _Recrutement_ *PlacesRéservéesFemme* ou *PlacesRéservéesHomme*, le nombre de places à réserver *N* est calculé en fonction du pourcentage renseigné. Puis si possible, les *N*  individus les plus compétents du genre favorisé sont recrutés. Pour le reste des postes à pourvoir (avec potentiellement les places réservées inoccupées par manque de candidat·e·s du genre souhaité), les candidat·e·s les plus compétent·e·s sont recruté·e·s peu importe leur genre et en cas d'égalité, le hasard les départage.
+Pour le _Recrutement_ *PlacesRéservéesFemme* ou *PlacesRéservéesHomme*, le nombre de places à réserver *N* est calculé en fonction du pourcentage renseigné. Puis si possible, les *N* individus les plus compétents du genre favorisé sont recrutés. Pour le reste des postes à pourvoir (avec potentiellement les places réservées inoccupées par manque de candidat·e·s du genre souhaité), les candidat·e·s les plus compétent·e·s sont recruté·e·s peu importe leur genre et en cas d'égalité, le hasard les départage.
 
 Une fois tous les candidats choisis, il démarre les agents correspondant aux candidat·e·s embauché·e·s. Enfin, l'agent envoie un message `FIN_RECRUTEMENT` à l'_Entreprise_ pour l'informer de la fin du _Recrutement_ et lui fournir un slice contenant tous les nouveaux _Employés_. 
 
