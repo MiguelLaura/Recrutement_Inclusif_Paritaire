@@ -7,6 +7,9 @@ Ce projet a été réalisé dans le cadre de l'UV IA04 enseignée à l'Universit
 * Nathan Menny
 * Laura Miguel
 
+## Note sur l'écriture inclusive
+Dans une volonté d'inclure chacun et chacune, nous avons utilisé le point médian de l'écriture inclusive dans l'interface et dans la documentation. Notre convention a été "employé·e·s", pour rendre visible le féminin et le pluriel. De plus, cette écriture n'est pas interdite à l'UTC.
+
 ## Le sujet
 Ce projet est une simulation d'une entreprise. On souhaite étudier la parité dans une entreprise. Nous nous sommes en particulier concentré·e·s sur le recrutement : c'est une étape systématique dans une entreprise qui peut influer sur la parité. Le but est donc de laisser l'utilisateur·ice choisir une façon d'effectuer son recrutement, de lancer la simulation et voir l'influence de ce recrutement sur le bénéfice de l'entreprise, le nombre de départs, etc.
 
@@ -55,7 +58,7 @@ Ceci va lancer un serveur web sur le port `8080` (par défaut) de le machine. Il
 
 ## Nombre max d'agents testés
 
-Afin de voir les limites de notre projet, nous avons lancé une simulation avec 10 000 _Employés_ et nous constatons que, bien que l'execution du programme soit bien ralenti, il tourne toujours (voir l'image ci-dessous). Cependant, lorsque l'on dépasse les 100 000 _Employés_ il de vient vraiment difficile pour le programme d'être fluide.
+Afin de voir les limites de notre projet, nous avons lancé une simulation avec 10 000 _Employés_ et nous constatons que, bien que l'execution du programme soit bien ralenti, il tourne toujours (voir l'image ci-dessous). Cependant, lorsque l'on dépasse les 100 000 _Employés_ il devient vraiment difficile pour le programme d'être fluide.
 
 <img src="img/capture_simu_10000_emp.png" alt="capture d'une simulation avec 10 000 Employés" width="1000px"/>
 
