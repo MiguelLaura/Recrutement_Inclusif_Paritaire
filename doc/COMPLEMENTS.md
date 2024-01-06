@@ -52,9 +52,7 @@ Dans ce document se trouvent des informations supplémentaires sur le projet : c
 
 <img src="capture_interface_formulaire.png" alt="capture du formulaire de création d'entreprise" width="1000px"/>
 
-Nous avons en premier temps un formulaire dans lequel l'utilisateur·ice entre les informations mentionnées ci-dessous.
-
-L'utilisateur·ice va pouvoir définir :
+Nous avons en premier temps un formulaire dans lequel l'utilisateur·ice va pouvoir définir :
 * le nombre d'employé·e·s de l'entreprise,
 * la durée de la simulation (un pas de la simulation correspond à une année dans l'entreprise),
 * le pourcentage initial de femmes dans l'entreprise,
