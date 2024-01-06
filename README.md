@@ -32,7 +32,26 @@ Enfin, le projet peut être lancé avec :
 go run ./cmd/launch-all/launch-all.go
 ```
 
-Ceci va lancer un serveur web sur le port `8080` de le machine. Il suffit après d'accéder à l'adresse `localhost:8080` pour arriver sur le formulaire de création d'entreprise.
+Il est possible de donner des arguments au script de lancement, les voici :
+
+```
+	launch-all [flags]
+
+Les flags peuvent être :
+
+	-h, --host nomHôte
+		Indique le nom de l'hôte.
+		Défaut : localhost
+
+	-p, --port numeroPort
+		Indique le port du serveur.
+		Défaut : 8080
+
+    -s 
+        Lance le serveur en mode silencieux (i.e. dans la console, seuls les logs envoyés au client sont affichés)
+```
+
+Ceci va lancer un serveur web sur le port `8080` (par défaut) de le machine. Il suffit après d'accéder à l'adresse `localhost:8080` (par défaut) pour arriver sur le formulaire de création d'entreprise.
 
 ## La table des matières
 
