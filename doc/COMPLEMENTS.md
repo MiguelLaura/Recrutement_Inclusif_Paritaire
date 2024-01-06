@@ -6,9 +6,9 @@ Dans ce document se trouvent des informations supplémentaires sur le projet : c
 
 * [L'interface de simulation](#linterface-de-simulation)
     * [Le formulaire](#le-formulaire)
-        * [Pourquoi un pourcentage de femmes à atteindre ?](#pourquoi-un-pourcentage-de-femmes-à-atteindre)
-        * [Places réservées ?](#places-réservées)
-        * [Compétences égales ?](#compétences-égales)
+        * [Pourquoi un pourcentage de femmes à atteindre ?](#pourquoi-un-pourcentage-de-femmes-à-atteindre-)
+        * [Places réservées ?](#places-réservées-)
+        * [Compétences égales ?](#compétences-égales-)
     * [La simulation](#la-simulation)
     * [Fonctionnement de l'interface](#fonctionnement-de-linterface)
 * [La modélisation](#la-modélisation)
@@ -24,10 +24,10 @@ Dans ce document se trouvent des informations supplémentaires sur le projet : c
     * [L'exprimer dans le code](#lexprimer-dans-le-code)
         * [_Simulation_](#simulation)
         * [_Entreprise_](#entreprise)
-        * [_Employé_](#code-employé)
+        * [_Employé_](#employé-1)
         * [_Recrutement_](#recrutement-1)
 * [Les résultats](#les-résultats)
-* [Non pris en compte dans notre modélisation](#pas-pris-en-compte)
+* [Non pris en compte dans notre modélisation](#non-pris-en-compte-dans-notre-modélisation26)
     * [La rédaction de l'annonce](#la-rédaction-de-lannonce)
     * [La présentation de l'entreprise](#la-présentation-de-lentreprise)
     * [L'anonymisation des candidatures](#lanonymisation-des-candidatures)
@@ -38,8 +38,9 @@ Dans ce document se trouvent des informations supplémentaires sur le projet : c
     * [L'intervention de la/du psychologue d'entreprise](#lintervention-de-ladu-psychologue-dentreprise)
     * [Les causes de départs](#les-causes-de-départs)
     * [Les différences de salaire](#les-différences-de-salaire)
+    * [La hiérarchie des postes](#la-hiérarchie-des-postes)
     * [Le secteur](#le-secteur)
-    * [Pourquoi nous n'avons pas utilisé l'index de l’égalité professionnelle entre les femmes et les hommes ?](#pourquoi-nous-navons-pas-utilisé-lindex-de-légalité-professionnelle-entre-les-femmes-et-les-hommes)
+    * [Pourquoi nous n'avons pas utilisé l'index de l’égalité professionnelle entre les femmes et les hommes ?](#pourquoi-nous-navons-pas-utilisé-lindex-de-légalité-professionnelle-entre-les-femmes-et-les-hommes-)
 * [Remarques sur la simulation actuelle](#remarques-sur-la-simulation-actuelle)
     * [Sur l'interface](#sur-linterface)
     * [Sur la modélisation](#sur-la-modélisation)
@@ -51,9 +52,7 @@ Dans ce document se trouvent des informations supplémentaires sur le projet : c
 
 <img src="capture_interface_formulaire.png" alt="capture du formulaire de création d'entreprise" width="1000px"/>
 
-Nous avons en premier temps un formulaire dans lequel l'utilisateur·ice entre les informations mentionnées ci-dessous. Il y a également des informations sur la simulation qui correspondent à la partie [Le sujet](#le-sujet) et cette partie.
-
-L'utilisateur·ice va pouvoir définir :
+Nous avons tout d'abord un formulaire dans lequel l'utilisateur·ice va pouvoir définir :
 * le nombre d'employé·e·s de l'entreprise,
 * la durée de la simulation (un pas de la simulation correspond à une année dans l'entreprise),
 * le pourcentage initial de femmes dans l'entreprise,
@@ -202,7 +201,7 @@ Pour arrêter tous les agents, l'_Entreprise_ envoie un message de fin sur les c
 
 Au cours des actions des _Employés_, ceux-ci peuvent changer les listes des _Employés_ démissionnaires, la liste des départs, la liste des plaintes, le nombre de dépressions et le nombre de congés parentaux : pour éviter des problèmes d'accès concurrents, les fonctions gérant ces changements posent un `Lock` sur l'_Entreprise_.
 
-#### <span id="code-employé">_Employé_<span>
+#### _Employé_
 
 [Voir la partie Annexes pour un diagramme de séquence réduit de le vie des _Employés_](#diagramme-de-séquence-de-la-vie-des-employés)
 
@@ -310,7 +309,7 @@ En effet, le groupe de candidat·e·s ne change pas après que les places réser
 
 **Une modélisation des biais au recrutement est donc indispensable pour s’approcher de la réalité.**
 
-## <span id="pas-pris-en-compte">Non pris en compte dans notre modélisation[<sup>26</sup>](https://infonet.fr/actualite/focus/parite-femme-homme-en-entreprise-7-pratiques-a-adopter/)</span>
+## Non pris en compte dans notre modélisation[<sup>26</sup>](https://infonet.fr/actualite/focus/parite-femme-homme-en-entreprise-7-pratiques-a-adopter/)
 
 De nombreux éléments entrant en compte dans la parité en entreprise n'ont pas été pris en compte dans cette modélisation et pourraient être ajoutés. Nous ne les avons pas mis en place par manque de temps, mais aussi à cause des difficultés de modélisation et du manque de chiffres sur lesquels nous appuyer.
 
@@ -366,6 +365,7 @@ Cet index mis en place par le gouvernement, et devant être partagé tous les an
 >   * L’écart de répartition des promotions (uniquement dans les entreprises de plus de 250 salariés),
 >   * Le nombre de salariées augmentées à leur retour de congé de maternité,
 >   * La parité parmi les 10 plus hautes rémunérations.
+
 Cet index repose donc principalement sur des salaires et des promotions et augmentations que nous n'avons pas modélisées.
 
 ## Remarques sur la simulation actuelle
