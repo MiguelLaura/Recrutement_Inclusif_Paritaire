@@ -124,7 +124,7 @@ func (rsa *RestServerAgent) creerNouvelleSimulation(w http.ResponseWriter, r *ht
 		return
 	} else if req.NbEmployes <= 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		msg := "erreur : le nombre d'employés doit être > 0"
+		msg := "erreur : le nombre d'employé·e·s doit être > 0"
 		log.Println(msg)
 		w.Write([]byte(msg))
 		return
@@ -242,6 +242,6 @@ func (rsa *RestServerAgent) Start() {
 	rsa.simulations = make(map[string]*agt.Simulation)
 
 	// lancement du serveur
-	log.Println("Listening on", rsa.addr)
+	fmt.Println("Listening on", rsa.addr)
 	go log.Fatal(s.ListenAndServe())
 }

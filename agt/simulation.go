@@ -22,7 +22,7 @@ func NewSimulation(nbEmployes int, pariteInit float64, obj float64, sav StratPar
 
 	simu.ent = *NewEntreprise(nbEmployes, pariteInit, &simu.logger)
 	recrut := NewRecrutement(&simu.ent, obj, sav, sap, trav, trap, ppav, ppap, &simu.logger)
-	simu.ent.AjouterRecrutement(*recrut)
+	simu.ent.SetRecrutement(*recrut)
 
 	simu.mettreAJourStatus(CREATED)
 
@@ -213,7 +213,7 @@ func (simu *Simulation) Relancer() {
 		&simu.logger,
 	)
 
-	simu.ent.AjouterRecrutement(*recrut)
+	simu.ent.SetRecrutement(*recrut)
 	simu.mettreAJourStatus(CREATED)
 
 	simu.logger.Log("La simulation a été recréée.")
@@ -235,7 +235,7 @@ func (simu *Simulation) terminerSimulation() {
 	// Permet d'attendre la fin effective de l'entreprise
 	EnvoyerMessageEntreprise(&simu.ent, FIN, nil)
 
-	log.Printf("Fin de la simulation [step: %d, nb employé fin : %d, début parité : %.2f, fin parité : %.2f]", simu.step, len(simu.ent.Employes()), simu.pariteInit, pariteFin)
+	log.Printf("Fin de la simulation [step: %d, nb employé·e·s fin : %d, début parité : %.2f, fin parité : %.2f]", simu.step, len(simu.ent.Employes()), simu.pariteInit, pariteFin)
 }
 
 func (simu *Simulation) mettreAJourStatus(nouveauStatus Status) {
@@ -342,7 +342,7 @@ func (simu *Simulation) startAgents() {
 	simu.step = 0
 	simu.start = time.Now()
 
-	go simu.ent.Start()
+	simu.ent.Start()
 
 	simu.locker.Add(1)
 

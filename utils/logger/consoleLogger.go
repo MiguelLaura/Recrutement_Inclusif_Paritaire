@@ -2,7 +2,7 @@ package logger
 
 import (
 	"fmt"
-	"log"
+	"time"
 )
 
 type ConsoleLogger struct{}
@@ -12,12 +12,14 @@ func NewConsoleLogger() *ConsoleLogger {
 }
 
 func (l *ConsoleLogger) Log(msg ...any) error {
-	log.Print(msg...)
+	now := time.Now()
+	timeStr := fmt.Sprintf("%s %s", now.Format(time.DateOnly), now.Format(time.TimeOnly))
+	fmt.Println(append([]any{timeStr}, msg...)...)
 	return nil
 }
 
 func (l *ConsoleLogger) Logf(format string, v ...any) error {
-	log.Printf(format, v...)
+	l.Log(fmt.Sprintf(format, v...))
 	return nil
 }
 

@@ -10,6 +10,14 @@ import (
 )
 
 // ---------------------
+//        Général
+// ---------------------
+
+func EnvoyerMessageRecrutement(dest *Recrutement, act ActionRecrutement, payload any) {
+	dest.Chnl() <- CommunicateurRecrutement{act, payload}
+}
+
+// ---------------------
 //     Constructeurs
 // ---------------------
 
@@ -157,12 +165,14 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 	if nbARecruter < 0 {
 		return nil
 	}
+
 	if strat != PrioFemme && strat != PrioHomme && strat != Hasard {
 		return nil
 	}
+
 	embauches = make([]*Employe, 0)
 	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH organise une campagne de recrutement pour %d poste(s).", nbARecruter)
-	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH cherche à recruter les candidat.e.s les plus compétent.e.s.")
+	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH cherche à recruter les candidat·e·s les plus compétent·e·s.")
 	for len(embauches) < nbARecruter {
 		maxCandidats := EmployeMaxCompetences(candidats)
 		if len(maxCandidats) == 1 {
@@ -174,20 +184,21 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 			switch strat {
 			case Hasard:
 				// Un.e candidat.e au hasard parmi les plus compétent.es est recruté
-				r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.e.s avec des compétences équivalentes ont postulé. On les départage par le hasard.")
+				r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat·e·s avec des compétences équivalentes ont postulé. On les départage par le hasard.")
 				idx = rand.Intn(len(maxCandidats))
 				embauches = append(embauches, maxCandidats[idx])
 				candidats = enleverEmploye(candidats, maxCandidats[idx])
+
 			case PrioFemme:
 				// Une femme au hasard parmi les candidat.es est recrutée
 				lFemmes := FiltreFemme(maxCandidats) // permet d'isoler les femmes parmi les candidat.es
 				if len(lFemmes) > 0 {
-					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.e.s avec des compétences équivalentes ont postulé. On privilégie les femmes.")
+					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat·e·s avec des compétences équivalentes ont postulé. On privilégie les femmes.")
 					idx = rand.Intn(len(lFemmes))
 					embauches = append(embauches, lFemmes[idx])
 					candidats = enleverEmploye(candidats, lFemmes[idx])
 				} else {
-					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.e.s avec des compétences équivalentes ont postulé. On veut privilégier les femmes, mais il n'y en a pas dans le groupe. Un homme est recruté.")
+					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat·e·s avec des compétences équivalentes ont postulé. On veut privilégier les femmes, mais il n'y en a pas dans le groupe. Un homme est recruté.")
 					// S'il n'y a pas de femmes parmi les candidats les plus compétents, on choisit au hasard
 					idx = rand.Intn(len(maxCandidats))
 					embauches = append(embauches, maxCandidats[idx])
@@ -198,12 +209,12 @@ func (r *Recrutement) RecrutementCompetencesEgales(nbARecruter int, strat StratP
 				// Un homme au hasard parmi les candidat.es est recruté
 				lHommes := FiltreHomme(maxCandidats) // permet d'isoler les hommes parmi les candidat.es
 				if len(lHommes) > 0 {
-					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.e.s avec des compétences équivalentes ont postulé. On privilégie les hommes.")
+					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat·e·s avec des compétences équivalentes ont postulé. On privilégie les hommes.")
 					idx = rand.Intn(len(lHommes))
 					embauches = append(embauches, lHommes[idx])
 					candidats = enleverEmploye(candidats, lHommes[idx])
 				} else {
-					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat.e.s avec des compétences équivalentes ont postulé. On veut privilégier les hommes, mais il n'y en a pas dans le groupe. Une femme est recrutée.")
+					r.logger.LogfType(LOG_RECRUTEMENT, "Plusieurs candidat·e·s avec des compétences équivalentes ont postulé. On veut privilégier les hommes, mais il n'y en a pas dans le groupe. Une femme est recrutée.")
 					// S'il n'y a pas d'hommes parmi les candidats les plus compétents, on choisit au hasard
 					idx = rand.Intn(len(maxCandidats))
 					embauches = append(embauches, maxCandidats[idx])
@@ -238,7 +249,7 @@ func (r *Recrutement) RecrutementPlacesReserveesFemme(nbARecruter int, candidats
 	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH veut recruter au minimum %d%% de femmes.", int(pourcentagePlace*100))
 
 	if nbFemmesARecruter != 0 {
-		r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH  réserve des places pour %d femme(s).", nbFemmesARecruter)
+		r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH réserve des places pour %d femme(s).", nbFemmesARecruter)
 		// 1ere etape : recruter les femmes les plus compétentes pour les places réservées
 		candidatsFemmes := FiltreFemme(candidats) // permet d'isoler les femmes parmi les candidat.es
 		for i := 0; i < nbFemmesARecruter; i++ {
@@ -257,7 +268,7 @@ func (r *Recrutement) RecrutementPlacesReserveesFemme(nbARecruter int, candidats
 		r.logger.LogfType(LOG_RECRUTEMENT, "Pas assez de femmes ont postulé à l'offre pour remplir les places reservées. Le service RH a donc recruté des hommes pour occuper tous les postes vacants.")
 	} else {
 		if len(embauches) < nbARecruter {
-			r.logger.LogfType(LOG_RECRUTEMENT, "Pour les postes vacants, les candidat.e.s les plus compétent.e.s sont recruté.e.s sans tenir compte de leur genre.")
+			r.logger.LogfType(LOG_RECRUTEMENT, "Pour les postes vacants, les candidat·e·s les plus compétent·e·s sont recruté·e·s sans tenir compte de leur genre.")
 		}
 
 	}
@@ -290,7 +301,7 @@ func (r *Recrutement) RecrutementPlacesReserveesHomme(nbARecruter int, candidats
 
 	r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH veut recruter au minimum %d%% d'hommes.", int(pourcentagePlace*100))
 	if nbHommesARecruter != 0 {
-		r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH  réserve des places pour %d homme(s).", nbHommesARecruter)
+		r.logger.LogfType(LOG_RECRUTEMENT, "Le service RH réserve des places pour %d homme(s).", nbHommesARecruter)
 		// 1ere etape : recruter les hommes les plus compétents pour les places réservées
 		candidatsHommes := FiltreHomme(candidats) // permet d'isoler les hommes parmi les candidat.es
 		for i := 0; i < nbHommesARecruter; i++ {
@@ -310,7 +321,7 @@ func (r *Recrutement) RecrutementPlacesReserveesHomme(nbARecruter int, candidats
 		r.logger.LogfType(LOG_RECRUTEMENT, "Pas assez d'hommes ont postulé à l'offre pour remplir les places reservées. Le service RH a donc recruté des femmes pour occuper tous les postes vacants.")
 	} else {
 		if len(embauches) < nbARecruter {
-			r.logger.LogfType(LOG_RECRUTEMENT, "Pour les postes vacants, les candidat.e.s les plus compétent.e.s sont recruté.e.s sans tenir compte de leur genre.")
+			r.logger.LogfType(LOG_RECRUTEMENT, "Pour les postes vacants, les candidat·e·s les plus compétent·e·s sont recruté·e·s sans tenir compte de leur genre.")
 		}
 	}
 	// Le reste des candidats sont sélectionnés uniquement pour leurs compétences
@@ -381,26 +392,26 @@ func (r *Recrutement) ChoixRecrutement(nbARecruter int, candidats []*Employe, ty
 // ---------------------
 
 func (r *Recrutement) Start() {
-	log.Printf("Le service de recrutement est opérationnel")
+	go func() {
+		log.Printf("Le service de recrutement est opérationnel")
 
-	// Boucle de vie
-	for !r.fin {
-		// Attend un message pour agir
-		msg := <-r.chnl
-		switch msg.Act {
-		case RECRUTEMENT:
-			embauches := r.Recruter(msg.Payload.(int))
-			for _, emp := range embauches {
-				go func(emp *Employe) {
+		// Boucle de vie
+		for !r.fin {
+			// Attend un message pour agir
+			msg := <-r.chnl
+			switch msg.Act {
+			case RECRUTEMENT:
+				embauches := r.Recruter(msg.Payload.(int))
+				for _, emp := range embauches {
 					emp.Start()
-				}(emp)
+				}
+
+				r.chnl <- CommunicateurRecrutement{FIN_RECRUTEMENT, embauches}
+
+			case FIN_AGENT:
+				r.fin = true
 			}
-
-			r.chnl <- CommunicateurRecrutement{FIN_RECRUTEMENT, embauches}
-
-		case FIN_AGENT:
-			r.fin = true
 		}
-	}
-	log.Printf("Fin du recrutement")
+		log.Printf("Fin du recrutement")
+	}()
 }
