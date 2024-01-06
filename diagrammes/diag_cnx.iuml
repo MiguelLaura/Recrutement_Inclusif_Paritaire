@@ -1,0 +1,22 @@
+@startuml
+
+title Diagramme de séquence de la connexion d'un client
+
+Client++
+Serveur++
+Client -> Serveur : demande la page d’accueil
+Client <-- Serveur : formulaire.html
+
+Client -> Client : remplit le formulaire
+Client -> Serveur : demande de création d'une simulation
+
+Serveur -> simulation** : new
+Serveur <-- simulation
+
+Client <-- Serveur : visualisation.html liée à la simulation créée
+
+Client -> Serveur : demande d'ouverture d'un canal Websocket
+Client <-- Serveur : ack
+
+
+@enduml
