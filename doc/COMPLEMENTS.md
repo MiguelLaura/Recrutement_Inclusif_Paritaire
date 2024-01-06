@@ -238,7 +238,78 @@ Une fois tous les candidats choisis, il démarre les agents correspondant aux ca
 Si le message est `FIN_AGENT`, l'agent _Recrutement_ passe son attribut fin à `true` ce qui lui permettra de sortir de la boucle de vie.
 
 ## Les résultats
-**A FAIRE**
+
+
+Avec le modèle ainsi mis au point, on a pu lancer plusieurs simulations pour tester différentes stratégies de recrutement.
+
+Tous les exemples de simulation présentés ci-dessous se font avec **100** _Employés_ sur **100** ans et avec **20%** de femmes.
+
+<style>
+    table p {
+        margin: 0;
+    }
+    table td, table th {
+        text-align: center;
+    }
+</style>
+<table>
+    <tr>
+        <th>Stratégie</th>
+        <th>Graphiques</th>
+    </tr>
+    <tr>
+        <td>
+            <p>Avec seuil à 50%</p>
+            <p>Avant le seuil : places réservées aux femmes à 20%</p>
+            <p>Après le seuil : compétences égales : hasard</p>
+        </td>
+        <td>
+            <img src="resultats/simu_1.png" alt="capture simulation 1" width="500px"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>Sans seuil</p>
+            <p>Places réservées aux femmes à 30%</p>
+        </td>
+        <td>
+            <img src="resultats/simu_2.png" alt="capture simulation 2" width="500px"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>Sans seuil</p>
+            <p>Compétences égales : hasard</p>
+        </td>
+        <td>
+            <img src="resultats/simu_3.png" alt="capture simulation 3" width="500px"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>Avec seuil à 50%</p>
+            <p>Avant le seuil : compétences égale : femmes</p>
+            <p>Après le seuil : compétences égales : hasard</p>
+        </td>
+        <td>
+            <img src="resultats/simu_4.png" alt="capture simulation 4" width="500px"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>Sans seuil</p>
+            <p>Places réservées aux hommes à 30%</p>
+        </td>
+        <td>
+            <img src="resultats/simu_5.png" alt="capture simulation 5" width="500px"/>
+        </td>
+    </tr>
+</table>
+
+Peu importe le type de recrutement choisi (Compétences égales ou Places réservées), **la répartition femmes-hommes va tendre vers la parité dans la simulation**. L’unique moyen de ne pas obtenir ce résultat est de favoriser un groupe en lui réservant plus de 50% des places.
+En effet, le groupe de candidat·e·s ne change pas après que les places réservées soient occupées donc les postes encore à pourvoir seront pris par les meilleur·e·s candidat·e·s restant, soit ceux ou celles qui n’ont pas été favorisé·e·s.
+
+**Une modélisation des biais au recrutement est donc indispensable pour s’approcher de la réalité.**
 
 ## <span id="pas-pris-en-compte">Non pris en compte dans notre modélisation[<sup>26</sup>](https://infonet.fr/actualite/focus/parite-femme-homme-en-entreprise-7-pratiques-a-adopter/)</span>
 
