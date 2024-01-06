@@ -313,8 +313,8 @@ Un point d'amélioration serait l'ajout d'histogrammes pour montrer l'évolution
 
 ### Diagramme de classe
 
-<img src="img/Diagramme de classes centre sur la communication.png" alt="diagramme de classe réduit de la solution" width="700px"/>
+<img src="img/diag_classe_communication.png" alt="diagramme de classe réduit de la solution" width="700px"/>
 
 ### Diagramme de séquence de la vie des Employés
 
-<img src="img/vie employe.png" alt="diagramme de classe réduit de la solution" width="700px"/>
+<img src="img/vie employe.png" alt="diagramme de séquence de la vie d'un employé" width="700px"/>
