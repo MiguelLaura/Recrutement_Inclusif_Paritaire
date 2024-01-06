@@ -14,15 +14,11 @@ import (
 // ---------------------
 
 func EnvoyerMessageEntreprise(dest *Entreprise, act Action, payload any) {
-	dest.chnl <- Communicateur{act, payload}
+	dest.Chnl() <- Communicateur{act, payload}
 }
 
 func EnvoyerNotifActions(dest *Entreprise, act Action, payload any) {
-	dest.chnlNotifAction <- Communicateur{act, payload}
-}
-
-func EnvoyerMessageRecrutement(dest *Recrutement, act ActionRecrutement, payload any) {
-	dest.Chnl() <- CommunicateurRecrutement{act, payload}
+	dest.ChnlNotifAction() <- Communicateur{act, payload}
 }
 
 // ---------------------
@@ -314,6 +310,7 @@ func (ent *Entreprise) SetLogger(logger *logger.Loggers) {
 func (ent *Entreprise) RecevoirDemission(emp *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
+
 	ent.SetNbDemissions(ent.NbDemissions() + 1)
 	i, _ := TrouverEmploye(ent.departs, func(e *Employe) bool { return e.Id() == emp.Id() }, 0)
 	if i < 0 {
@@ -380,6 +377,7 @@ func (ent *Entreprise) RecevoirCongeParental(emp *Employe) {
 func (ent *Entreprise) RecevoirPlainte(plaignant *Employe, accuse *Employe) {
 	ent.Lock()
 	defer ent.Unlock()
+
 	ent.SetNbPlaintes(ent.NbPlaintes() + 1)
 	ent.plaintes = append(ent.plaintes, []*Employe{plaignant, accuse})
 	log.Printf("%s porte plainte contre %s ", plaignant.String(), accuse.String())
@@ -578,8 +576,8 @@ func (ent *Entreprise) CalculerBenefice() int {
 	benef -= 2 * float64(ent.NbEmployes()) * constantes.COUT_TB_PAR_EMPLOYE
 
 	// Coût des formations
-	nbFormes := len(ent.formation)
-	benef -= float64(constantes.PRIX_FORMATION * constantes.NB_JOURS_FORMATION * nbFormes)
+	nbFormas := len(ent.formation)
+	benef -= float64(constantes.PRIX_FORMATION * constantes.NB_JOURS_FORMATION * nbFormas)
 
 	// Amende si non parité
 	// Modèle le plus simple : si %Femmes ne respectent pas la loi (<40%), amende d'1% des bénéfices
@@ -691,6 +689,14 @@ func (ent *Entreprise) PourcentageFemmes() float64 {
 	femmes := FiltreFemme(ent.employes)
 	parite := float64(len(femmes)) / float64(ent.NbEmployes())
 	return math.Round(parite*100) / 100
+}
+
+func (ent *Entreprise) IncrementeNbEnfants() {
+	ent.Lock()
+	defer ent.Unlock()
+
+	nbEnfants := ent.NbEnfants() + 1
+	ent.SetNbEnfants(nbEnfants)
 }
 
 func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
