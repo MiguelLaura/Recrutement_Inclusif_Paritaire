@@ -23,11 +23,11 @@ Dans ce document se trouvent des informations supplémentaires sur le projet : c
         * [Bénéfices](#bénéfices)
     * [L'exprimer dans le code](#lexprimer-dans-le-code)
         * [Simulation](#simulation)
-        * [_Entreprise_](#entreprise-1)
-        * [_Employé_](#employé-1)
+        * [_Entreprise_](#entreprise)
+        * [_Employé_](#code-employé)
         * [_Recrutement_](#recrutement-1)
 * [Les résultats](#les-résultats)
-* [Non pris en compte dans notre modélisation](#non-pris-en-compte-dans-notre-modélisation)
+* [Non pris en compte dans notre modélisation](#pas-pris-en-compte)
     * [La rédaction de l'annonce](#la-rédaction-de-lannonce)
     * [La présentation de l'entreprise](#la-présentation-de-lentreprise)
     * [L'anonymisation des candidatures](#lanonymisation-des-candidatures)
@@ -197,7 +197,7 @@ Pour arrêter tous les agents, l'_Entreprise_ envoie un message de fin sur les c
 
 Au cours des actions des _Employés_, ceux-ci peuvent changer les listes des _Employés_ démissionnaires, la liste des départs, la liste des plaintes, le nombre de dépressions et le nombre de congés parentaux : pour éviter des problèmes d'accès concurrents, les fonctions gérant ces changements posent un `Lock` sur l'_Entreprise_.
 
-#### _Employé_
+#### <span id="code-employé">_Employé_<span>
 Les _Employés_ sont des agents lancés par l'_Entreprise_.
 
 Quand ils sont lancés, ils entrent dans une boucle dans laquelle ils effectuent leurs actions jusqu'à ce qu'ils aient été arrêtés par l'_Entreprise_.
@@ -232,7 +232,7 @@ Si le message est `FIN_AGENT`, l'agent _Recrutement_ passe son attribut fin à `
 ## Les résultats
 **A FAIRE**
 
-## Non pris en compte dans notre modélisation[<sup>25</sup>](https://infonet.fr/actualite/focus/parite-femme-homme-en-entreprise-7-pratiques-a-adopter/)
+## <span id="pas-pris-en-compte">Non pris en compte dans notre modélisation[<sup>25</sup>](https://infonet.fr/actualite/focus/parite-femme-homme-en-entreprise-7-pratiques-a-adopter/)</span>
 
 De nombreux éléments entrant en compte dans la parité en entreprise n'ont pas été pris en compte dans cette modélisation et pourraient être ajoutés. Nous ne les avons pas mis en place par manque de temps, mais aussi à cause des difficultés de modélisation et du manque de chiffres sur lesquels nous appuyer.
 
