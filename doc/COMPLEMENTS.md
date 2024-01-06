@@ -93,9 +93,9 @@ L'interface a été réalisée en HTML/CSS/JavaScript. Nous utilisons la bibliot
 
 Une fois sur la page de la simulation, toutes les informations sont transférées grâce à des websockets. Les données sont de différents types et envoyées à différents moments. Nous utilisons un Logger qui envoie les données dans les websockets, en même temps qu'il les affiche dans la console. Ce Logger est commun à la simulation et à tous les agents (employé·e·s, recrutement et entreprise). Nous avons séparé les différents types de log avec des constantes dans le code pour pouvoir les différencier les uns des autres.
 
-D'abord, les informations "initiales" qui concernent la simulation créée (l'id de la simulation, le nombre d'années, le type de recrutement choisi, status de la simulation...) sont envoyées à la page HTML dès qu'une connexion websocket est établie. Cela permet à la simulation de n'être pas dépendante d'une page web particulière. Ainsi, on peut toujours retrouver les informations lorsqu'on reload une page web avec l'id de la simulation. Dans le code, ces informations sont regroupés sous la constante "LOG_INITIAL".
+D'abord, les informations "initiales" qui concernent la simulation créée (l'id de la simulation, le nombre d'années, le type de recrutement choisi, status de la simulation...) sont envoyées à la page HTML dès qu'une connexion websocket est établie après que celle-ci ait fait une requête de type `init`.Cela permet à la simulation de n'être pas dépendante d'une page web particulière. Ainsi, on peut toujours retrouver les informations lorsqu'on reload une page web avec l'id de la simulation. Dans le code, ces informations sont regroupés sous la constante "LOG_INITIAL".
 
-Nous gérons également des informations sur le status de la simulation, par exemple si elle est terminée, à relancer, en pause, pour afficher ces informations sur l'interface avec des popup temporaires. Ce sont des "LOG_REPONSE". 
+Nous gérons également des informations sur le status de la simulation, par exemple si elle est terminée, à relancer, en pause, pour afficher ces informations sur l'interface avec des popup temporaires. Ce sont des "LOG_REPONSE". Ces informations peuvent être envoyées quand la simulation s'est terminée ou après que l'utilisateur·ice ait demandé un changement d'état (mettre en pause, relancer, etc.). Lorsque cette demande vient de l'utilisateur·ice, elle passe par une requête websocket de type `action`.
 
 Ensuite, pour afficher les informations au fur et à mesure, la simulation envoie chaque année son pas de temps actuel, son nombre d'employé·e·s, son pourcentage de femmes, son bénéfice, la moyenne des compétences et la moyenne de la santé mentale. Cela correspond aux informations globales, "LOG_GLOBAL". 
 
@@ -121,7 +121,7 @@ Pour le recrutement, nous avons considéré que l'entreprise cherche à s'étend
 Pour chaque poste ouvert, 18 candidat·e·s postulent d'après les chiffres d'automne 2022 de notre source [<sup>6</sup>](https://blog.flatchr.io/barometre-des-entreprises-qui-recrutent-deuxieme-semestre-2022). Les détails du recrutement seront décrits dans la partie suivante [L'exprimer dans le code](#lexprimer-dans-le-code).
 
 #### Agressions, plaintes et licenciement
-Chaque employé·e identifié·e comme un·e agresseur·euse agresse tous les ans une fois. Iel agresse quelqu'un du genre opposé sauf si l'entreprise ne contient que des employé·e·s de même genre. Iel ne s'agresse pas lui-même. Par sécurité, nous avons déterminé que si l'agresseur.euse ne parvient pas à trouver une personne à agresser après 4 essais, alors elle/il n'agresse pas. 
+Chaque employé·e identifié·e comme un·e agresseur·euse agresse tous les ans une fois. Il/elle agresse quelqu'un du genre opposé sauf si l'entreprise ne contient que des employé·e·s de même genre. On ne s'agresse pas soi-même. Par sécurité, nous avons déterminé que si l'agresseur·euse ne parvient pas à trouver une personne à agresser après 4 essais, alors elle/il n'agresse pas. 
 Les personnes agressées voient leur santé mentale diminuer de 20 (sur 100 lorsqu'elle est au maximum). Cette valeur a été déterminée arbitrairement car l'impact d'une agression sexuelle n'est pas quantifiable. Une victime informe l'entreprise de l'agression dans 30% des cas [<sup>7</sup>](https://juridique.defenseurdesdroits.fr/doc_num.php?explnum_id=20252). Cette source explique aussi que 35% des signalements se sont conclus "au détriment de l'auteur" mais que "celui-ci n'a pas finalement pas été sanctionné" dans la moitié de ces cas. Nous faisons donc l'hypothèse qu'en cas de licenciement, un·e agresseur·euse est licencié·e dans 17.5% des cas (35/2).
 
 #### Départs (hors licenciement)
@@ -138,7 +138,7 @@ Cependant, la présence de femmes au sein d'une entreprise a tendance à augment
 
 #### Congés maternité
 Aucune source fournissant le nombre de naissances par an au sein d'une entreprise n'a été trouvée. Par conséquent, nous avons utilisé l'indice de natalité français[<sup>12</sup>](https://data.worldbank.org/indicator/SP.DYN.TFRT.IN?end=2021&start=2021&view=bar) indiquant qu'en moyenne un individu a 1.83 enfant en France. Puis, nous avons considéré qu'une femme a un enfant entre 20 et 60 ans donc qu'elle dispose de 40 ans pour avoir 1.83 enfant. Ainsi, nous considérons qu'un·e employé·e a une probabilité de 0.04575 d'avoir un enfant au sein de son foyer par an. Nous n'avons pas placé de limites sur le nombre d'enfants qu'un·e employé·e peut avoir.
-Le congé de maternité est obligatoire[<sup>13</sup>](https://www.service-public.fr/particuliers/vosdroits/F2265/personnalisation/resultat?lang=&quest0=0&quest1=0&quest=) donc toutes les femmes ayant un enfant partent en congé maternité. Les hommes ont 71% de chance de partir en congé maternité (chiffre issu d'une étude de la *Drees* en 2021[<sup>14</sup>](https://www.lefigaro.fr/social/de-plus-en-plus-de-peres-prennent-leur-conge-paternite-mais-des-inegalites-demeurent-20230720)).
+Le congé de maternité est obligatoire[<sup>13</sup>](https://www.service-public.fr/particuliers/vosdroits/F2265/personnalisation/resultat?lang=&quest0=0&quest1=0&quest=) donc toutes les femmes ayant un enfant partent en congé maternité. Les hommes ont 71% de chance de partir en congé paternité (chiffre issu d'une étude de la *Drees* en 2021[<sup>14</sup>](https://www.lefigaro.fr/social/de-plus-en-plus-de-peres-prennent-leur-conge-paternite-mais-des-inegalites-demeurent-20230720)).
 Pour simplifier la modélisation, nous considérons que toute personne partant en congé maternité part pendant la durée maximale du congé maternité (ce qui s'éloigne de la réalité). Un congé maternité peut durer jusqu'à 4 mois et un congé paternité jusqu'à 1 mois[<sup>15</sup>](https://www.capital.fr/votre-carriere/conge-parental-1323770). 
 Le remplacement de l'employé·e en congé parental n'a pas été modélisé.
 
@@ -175,9 +175,12 @@ Enfin, nous déduisons du bénéfice le coût de fonctionnement de l'entreprise.
 [Voir la partie Annexes pour le diagramme de classe](#diagramme-de-classe)
 
 #### Simulation
-Cette classe gère la simulation et en particulier le lien entre le front et la back.
+La simulation est la structure qui, à partir des informations choisies par l'utilisateur·ice, va créer l'entreprise et le recrutement associé. Elle possède aussi toutes les informations initiales, comme la réparition femmes-hommes du début mais aussi le nombre d'année maximum pendant laquelle la simulation doit tourner. La status de la simulation déterminera si on avance le pas de temps, si on met en pause les agents, etc. Ce status peut être modifié en interne, par exemple quand celle-ci est créée ou terminée, mais aussi par l'action de l'utilisateur·ice.
 
-**A FAIRE parler en particulier de la gestion de la communication**
+Dans la boucle de la simulation, elle envoie un message à l'entreprise sur ce qu'elle doit faire et incrémente le pas de temps. Le message envoyé dependra du status de la simulation : si l'entreprise peut faire son cycle normalement, elle enverra `LIBRE`. Si jamais la simulation est en pause, alors elle n'enverra rien à l'entreprise. Enfin, si elle doit être arrêtée, alors le message sera `FIN`. 
+
+Comme les autres agents, la simulation possède un logger websocket sur lequel elle peut envoyer des informations. Ainsi, à la création d'une connexion websocket, lorsqu'il faut afficher les informations initiales de l'entreprise créée, la simulation va envoyer ces informations par log. La simulation prévient également l'interface de son status grâce à travers le log.
+
 
 #### _Entreprise_
 L'_Entreprise_ est un agent qui assume aussi le rôle de l'environnement puisqu'elle gère les différents agents et c'est elle qui centralise les informations.
