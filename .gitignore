@@ -1,5 +1,6 @@
 *
 !*/
+!*.pdf
 !*.go
 !.gitignore
 !go.mod
