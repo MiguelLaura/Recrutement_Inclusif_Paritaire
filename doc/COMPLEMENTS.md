@@ -57,8 +57,8 @@ L'utilisateur·ice va pouvoir définir :
 * le nombre d'employé·e·s de l'entreprise,
 * la durée de la simulation (un pas de la simulation correspond à une année dans l'entreprise),
 * le pourcentage initial de femmes dans l'entreprise,
-* s'elle/il a un pourcentage de femmes à atteindre,
-* le type de recrutement (s'elle/il a certaine répartition femmes-hommes à atteindre, il faut choisir un type de recrutement pour quand on est en dessous de ce pourcentage, et un type de recrutement pour quand on est au-dessus du pourcentage).
+* si elle/il a un pourcentage de femmes à atteindre,
+* le type de recrutement (si elle/il a une certaine répartition femmes-hommes à atteindre, il faut choisir un type de recrutement pour quand on est en dessous de ce pourcentage, et un type de recrutement pour quand on est au-dessus du pourcentage).
 
 #### Pourquoi un pourcentage de femmes à atteindre ?
 Les entreprises peuvent vouloir atteindre une certaine répartition femmes-hommes (pour respecter une loi, favoriser l’innovation, etc.) et mettre en place des stratégies temporaires, notamment au niveau du recrutement. Ainsi, les manières de recruter ne seront pas les mêmes en dessous ou au-dessus du seuil défini.
@@ -67,7 +67,7 @@ Les entreprises peuvent vouloir atteindre une certaine répartition femmes-homme
 Pour cette stratégie, sur le nombre de personnes à recruter, on choisira de recruter un pourcentage fixe de femmes ou d'hommes (on prendra toujours les plus compétent·e·s dans cette population) puis, pour le reste des candidat·e·s, on recrutera en fonction des compétences seulement. Cette stratégie n'existe pas dans la réalité puisqu'il s'agit d'une discrimination de genre. En effet, on ne peut discriminer à l'embauche sur le genre que pour des cas particuliers, comme pour le cinéma ou mannequinat[<sup>1</sup>](https://analyseur.acompetenceegale.com/comment-eviter-discriminations-a-lembauche-selon-sexe/).
 
 #### Compétences égales ?
-Pour cette stratégie, on recrute d’abord la personne la plus compétente. Si jamais deux personnes ont des compétences équivalentes, on choisira qui recruter en fonction de ce qui a été demandé par l’utilisateur·ice : elle/il choisit s'elle/il donne sa préférence à une femme, à un homme, ou s'elle/il n'a pas de préférence et prend un·e des candidat·e·s au hasard. C'est un type de recrutement qu'on peut appliquer à la vie réelle, mais uniquement en cas de candidatures comparables, en faveur du genre sous-représenté et en cas de dernier critère de départage[<sup>2</sup>](https://egaliteautravail.com/domaine/recrutement/).
+Pour cette stratégie, on recrute d’abord la personne la plus compétente. Si jamais deux personnes ont des compétences équivalentes, on choisira qui recruter en fonction de ce qui a été demandé par l’utilisateur·ice : elle/il choisit si elle/il donne sa préférence à une femme, à un homme, ou si elle/il n'a pas de préférence et prend un·e des candidat·e·s au hasard. C'est un type de recrutement qu'on peut appliquer à la vie réelle, mais uniquement en cas de candidatures comparables, en faveur du genre sous-représenté et en cas de dernier critère de départage[<sup>2</sup>](https://egaliteautravail.com/domaine/recrutement/).
 
 
 ### La simulation
@@ -93,9 +93,9 @@ L'interface a été réalisée en HTML/CSS/JavaScript. Nous utilisons la bibliot
 
 Une fois sur la page de la simulation, toutes les informations sont transférées grâce à des websockets. Les données sont de différents types et envoyées à différents moments. Nous utilisons un Logger qui envoie les données dans les websockets, en même temps qu'il les affiche dans la console. Ce Logger est commun à la simulation et à tous les agents (employé·e·s, recrutement et entreprise). Nous avons séparé les différents types de log avec des constantes dans le code pour pouvoir les différencier les uns des autres.
 
-D'abord, les informations "initiales" qui concernent la simulation créée (l'id de la simulation, le nombre d'années, le type de recrutement choisi, status de la simulation...) sont envoyées à la page HTML dès qu'une connexion websocket est établie après que celle-ci ait fait une requête de type `init`.Cela permet à la simulation de n'être pas dépendante d'une page web particulière. Ainsi, on peut toujours retrouver les informations lorsqu'on reload une page web avec l'id de la simulation. Dans le code, ces informations sont regroupés sous la constante "LOG_INITIAL".
+D'abord, les informations "initiales" qui concernent la simulation créée (l'id de la simulation, le nombre d'années, le type de recrutement choisi, statut de la simulation...) sont envoyées à la page HTML dès qu'une connexion websocket est établie après que celle-ci ait fait une requête de type `init`.Cela permet à la simulation de ne pas être dépendante d'une page web particulière. Ainsi, on peut toujours retrouver les informations lorsqu'on reload une page web avec l'id de la simulation. Dans le code, ces informations sont regroupées sous la constante "LOG_INITIAL".
 
-Nous gérons également des informations sur le status de la simulation, par exemple si elle est terminée, à relancer, en pause, pour afficher ces informations sur l'interface avec des popup temporaires. Ce sont des "LOG_REPONSE". Ces informations peuvent être envoyées quand la simulation s'est terminée ou après que l'utilisateur·ice ait demandé un changement d'état (mettre en pause, relancer, etc.). Lorsque cette demande vient de l'utilisateur·ice, elle passe par une requête websocket de type `action`.
+Nous gérons également des informations sur le statut de la simulation, par exemple si elle est terminée, à relancer, en pause, pour afficher ces informations sur l'interface avec des pop-up temporaires. Ce sont des "LOG_REPONSE". Ces informations peuvent être envoyées quand la simulation s'est terminée ou après que l'utilisateur·ice ait demandé un changement d'état (mettre en pause, relancer, etc.). Lorsque cette demande vient de l'utilisateur·ice, elle passe par une requête websocket de type `action`.
 
 Ensuite, pour afficher les informations au fur et à mesure, la simulation envoie chaque année son pas de temps actuel, son nombre d'employé·e·s, son pourcentage de femmes, son bénéfice, la moyenne des compétences et la moyenne de la santé mentale. Cela correspond aux informations globales, "LOG_GLOBAL". 
 
@@ -175,11 +175,11 @@ Enfin, nous déduisons du bénéfice le coût de fonctionnement de l'entreprise.
 [Voir la partie Annexes pour le diagramme de classe](#diagramme-de-classe)
 
 #### Simulation
-La simulation est la structure qui, à partir des informations choisies par l'utilisateur·ice, va créer l'entreprise et le recrutement associé. Elle possède aussi toutes les informations initiales, comme la réparition femmes-hommes du début mais aussi le nombre d'années maximum pendant laquelle la simulation doit tourner. Le status de la simulation déterminera si on avance le pas de temps, si on met en pause les agents, etc. Ce status peut être modifié en interne, par exemple quand celle-ci est créée ou terminée, mais aussi par l'action de l'utilisateur·ice.
+La simulation est la structure qui, à partir des informations choisies par l'utilisateur·ice, va créer l'entreprise et le recrutement associé. Elle possède aussi toutes les informations initiales, comme la répartition femmes-hommes du début mais aussi le nombre d'années maximum pendant laquelle la simulation doit tourner. Le statut de la simulation déterminera si on avance le pas de temps, si on met en pause les agents, etc. Ce statut peut être modifié en interne, par exemple quand celle-ci est créée ou terminée, mais aussi par l'action de l'utilisateur·ice.
 
-Dans la boucle de la simulation, elle envoie un message à l'entreprise sur ce qu'elle doit faire et incrémente le pas de temps. Le message envoyé dependra du status de la simulation : si l'entreprise peut faire son cycle normalement, elle enverra `LIBRE`. Si jamais la simulation est en pause, alors elle n'enverra rien à l'entreprise. Enfin, si elle doit être arrêtée, alors le message sera `FIN`. 
+Dans la boucle de la simulation, elle envoie un message à l'entreprise sur ce qu'elle doit faire et incrémente le pas de temps. Le message envoyé dependra du statut de la simulation : si l'entreprise peut faire son cycle normalement, elle enverra `LIBRE`. Si jamais la simulation est en pause, alors elle n'enverra rien à l'entreprise. Enfin, si elle doit être arrêtée, alors le message sera `FIN`. 
 
-Comme les autres agents, la simulation possède un logger websocket sur lequel elle peut envoyer des informations. Ainsi, à la création d'une connexion websocket, lorsqu'il faut afficher les informations initiales de l'entreprise créée, la simulation va envoyer ces informations par log. La simulation prévient également l'interface de son status à travers le log.
+Comme les autres agents, la simulation possède un Logger websocket sur lequel elle peut envoyer des informations. Ainsi, à la création d'une connexion websocket, lorsqu'il faut afficher les informations initiales de l'entreprise créée, la simulation va envoyer ces informations par log. La simulation prévient également l'interface de son statut à travers le log.
 
 
 #### _Entreprise_
@@ -238,7 +238,77 @@ Une fois tous les candidats choisis, il démarre les agents correspondant aux ca
 Si le message est `FIN_AGENT`, l'agent _Recrutement_ passe son attribut fin à `true` ce qui lui permettra de sortir de la boucle de vie.
 
 ## Les résultats
-**A FAIRE**
+
+Avec le modèle ainsi mis au point, on a pu lancer plusieurs simulations pour tester différentes stratégies de recrutement.
+
+Tous les exemples de simulation présentés ci-dessous se font avec **100** _Employés_ sur **100** ans et avec **20%** de femmes.
+
+<style>
+    table p {
+        margin: 0;
+    }
+    table td, table th {
+        text-align: center;
+    }
+</style>
+<table>
+    <tr>
+        <th>Stratégie</th>
+        <th>Graphiques</th>
+    </tr>
+    <tr>
+        <td>
+            <p>Avec seuil à 50%</p>
+            <p>Avant le seuil : places réservées aux femmes à 20%</p>
+            <p>Après le seuil : compétences égales : hasard</p>
+        </td>
+        <td>
+            <img src="resultats/simu_1.png" alt="capture simulation 1" width="500px"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>Sans seuil</p>
+            <p>Places réservées aux femmes à 30%</p>
+        </td>
+        <td>
+            <img src="resultats/simu_2.png" alt="capture simulation 2" width="500px"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>Sans seuil</p>
+            <p>Compétences égales : hasard</p>
+        </td>
+        <td>
+            <img src="resultats/simu_3.png" alt="capture simulation 3" width="500px"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>Avec seuil à 50%</p>
+            <p>Avant le seuil : compétences égale : femmes</p>
+            <p>Après le seuil : compétences égales : hasard</p>
+        </td>
+        <td>
+            <img src="resultats/simu_4.png" alt="capture simulation 4" width="500px"/>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>Sans seuil</p>
+            <p>Places réservées aux hommes à 30%</p>
+        </td>
+        <td>
+            <img src="resultats/simu_5.png" alt="capture simulation 5" width="500px"/>
+        </td>
+    </tr>
+</table>
+
+Peu importe le type de recrutement choisi (Compétences égales ou Places réservées), **la répartition femmes-hommes va tendre vers la parité dans la simulation**. L’unique moyen de ne pas obtenir ce résultat est de favoriser un groupe en lui réservant plus de 50% des places.
+En effet, le groupe de candidat·e·s ne change pas après que les places réservées soient occupées donc les postes encore à pourvoir seront pris par les meilleur·e·s candidat·e·s restant, soit ceux ou celles qui n’ont pas été favorisé·e·s.
+
+**Une modélisation des biais au recrutement est donc indispensable pour s’approcher de la réalité.**
 
 ## <span id="pas-pris-en-compte">Non pris en compte dans notre modélisation[<sup>26</sup>](https://infonet.fr/actualite/focus/parite-femme-homme-en-entreprise-7-pratiques-a-adopter/)</span>
 
