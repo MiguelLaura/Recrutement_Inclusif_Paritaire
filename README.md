@@ -8,7 +8,7 @@ Ce projet a été réalisé dans le cadre de l'UV IA04 enseignée à l'Universit
 * Laura Miguel
 
 ## Note sur l'écriture inclusive
-Dans une volonté d'inclure chacun et chacune, nous avons utilisé le point médian de l'écriture inclusive dans l'interface et dans la documentation. Notre convention a été "employé·e·s", pour rendre visible le féminin et le pluriel. De plus, cette écriture n'est pas interdite à l'UTC.
+Dans une volonté d'inclure chacun et chacune, nous avons utilisé le point médian de l'écriture inclusive dans l'interface et dans la documentation. Notre convention a été "employé·e·s", pour rendre visible le féminin et le pluriel. Cette écriture n'est pas interdite à l'UTC, et étant donné notre sujet, il nous a semblé important d'utiliser une écriture rendant visible tous les genres.
 
 ## Le sujet
 Ce projet est une simulation d'une entreprise. On souhaite étudier la parité dans une entreprise. Nous nous sommes en particulier concentré·e·s sur le recrutement : c'est une étape systématique dans une entreprise qui peut influer sur la parité. Le but est donc de laisser l'utilisateur·ice choisir une façon d'effectuer son recrutement, de lancer la simulation et voir l'influence de ce recrutement sur le bénéfice de l'entreprise, le nombre de départs, etc.
