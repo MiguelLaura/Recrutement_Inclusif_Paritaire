@@ -613,30 +613,30 @@ func (ent *Entreprise) bonneAnnee() {
 // ---------------------
 
 func (ent *Entreprise) Start() {
-	for _, emp := range ent.employes {
-		go func(emp *Employe) {
+	go func() {
+		for _, emp := range ent.employes {
 			emp.Start()
-		}(emp)
-	}
+		}
 
-	go ent.recrutement.Start()
+		ent.recrutement.Start()
 
-	for {
-		msg := <-ent.chnl
-		if msg.Act == LIBRE && !ent.fin {
-			ent.agir()
-		} else if msg.Act == FIN && !ent.fin {
-			ent.stop()
-			break
-		} else {
-			msg = <-ent.chnl
-			if msg.Act == FIN {
+		for {
+			msg := <-ent.chnl
+			if msg.Act == LIBRE && !ent.fin {
+				ent.agir()
+			} else if msg.Act == FIN && !ent.fin {
+				ent.stop()
 				break
+			} else {
+				msg = <-ent.chnl
+				if msg.Act == FIN {
+					break
+				}
 			}
 		}
-	}
-	log.Printf("Fin d'entreprise")
-	<-ent.chnl
+		log.Printf("Fin d'entreprise")
+		<-ent.chnl
+	}()
 }
 
 func (ent *Entreprise) agir() {

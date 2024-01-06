@@ -272,15 +272,15 @@ func (agresseur *Employe) agresser() {
 
 // Lance la vie de l'agent
 func (e *Employe) Start() {
-	log.Printf("Démarrage de l'employé·e %s", e.id)
-
 	// Initialisation
-
-	// Boucle de vie
-	for !e.fin {
-		e.agir()
-	}
-	log.Printf("Fin de l'employé·e %s", e.Id())
+	go func() {
+		log.Printf("Démarrage de l'employé·e %s", e.id)
+		// Boucle de vie
+		for !e.fin {
+			e.agir()
+		}
+		log.Printf("Fin de l'employé·e %s", e.Id())
+	}()
 }
 
 // Ce que l'employé fait à chaque tour
