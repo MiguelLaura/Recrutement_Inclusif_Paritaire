@@ -58,11 +58,19 @@ Les flags peuvent être :
 
 Ceci va lancer un serveur web sur le port `8080` (par défaut) de le machine. Il suffit après d'accéder à l'adresse `localhost:8080` (par défaut) pour arriver sur le formulaire de création d'entreprise.
 
-## Nombre max d'agents testés
+## Quelques captures du projet
+
+<img src="capture_interface_formulaire.png" alt="capture du formulaire de création d'entreprise" width="1000px"/>
+
+<img src="capture_interface_visualisation.png" alt="capture de l'interface de visualisation" width="1000px"/>
+
+## Nombre maximum d'agents testés
 
 Afin de voir les limites de notre projet, nous avons lancé une simulation avec 10 000 _Employés_ et nous constatons que, bien que l'execution du programme soit bien ralenti, il tourne toujours (voir l'image ci-dessous). Cependant, lorsque l'on dépasse les 100 000 _Employés_ il devient vraiment difficile pour le programme d'être fluide.
 
-<img src="img/capture_simu_10000_emp.png" alt="capture d'une simulation avec 10 000 Employés" width="1000px"/>
+<img src="doc/capture_simu_10000_emp.png" alt="capture d'une simulation avec 10 000 Employés" width="1000px"/>
+
+N.B. : On peut noter un résultat intéressant et inattendu dans cette capture, puisque même en favorisant les hommes dans une situation où les femmes sont en minorité, le pourcentage de femmes augmente. Pour plus d'explication, voir le document [COMPLEMENTS.md](COMPLEMENTS.md).
 
 ---
 
