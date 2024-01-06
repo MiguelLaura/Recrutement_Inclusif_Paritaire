@@ -239,7 +239,6 @@ Si le message est `FIN_AGENT`, l'agent _Recrutement_ passe son attribut fin à `
 
 ## Les résultats
 
-
 Avec le modèle ainsi mis au point, on a pu lancer plusieurs simulations pour tester différentes stratégies de recrutement.
 
 Tous les exemples de simulation présentés ci-dessous se font avec **100** _Employés_ sur **100** ans et avec **20%** de femmes.
