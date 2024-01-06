@@ -207,7 +207,7 @@ func (e *Employe) seFormer() {
 func (e *Employe) avoirEnfant() {
 	log.Printf("%s a un enfant", e.String())
 	e.entreprise.SetNbEnfants(e.entreprise.NbEnfants() + 1)
-	if e.Genre() == Femme {
+	if e.genre == Femme {
 		if rand.Float64() < constantes.PROBA_CONGE_F {
 			e.entreprise.RecevoirCongeParental(e)
 		}
@@ -295,12 +295,12 @@ func (e *Employe) agir() {
 	case LIBRE: // Vie une année complète
 
 		// Si l'agent est un agresseur, il agresse
-		if e.Agresseur() {
+		if e.agresseur {
 			e.agresser()
 		}
 
 		// Participer à une formation
-		i, _ := TrouverEmploye(e.entreprise.Formation(), func(emp *Employe) bool { return e.Id() == emp.Id() }, 0)
+		i, _ := TrouverEmploye(e.entreprise.Formation(), func(emp *Employe) bool { return e.id == emp.id }, 0)
 		if i >= 0 {
 			e.seFormer()
 		}
@@ -316,7 +316,7 @@ func (e *Employe) agir() {
 		}
 
 		// Demissionner apres congé maternité
-		if e.Genre() == Femme && enfant {
+		if e.genre == Femme && enfant {
 			if rand.Float64() <= constantes.PROBA_DEPART_F {
 				e.poserDemissionMaternite()
 			}
