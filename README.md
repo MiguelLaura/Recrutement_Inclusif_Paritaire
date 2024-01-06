@@ -76,6 +76,7 @@ Ceci va lancer un serveur web sur le port `8080` de le machine. Il suffit après
 * [Remarques sur la simulation actuelle](#remarques-sur-la-simulation-actuelle)
     * [Sur l'interface](#sur-linterface)
     * [Sur la modélisation](#sur-la-modélisation)
+* [Annexes](#annexes)
 
 ## L'interface de simulation
 
@@ -202,6 +203,8 @@ Enfin, nous déduisons du bénéfice le coût de fonctionnement de l'entreprise.
 
 ### L'exprimer dans le code
 
+[Voir partie Annexes pour le diagramme de classe](#diagramme-de-classe)
+
 #### Simulation
 Cette classe gère la simulation et en particulier le lien entre le front et la back.
 
@@ -231,7 +234,7 @@ Au cours des actions des _Employés_, ceux-ci peuvent changer les listes des _Em
 Les _Employés_ sont des agents lancés par l'_Entreprise_.
 
 Quand ils sont lancés, ils entrent dans une boucle dans laquelle ils effectuent leurs actions jusqu'à ce qu'ils aient été arrêtés par l'_Entreprise_.
-Pour agir, les _Employés_ attendent un message de l'_Entreprise_ sur un channel dédié. Si l'_Entreprise_ leur envoie le message `LIBRE`, ils vont :
+Pour agir, les _Employés_ attendent un message de l'_Entreprise_ sur un channel dédié (voir [Diagramme de séquence de la vie des employés](#diagramme-de-séquence-de-la-vie-des-employés) pour l'enchaînement des actions). Si l'_Entreprise_ leur envoie le message `LIBRE`, ils vont :
 * agresser s'ils sont agresseurs ;
 * se former s'ils sont dans la liste des _Employés_ recevant une formation pendant l'année en cours ;
 * vieillir ;
@@ -341,3 +344,16 @@ Un point d'amélioration serait l'ajout d'histogrammes pour montrer l'évolution
 * Le recrutement : nous engageons chaque année 5% d'employé·e·s supplémentaires, mais c'est un chiffre décidé arbitrairement, de plus, nous considérons que les postes seront toujours pourvus, et nous ne cherchons pas à remplacer les personnes qui ont quitté l'entreprise (le recrutement est fait indépendamment des départs et les embauches représentent toujours une hausse de 5% de l'effectif total) ;
 * L'amende liée à l'absence de femme : il s'agit d'une amende liée à la loi de Rixain qui est prise en compte dans notre modélisation, mais cette loi ne s’appliquera qu’à partir de 2026 ;
 * Les méthodes de recrutement : pour rappel, les places réservées n'existent pas dans la réalité.
+
+## Annexes
+
+* [Diagramme de classe](#diagramme-de-classe)
+* [Diagramme de séquence de la vie des employés](#diagramme-de-séquence-de-la-vie-des-employés)
+
+### Diagramme de classe
+
+<img src="img/Diagramme de classes centre sur la communication.png" alt="diagramme de classe réduit de la solution" width="700px"/>
+
+### Diagramme de séquence de la vie des Employés
+
+<img src="img/vie employe.png" alt="diagramme de classe réduit de la solution" width="700px"/>
