@@ -70,8 +70,8 @@ Afin de voir les limites de notre projet, nous avons lancé une simulation avec 
 
 <img src="doc/capture_simu_10000_emp.png" alt="capture d'une simulation avec 10 000 Employés" width="1000px"/>
 
-N.B. : On peut noter un résultat intéressant et inattendu dans cette capture, puisque même en favorisant les hommes dans une situation où les femmes sont en minorité, le pourcentage de femmes augmente. Pour plus d'explication, voir le document [COMPLEMENTS.md](doc/COMPLEMENTS.md).
+N.B. : On peut noter un résultat intéressant et inattendu dans cette capture, puisque même en favorisant les hommes dans une situation où les femmes sont en minorité, le pourcentage de femmes augmente. Pour plus d'explications, voir le document [COMPLEMENTS.md](doc/COMPLEMENTS.md).
 
 ---
 
-Des informations complémentaires sur le projet et la manière dont nous avons effectuer la modélisation peuvent être trouvées dans le document [COMPLEMENTS.md](doc/COMPLEMENTS.md)
+Des informations complémentaires sur le projet et la manière dont nous avons effectué la modélisation peuvent être trouvées dans le document [COMPLEMENTS.md](doc/COMPLEMENTS.md)
