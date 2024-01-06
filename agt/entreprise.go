@@ -22,7 +22,7 @@ func EnvoyerNotifActions(dest *Entreprise, act Action, payload any) {
 }
 
 func EnvoyerMessageRecrutement(dest *Recrutement, act ActionRecrutement, payload any) {
-	dest.chnl <- CommunicateurRecrutement{act, payload}
+	dest.Chnl() <- CommunicateurRecrutement{act, payload}
 }
 
 // ---------------------
@@ -116,39 +116,39 @@ func (ent *Entreprise) Cmpt() *Compteur {
 }
 
 func (ent *Entreprise) NbEmbauches() int {
-	return ent.Cmpt().nbEmbauches
+	return ent.cmpt.nbEmbauches
 }
 
 func (ent *Entreprise) NbEmbauchesFemme() int {
-	return ent.Cmpt().nbEmbauchesFemme
+	return ent.cmpt.nbEmbauchesFemme
 }
 
 func (ent *Entreprise) NbAgressions() int {
-	return ent.Cmpt().nbAgressions
+	return ent.cmpt.nbAgressions
 }
 
 func (ent *Entreprise) NbPlaintes() int {
-	return ent.Cmpt().nbPlaintes
+	return ent.cmpt.nbPlaintes
 }
 
 func (ent *Entreprise) NbDemissions() int {
-	return ent.Cmpt().nbDemissions
+	return ent.cmpt.nbDemissions
 }
 
 func (ent *Entreprise) NbDemissionsMaternite() int {
-	return ent.Cmpt().nbDemissionsMaternite
+	return ent.cmpt.nbDemissionsMaternite
 }
 
 func (ent *Entreprise) NbRetraites() int {
-	return ent.Cmpt().nbRetraites
+	return ent.cmpt.nbRetraites
 }
 
 func (ent *Entreprise) NbLicenciements() int {
-	return ent.Cmpt().nbLicenciements
+	return ent.cmpt.nbLicenciements
 }
 
 func (ent *Entreprise) NbDepressions() int {
-	return ent.Cmpt().nbDepressions
+	return ent.cmpt.nbDepressions
 }
 
 func (ent *Entreprise) NbDeparts() int {
@@ -162,11 +162,11 @@ func (ent *Entreprise) NbEnfants() int {
 }
 
 func (ent *Entreprise) NbCongesMaternite() int {
-	return ent.Cmpt().nbCongesMaternite
+	return ent.cmpt.nbCongesMaternite
 }
 
 func (ent *Entreprise) NbCongesPaternite() int {
-	return ent.Cmpt().nbCongesPaternite
+	return ent.cmpt.nbCongesPaternite
 }
 
 func (ent *Entreprise) Recrutement() Recrutement {
@@ -529,7 +529,7 @@ func (ent *Entreprise) CalculerBenefice() int {
 	// CA_PAR_EMPLOYE/5 * competences pour garder la valeur moyenne du CA_PAR_EMPLOYE mais prendre en compte les compétences
 	// CA_PAR_EMPLOYE dépend de la taille de l'entreprise
 	// benef plus faible si santé mentale plus basse
-	if len(ent.employes) < 10 {
+	if ent.NbEmployes() < 10 {
 		for _, e := range ent.employes {
 			benef += (constantes.CA_PAR_EMPLOYE_MIC/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE
 		}
@@ -541,7 +541,7 @@ func (ent *Entreprise) CalculerBenefice() int {
 				benef -= constantes.PROPORTION_ARRET_H * ((constantes.CA_PAR_EMPLOYE_MIC/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE)
 			}
 		}
-	} else if len(ent.employes) >= 10 && len(ent.employes) < 250 {
+	} else if ent.NbEmployes() >= 10 && ent.NbEmployes() < 250 {
 		for _, e := range ent.employes {
 			benef += (constantes.CA_PAR_EMPLOYE_PME/5)*float64(e.Competence())*float64(e.SanteMentale())/100 - constantes.COUT_EMPLOYE
 		}
@@ -617,34 +617,34 @@ func (ent *Entreprise) bonneAnnee() {
 // ---------------------
 
 func (ent *Entreprise) Start() {
-	for _, emp := range ent.employes {
-		go func(emp *Employe) {
+	go func() {
+		for _, emp := range ent.employes {
 			emp.Start()
-		}(emp)
-	}
+		}
 
-	go ent.recrutement.Start()
+		ent.recrutement.Start()
 
-	for {
-		msg := <-ent.chnl
-		if msg.Act == LIBRE && !ent.fin {
-			ent.agir()
-		} else if msg.Act == FIN && !ent.fin {
-			ent.stop()
-			break
-		} else {
-			msg = <-ent.chnl
-			if msg.Act == FIN {
+		for {
+			msg := <-ent.chnl
+			if msg.Act == LIBRE && !ent.fin {
+				ent.agir()
+			} else if msg.Act == FIN && !ent.fin {
+				ent.stop()
 				break
+			} else {
+				msg = <-ent.chnl
+				if msg.Act == FIN {
+					break
+				}
 			}
 		}
-	}
-	log.Printf("Fin d'entreprise")
-	<-ent.chnl
+		log.Printf("Fin d'entreprise")
+		<-ent.chnl
+	}()
 }
 
 func (ent *Entreprise) agir() {
-	if len(ent.employes) <= 0 {
+	if ent.NbEmployes() <= 0 {
 		ent.fin = true
 		return
 	}
@@ -687,22 +687,18 @@ func (ent *Entreprise) finirCycle() {
 //     Autres
 // ---------------------
 
-func (ent *Entreprise) AjouterRecrutement(recrut Recrutement) {
-	ent.recrutement = recrut
-}
-
 func (ent *Entreprise) NbEmployes() int {
 	return len(ent.employes)
 }
 
 func (ent *Entreprise) PourcentageFemmes() float64 {
 	femmes := FiltreFemme(ent.employes)
-	parite := float64(len(femmes)) / float64(len(ent.employes))
+	parite := float64(len(femmes)) / float64(ent.NbEmployes())
 	return math.Round(parite*100) / 100
 }
 
 func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
-	if len(ent.employes) == 0 {
+	if ent.NbEmployes() == 0 {
 		return nil
 	}
 
@@ -717,7 +713,7 @@ func (ent *Entreprise) EnvoyerEmploye(g Genre) *Employe {
 
 	// si on a personne pour le genre demandé, on va chercher dans l'autre genre
 	if len(empList) == 0 {
-		idx := rand.Intn(len(ent.employes))
+		idx := rand.Intn(ent.NbEmployes())
 		emp := (ent.employes)[idx]
 		return emp
 	}

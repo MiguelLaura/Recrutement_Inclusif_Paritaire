@@ -56,12 +56,14 @@ func creerChemin(logFolder string) (chemin string, err error) {
 }
 
 func (l *FileLogger) Log(msg ...any) (err error) {
-	_, err = l.fichier.WriteString(fmt.Sprint(msg...) + "\n")
+	now := time.Now()
+	timeStr := fmt.Sprintf("%s %s ", now.Format(time.DateOnly), now.Format(time.TimeOnly))
+	_, err = l.fichier.WriteString(timeStr + fmt.Sprint(msg...) + "\n")
 	return
 }
 
 func (l *FileLogger) Logf(format string, v ...any) (err error) {
-	_, err = l.fichier.WriteString(fmt.Sprintf(format, v...) + "\n")
+	err = l.Log(fmt.Sprintf(format, v...))
 	return
 }
 

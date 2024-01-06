@@ -273,15 +273,15 @@ func (agresseur *Employe) agresser() {
 
 // Lance la vie de l'agent
 func (e *Employe) Start() {
-	log.Printf("Démarrage de l'employé·e %s", e.id)
-
 	// Initialisation
-
-	// Boucle de vie
-	for !e.fin {
-		e.agir()
-	}
-	log.Printf("Fin de l'employé·e %s", e.Id())
+	go func() {
+		log.Printf("Démarrage de l'employé·e %s", e.id)
+		// Boucle de vie
+		for !e.fin {
+			e.agir()
+		}
+		log.Printf("Fin de l'employé·e %s", e.Id())
+	}()
 }
 
 // Ce que l'employé fait à chaque tour
@@ -296,12 +296,12 @@ func (e *Employe) agir() {
 	case LIBRE: // Vie une année complète
 
 		// Si l'agent est un agresseur, il agresse
-		if e.Agresseur() {
+		if e.agresseur {
 			e.agresser()
 		}
 
 		// Participer à une formation
-		i, _ := TrouverEmploye(e.entreprise.Formation(), func(emp *Employe) bool { return e.Id() == emp.Id() }, 0)
+		i, _ := TrouverEmploye(e.entreprise.Formation(), func(emp *Employe) bool { return e.id == emp.id }, 0)
 		if i >= 0 {
 			e.seFormer()
 		}
@@ -317,7 +317,7 @@ func (e *Employe) agir() {
 		}
 
 		// Demissionner apres congé maternité
-		if e.Genre() == Femme && enfant {
+		if e.genre == Femme && enfant {
 			if rand.Float64() <= constantes.PROBA_DEPART_F {
 				e.poserDemissionMaternite()
 			}
