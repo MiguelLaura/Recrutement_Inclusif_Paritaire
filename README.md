@@ -207,60 +207,66 @@ Cette classe gère la simulation et en particulier le lien entre le front et la 
 
 **A FAIRE parler en particulier de la gestion de la communication**
 
-#### Entreprise
-L'entreprise est un agent qui assume aussi le rôle de l'environnement puisqu'elle gère les différents agents et c'est elle qui centralise les informations.
+#### _Entreprise_
+L'_Entreprise_ est un agent qui assume aussi le rôle de l'environnement puisqu'elle gère les différents agents et c'est elle qui centralise les informations.
 
-Lorsqu'on démarre l'entreprise, elle démarre les employés et le recrutement, et elle entre dans une boucle dont la durée est déterminée par le nombre de pas de temps de la simulation (et donc le nombre d'années de vie de l'entreprise). Au début de la boucle, l'entreprise attend un message sur le channel le liant à la simulation. Le message est soit `LIBRE` et ce qui indique à l'entreprise de lancer une année (ce qui revient à lancer la méthode `agir`), soit `FIN` et ce qui lui indique d'arrêter tous les agents qu'elle a lancé. Si le nombre d'employés atteint zéro avant la fin de la simulation, on passe tous les pas de temps sans rien faire jusqu'à la fin. Quand l'entreprise sort de la boucle, elle attend un message final de la simulation pour confirmer l'arrêt.
+Lorsqu'on démarre l'_Entreprise_, elle démarre les _Employés_ et le _Recrutement_, et elle entre dans une boucle dont la durée est déterminée par le nombre de pas de temps de la simulation (et donc le nombre d'années de vie de l'_Entreprise_). Au début de la boucle, l'_Entreprise_ attend un message sur le channel le liant à la simulation. Le message est soit `LIBRE` et ce qui indique à l'_Entreprise_ de lancer une année (ce qui revient à lancer la méthode `agir`), soit `FIN` et ce qui lui indique d'arrêter tous les agents qu'elle a lancé. Si le nombre d'_Employés_ atteint zéro avant la fin de la simulation, on passe tous les pas de temps sans rien faire jusqu'à la fin. Quand l'_Entreprise_ sort de la boucle, elle attend un message final de la simulation pour confirmer l'arrêt.
 
-Quand elle lance une année, l'entreprise :
+Quand elle lance une année, l'_Entreprise_ :
 * organise les formations ;
 * organise un team building ;
-* lance les recrutements en envoyant un message à l'agent recrutement avec le nombre d'employés à recruter (le recrutement a un channel dédié à la communication entreprise->recrutement) ;
-* envoie un message aux employés pour leur dire d'agir (chaque employé a un channel dédié à la communication entreprise->employé).
-L'entreprise attend un message de chacun des employés (entreprise a un channel dédié aux retours des employés) pour lancer la fin d'année. Pour attendre les employés, l'entreprise a une fonction `RecevoirActions` qui prend le nombre d'actions à recevoir en entrée, lance une boucle dans laquelle elle attend un message sur son channel et incrémente un compteur à chaque fois qu'elle reçoit un message. Quand le compteur atteint le nombre d'actions passé en entrée, c'est la fin de la boucle.
-En fin d'année, l'entreprise lance un team building, et lance la fin d'année, elle gère :
-* les plaintes (donc licencie éventuellement des employés) ;
+* lance les recrutements en envoyant un message à l'agent _Recrutement_ avec le nombre d'_Employés_ à recruter (le _Recrutement_ a un channel dédié à la communication _Entreprise_->_Recrutement_) ;
+* envoie un message aux _Employés_ pour leur dire d'agir (chaque _Employé_ a un channel dédié à la communication _Entreprise_->_Employé_).
+L'_Entreprise_ attend un message de chacun des _Employés_ (_Entreprise_ a un channel dédié aux retours des _Employés_) pour lancer la fin d'année. Pour attendre les _Employés_, l'_Entreprise_ a une fonction `RecevoirActions` qui prend le nombre d'actions à recevoir en entrée, lance une boucle dans laquelle elle attend un message sur son channel et incrémente un compteur à chaque fois qu'elle reçoit un message. Quand le compteur atteint le nombre d'actions passé en entrée, c'est la fin de la boucle.
+En fin d'année, l'_Entreprise_ lance un team building, et lance la fin d'année, elle gère :
+* les plaintes (donc licencie éventuellement des _Employés_) ;
 * les départs ;
-* les recrutements : elle attend un message du recrutement qui l'informe de la fin du processus de recrutement (entreprise a un channel dédié aux retours du recrutement), puis démarre les nouveaux employés.
+* les recrutements : elle attend un message du _Recrutement_ qui l'informe de la fin du processus de _Recrutement_ (_Entreprise_ a un channel dédié aux retours du _Recrutement_), puis démarre les nouveaux _Employés_.
 
-Pour arrêter tous les agents, l'entreprise envoie un message de fin sur les channels des employés et sur le channel du recrutement. Elle doit attendre leurs retours avant de s'arrêter elle-même.
+Pour arrêter tous les agents, l'_Entreprise_ envoie un message de fin sur les channels des _Employés_ et sur le channel du _Recrutement_. Elle doit attendre leurs retours avant de s'arrêter elle-même.
 
-Au cours des actions des employés, ceux-ci peuvent changer les listes des employés démissionnaires, la liste des départs, la liste des plaintes, le nombre de dépressions et le nombre de congés parentaux : pour éviter des problèmes d'accès concurrents, les fonctions gérant ces changements posent un `Lock` sur l'entreprise.
+Au cours des actions des _Employés_, ceux-ci peuvent changer les listes des _Employés_ démissionnaires, la liste des départs, la liste des plaintes, le nombre de dépressions et le nombre de congés parentaux : pour éviter des problèmes d'accès concurrents, les fonctions gérant ces changements posent un `Lock` sur l'_Entreprise_.
 
-#### Employé
-Les employés sont des agents lancés par l'entreprise.
+#### _Employé_
+Les _Employés_ sont des agents lancés par l'_Entreprise_.
 
-Quand ils sont lancés, ils entrent dans une boucle dans laquelle ils effectuent leurs actions jusqu'à ce qu'ils aient été arrêtés par l'entreprise.
-Pour agir, les employés attendent un message de l'entreprise sur un channel dédié. Si l'entreprise leur envoie le message `LIBRE`, ils vont :
+Quand ils sont lancés, ils entrent dans une boucle dans laquelle ils effectuent leurs actions jusqu'à ce qu'ils aient été arrêtés par l'_Entreprise_.
+Pour agir, les _Employés_ attendent un message de l'_Entreprise_ sur un channel dédié. Si l'_Entreprise_ leur envoie le message `LIBRE`, ils vont :
 * agresser s'ils sont agresseurs ;
-* se former s'ils sont dans la liste des employés recevant une formation pendant l'année en cours ;
+* se former s'ils sont dans la liste des _Employés_ recevant une formation pendant l'année en cours ;
 * vieillir ;
 * potentiellement avoir un enfant et donc potentiellement partir en congé paternité et potentiellement démissionner après un congé maternité ;
 * partir à la retraite s'ils ont assez d'ancienneté ;
 * potentiellement poser une démission spontanée.
-À chaque action, ils vont modifier des informations centralisées par l'entreprise, donc pour se faire, ils appellent des méthodes de l'entreprise.
-Si le message reçu par l'employé de la part de l'entreprise est `AGRESSION`, cela signifie que l'employé se fait agresser. Il va donc perdre de la santé mentale et potentiellement porter plainte auprès de l'entreprise et partir en dépression.
-Si le message est `FIN`, l'employé passe son attribut fin à `true` ce qui lui permettra de sortir de la boucle de vie.
-Enfin, l'employé envoie un message à l'entreprise sur un channel pour l'informer qu'il a fini ses actions.
+À chaque action, ils vont modifier des informations centralisées par l'_Entreprise_, donc pour se faire, ils appellent des méthodes de l'_Entreprise_.
+Si le message reçu par l'_Employé_ de la part de l'_Entreprise_ est `AGRESSION`, cela signifie que l'_Employé_ se fait agresser. Il va donc perdre de la santé mentale et potentiellement porter plainte auprès de l'_Entreprise_ et partir en dépression.
+Si le message est `FIN`, l'_Employé_ passe son attribut fin à `true` ce qui lui permettra de sortir de la boucle de vie.
+Enfin, l'_Employé_ envoie un message à l'_Entreprise_ sur un channel pour l'informer qu'il a fini ses actions.
 
-#### Recrutement
-Le recrutement est un agent unique créé par la simulation et que l'entreprise démarre.
-Il attend un message de l'entreprise qui intervient à chaque pas de temps.
+#### _Recrutement_
+Le _Recrutement_ est un agent unique créé par la simulation et que l'_Entreprise_ démarre.
+Il attend un message de l'_Entreprise_ qui intervient à chaque pas de temps.
 
-Si le message est `RECRUTEMENT` alors il peut désormais commencer le recrutement.
-Un message de type `RECRUTEMENT` est accompagné du nombre de postes à pourvoir. 
-Il génère donc un nombre de candidat·e·s correspondant à 18 fois le nombre de postes à pourvoir (voir  [Ce qui est modélisé et les sources](#ce-qui-est-modélisé-et-les-sources)). Puis, il sélectionne les candidat·e·s en fonction des différents choix de l'utilisateur·ice, soit la présence d'une répartition homme-femme souhaité ou non ainsi que la stratégie de recrutement à appliquer avec les paramètres correspondant. 
+Si le message est `Recrutement` alors il peut désormais commencer le _Recrutement_.
+Un message de type `Recrutement` est accompagné du nombre de postes à pourvoir. 
+Il génère donc un nombre de candidat·e·s correspondant à 18 fois le nombre de postes à pourvoir (voir  [Ce qui est modélisé et les sources](#ce-qui-est-modélisé-et-les-sources)). Puis, il sélectionne les candidat·e·s en fonction des différents choix de l'utilisateur·ice, soit la présence d'une répartition homme-femme souhaité ou non ainsi que la stratégie de _Recrutement_ à appliquer avec les paramètres correspondant. 
 
-Pour le recrutement *CompétencesÉgales*, il sélectionne le/la candidat·e le/la plus compétent·e. En cas d'égalité, il respecte si possible la priorité précisée par l'utilisateur·ice et choisit au hasard s'il y a encore des égalités (par exemple priorité aux femmes et égalité entre femmes). Dans le cas où il ne peut pas (par exemple priorité aux femmes mais égalité entre hommes), il sélectionne également au hasard.
+Pour le _Recrutement_ *CompétencesÉgales*, il sélectionne le/la candidat·e le/la plus compétent·e. En cas d'égalité, il respecte si possible la priorité précisée par l'utilisateur·ice et choisit au hasard s'il y a encore des égalités (par exemple priorité aux femmes et égalité entre femmes). Dans le cas où il ne peut pas (par exemple priorité aux femmes mais égalité entre hommes), il sélectionne également au hasard.
 
-Pour le recrutement *PlacesRéservéesFemme* ou *PlacesRéservéesHomme*, le nombre de places à réserver *N* est calculé en fonction du pourcentage renseigné. Puis si possible, les *N*  individus les plus compétents du genre favorisé sont recrutés. Pour le reste des postes à pourvoir (avec potentiellement les places réservées inoccupées par manque de candidat·e·s du genre souhaité), les candidat·e·s les plus compétent·e·s sont recruté·e·s peu importe leur genre et en cas d'égalité, le hasard les départage.
+Pour le _Recrutement_ *PlacesRéservéesFemme* ou *PlacesRéservéesHomme*, le nombre de places à réserver *N* est calculé en fonction du pourcentage renseigné. Puis si possible, les *N*  individus les plus compétents du genre favorisé sont recrutés. Pour le reste des postes à pourvoir (avec potentiellement les places réservées inoccupées par manque de candidat·e·s du genre souhaité), les candidat·e·s les plus compétent·e·s sont recruté·e·s peu importe leur genre et en cas d'égalité, le hasard les départage.
 
-Une fois tous les candidats choisis, il démarre les agents correspondant aux candidat·e·s embauché·e·s. Enfin, l'agent envoie un message `FIN_RECRUTEMENT` à l'entreprise pour l'informer de la fin du recrutement et lui fournir un slice contenant tous les nouveaux employé·e·s. 
+Une fois tous les candidats choisis, il démarre les agents correspondant aux candidat·e·s embauché·e·s. Enfin, l'agent envoie un message `FIN_RECRUTEMENT` à l'_Entreprise_ pour l'informer de la fin du _Recrutement_ et lui fournir un slice contenant tous les nouveaux _Employés_. 
 
-Si le message est `FIN_AGENT`, l'agent Recrutement passe son attribut fin à `true` ce qui lui permettra de sortir de la boucle de vie.
+Si le message est `FIN_AGENT`, l'agent _Recrutement_ passe son attribut fin à `true` ce qui lui permettra de sortir de la boucle de vie.
 
 ## Les résultats
 **A FAIRE**
+
+### Nombre max d'agents testés
+
+Afin de voir les limites de notre projet, nous avons lancé une simulation avec 10 000 _Employés_ et nous constatons que, bien que l'execution du programme soit bien ralenti, il tourne toujours (voir l'image ci-dessous). Cependant, lorsque l'on dépasse les 100 000 _Employés_ il de vient vraiment difficile pour le programme d'être fluide.
+
+<img src="img/capture_simu_10000_emp.png" alt="capture d'une simulation avec 10 000 Employés" width="1000px"/>
 
 ## Non pris en compte dans notre modélisation[<sup>25</sup>](https://infonet.fr/actualite/focus/parite-femme-homme-en-entreprise-7-pratiques-a-adopter/)
 
